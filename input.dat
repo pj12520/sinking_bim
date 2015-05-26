@@ -4,6 +4,7 @@
 100
 100
 15
+0.1
 
 Viscosity Ratio
 Bond number
@@ -11,3 +12,4 @@ Modified Density Ratio
 Number of elements on sphere
 Number of elements on interface
 Truncation length of interface
+Time step
