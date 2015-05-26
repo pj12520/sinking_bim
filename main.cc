@@ -18,6 +18,10 @@ int main()
   particle sphere;
   Create_sphere(sphere, input.init_height, input.n_sphere);
 
+  //Create interface
+  surf interf;
+  Create_interf(interf, input.n_int, input.max_arc);
+
   return 0;
 }
 
