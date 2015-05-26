@@ -5,11 +5,11 @@ all: $(EXE)
 
 # This rule uses the automatic variables, '$^' and '$@'
 $(EXE): $(OBJS)
-	gcc $^ -o $@
+	g++ $^ -o $@
 
 # This is a 'static pattern rule'
 $(OBJS): %.o : %.cc inout.h
-	gcc -c $< -o $@
+	g++ -c $< -o $@
 
 .PHONY: clean spotless
 
