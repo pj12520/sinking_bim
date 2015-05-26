@@ -5,7 +5,7 @@
 100
 15.0
 0.1
-
+3.0
 
 Viscosity Ratio
 Bond number
@@ -14,3 +14,4 @@ Number of elements on sphere
 Number of elements on interface
 Truncation length of interface
 Time step
+Initial height of sphere

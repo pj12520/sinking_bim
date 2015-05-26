@@ -3,6 +3,7 @@
 #include <string>
 
 #include "inout.h"
+#include "object.h"
 
 using std::string;
 
@@ -12,6 +13,10 @@ int main()
   dimless_in input;
   string infile = "input.dat";
   Dimless_in(infile, input);
+
+  //Create sphere
+  particle sphere;
+  Create_sphere(sphere, input.init_height, input.n_sphere);
 
   return 0;
 }

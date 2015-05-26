@@ -1,3 +1,5 @@
+//File containing defintions for functions relating to input and output
+
 #include <fstream>
 #include <string>
 
@@ -6,7 +8,8 @@
 using std::fstream;
 using std::string;
 
-void Dimless_in(string file, dimless_in input) //Function to read in the input variables for the case that they are the dimensionless parameters
+//Function to read in the input variables for the case that they are the dimensionless parameters
+void Dimless_in(string file, dimless_in input) 
 {
   fstream read; //Object for reading input parameters from file
   read.open(file.c_str()); 
@@ -19,7 +22,7 @@ void Dimless_in(string file, dimless_in input) //Function to read in the input v
   read >> input.n_int; //Number of elements on interface
   read >> input.max_arc; //Truncation length of interface
   read >> input.t_step; //Initial time step
-
+  read >> input.init_height; //Initial height of sphere
   read.close();
 
 }
