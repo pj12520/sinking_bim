@@ -4,6 +4,7 @@
 
 #include "inout.h"
 #include "object.h"
+#include "testing.h"
 
 using std::string;
 
@@ -12,7 +13,11 @@ int main()
   //Read in input data from input file
   dimless_in input;
   string infile = "input.dat";
-  Dimless_in(infile, input);
+  Dimless_in(infile, &input);
+
+  //TESTING - Test that input data is read correctly//////////////////////
+   In_test(input);
+  ///////////////////////////////////////////////////////////////////////
 
   //Create sphere
   particle sphere;

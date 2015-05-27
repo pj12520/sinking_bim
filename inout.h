@@ -23,6 +23,6 @@ struct dimless_in
 };
 
 //Function to read in the input variables for the case that they are the dimensionless parameters
-void Dimless_in(string file, dimless_in input); 
+void Dimless_in(string file, dimless_in *input); 
 
 #endif /* INOUT_H */
