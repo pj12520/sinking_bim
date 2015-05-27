@@ -73,6 +73,4 @@ double G1(double alpha_2, double beta_2, double sum_half);
 //Function to calculate the function g2 as defined in the notes
 double G2(double sum_half);
 
-//Testing svn
-
 #endif /* AXISYM_H */
