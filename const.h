@@ -24,4 +24,30 @@ namespace Gauss
   const double Gauss_wt4 = 0.3478548451;
 
 }
+
+//Constants used in the polynomial approximations of the complete elliptic integrals (Abramovitch and Stegun 1956 pages 591 - 592)
+namespace ellip_poly
+{
+  const double ellip1_a0 = 1.38629436112;
+  const double ellip1_a1 = 0.09666344259;
+  const double ellip1_a2 = 0.03590092383;
+  const double ellip1_a3 = 0.03742563713;
+  const double ellip1_a4 = 0.01451196212;
+
+  const double ellip1_b0 = 0.5;
+  const double ellip1_b1 = 0.12498593597;
+  const double ellip1_b2 = 0.06880248576;
+  const double ellip1_b3 = 0.03328355346;
+  const double ellip1_b4 = 0.00441787012;
+
+  const double ellip2_a1 = 0.44325141463;
+  const double ellip2_a2 = 0.06260601220;
+  const double ellip2_a3 = 0.04757383546;
+  const double ellip2_a4 = 0.01736506451;
+
+  const double ellip2_b1 = 0.24998368310;
+  const double ellip2_b2 = 0.09200180037;
+  const double ellip2_b3 = 0.04069697526;
+  const double ellip2_b4 = 0.00526449639;
+}
 #endif /* CONST_H */

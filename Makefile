@@ -1,6 +1,6 @@
-OBJS=main.o inout.o object.o testing.o
+OBJS=main.o inout.o object.o testing.o ellip.o axisym.o
 EXE=impact
-HEAD=inout.h object.h const.h testing.h
+HEAD=inout.h object.h const.h testing.h ellip.h axisym.h
 all: $(EXE)
 
 # This rule uses the automatic variables, '$^' and '$@'

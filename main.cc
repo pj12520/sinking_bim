@@ -40,6 +40,18 @@ int main()
   Config(sphere, interf);
   //Output values of the interval bounds and midpoints for both the sphere and interface
   //////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  //Create the matrix of coefficients and the known vector for the linear system
+  int order = 2 * (input.n_int + input.n_sphere) + 1;
+
+  vector<vector<double> > coeffs(order);
+  for (int i = 0; i < order; i++)
+    {
+      coeffs[i].resize(order);
+    }
+
+  vector<double> known(order);
+
   return 0;
 }
 
