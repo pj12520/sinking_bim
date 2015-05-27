@@ -57,13 +57,13 @@ struct surf
 
 
 //Function to fill the properties of the particle structure
-void Create_sphere(particle sphere, double height, int n_int);
+void Create_sphere(particle *sphere, double height, int n_int);
 
 //Function to fill the properties of the surf structure
-void Create_interf(surf interf, int n_int, double max_arc);
+void Create_interf(surf *interf, int n_int, double max_arc);
 
 //Function to find the midpoints in a set of n_int equally spaced intervals
-void Find_midpoints(vector<double> midpoints, double start, double end, int n_int);
+void Find_midpoints(vector<double>* midpoints, double start, double end, int n_int);
 
 //Function to create the intervals that cover the surface of the sphere
 void Create_sphere_int(vector<sphere_int>* intervals, int n_int, double height);
@@ -72,7 +72,7 @@ void Create_sphere_int(vector<sphere_int>* intervals, int n_int, double height);
 void Create_interf_int(vector<interf_int>* intervals, int n_int, double max_arc);
 
 //Function to create the abscissas used for Gauss-Legendre integration in an interval
-void Abscissas(double lower, double upper, double max, int n_int, vector<double>* points, double width, double half_width, int interval); 
+void Abscissas(double* lower, double* upper, double max, int n_int, vector<double>* points, double* width, double half_width, int interval); 
 
 #endif /* OBJECT_H */
 
