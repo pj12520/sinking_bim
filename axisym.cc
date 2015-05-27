@@ -1,10 +1,15 @@
 //File containing defintions for functions evaluating the components of A, B and C
 
+#include <iostream> //Currently only inlcuded for debugging purposes. Remove when program is operational
+
 #include "const.h"
 
 using math_const::PI;
 
 using namespace ellip_poly;
+
+using std::cout; //Currently only using for debugging purposes. Remove when program is operational
+using std::endl; //Currently only using for debugging purposes. Remove when program is operational
 
 //Function to calculate the quantity a1 as defined in the notes
 double A1(double viscos_rat, double sum_3_2, double diff, double beta_4, double source_rad, double alpha_2, double alpha_4, double source_rad_2, double pos_rad_2, double pos_rad, double beta_2)
@@ -25,7 +30,7 @@ double A2(double viscos_rat, double vert_diff, double alpha_4, double beta_4, do
 //Function to calculate the quantity a3 as defined in the notes
 double A3(double viscos_rat, double sum_3_2, double diff_2, double beta_4, double source_rad, double alpha_8, double alpha_4, double beta_8, double pos_rad_2, double source_rad_2, double alpha_2, double pos_rad, double beta_2)
 {
-  double a3 = ((1.0 - viscos_rat) / (PI * sum_3_2 * diff_2 * beta_4)) * ((source_rad / 2) * (-8.0 * alpha_8 + 15.0 * alpha_4 * beta_4 - 3.0 * beta_8) - 2.0 * (2.0 * pos_rad_2 + source_rad_2) * source_rad * alpha_2 * (-alpha_4 + 3.0 * beta_4) + (pos_rad_2 + 2.0 * source_rad_2) * pos_rad * beta_2 * (alpha_4 + 3.0 * beta_4) - 4.0 * source_rad * pos_rad_2 * alpha_2 * beta_4);
+  double a3 = ((1.0 - viscos_rat) / (PI * sum_3_2 * diff_2 * beta_4)) * ((source_rad / 2.0) * (-8.0 * alpha_8 + 15.0 * alpha_4 * beta_4 - 3.0 * beta_8) - 2.0 * (2.0 * pos_rad_2 + source_rad_2) * source_rad * alpha_2 * (-alpha_4 + 3.0 * beta_4) + (pos_rad_2 + 2.0 * source_rad_2) * pos_rad * beta_2 * (alpha_4 + 3.0 * beta_4) - 4.0 * source_rad * pos_rad_2 * alpha_2 * beta_4);
 
   return a3;
 }
