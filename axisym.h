@@ -40,6 +40,9 @@ double A14(double viscos_rat, double vert_diff_3, double sum_3_2, double diff);
 //Function to calculate the quantity a16 as defined in the notes
 double A16(double viscos_rat, double alpha_2, double sum_3_2, double diff_2, double vert_diff_3);
 
+//Function to calculate a 11 component of A for an intermediate and regular interval
+double Matrix_A(double a1, double a2, double a3, double a4, double norm_rad, double norm_vert, double ellip1, double ellip2);
+
 //Function to calculate the 11 component of B for an intermediate and regular interval
 double Matrix_B11(double beta_2, double sum_half, double alpha_2, double vert_diff_2, double sum, double diff, double ellip1, double ellip2);
 
