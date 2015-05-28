@@ -247,9 +247,9 @@ double Vector_C2(double beta_2, double norm_vert, double pos_rad, double vert_di
 }
 
 //Function to calculate the 2 component of C when the source point is on axis
-double vector_C2_axisym(double div_norm, double bond, double pos_vert, double norm_vert, double mdr, double alpha, double vert_diff_2, double alpha_2)
+double Vector_C2_axisource(double div_norm, double bond, double pos_vert, double mdr, double alpha, double vert_diff_2, double alpha_2)
 {
-  double vector_C2 = 9.0 * (div_norm - bond * pos_vert) * norm_vert / (8.0 * mdr * bond * alpha) * (1.0 + vert_diff_2 / alpha_2);
+  double vector_C2 = 9.0 * (div_norm - bond * pos_vert) / (8.0 * mdr * bond * alpha) * (1.0 + vert_diff_2 / alpha_2);
 
   return vector_C2;
 }
