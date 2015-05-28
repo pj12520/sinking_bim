@@ -4,20 +4,26 @@
 #include <iostream>
 
 #include "../../axisym.h"
+#include "../../ellip.h"
 
 using std::cout;
 using std::endl;
 
 int main()
 {
+  //Set dimensionless variables to be used
   double viscos_rat = 2.0;
+  double bond = 2.0;
+  double mdr = 2.0;
 
+  //Set location of source and position points
   double source_rad = 2.0;
   double source_vert = 3.0;
 
   double pos_rad = 4.0;
   double pos_vert = 5.0;
 
+  //Calculate quantities that depend on these locations
   double source_rad_2 = source_rad * source_rad;
   double pos_rad_2 = pos_rad * pos_rad;
 
@@ -40,11 +46,30 @@ int main()
   double beta_8 = beta_6 * beta_2;
 
   double sum = alpha_2 + beta_2;
-  double sum_3_2 = pow(sum, 1.5);
+  double sum_half = sqrt(sum);
+
+  double sum_3_2 = sum * sum_half;
 
   double diff = alpha_2 - beta_2;
   double diff_2 = diff * diff;
 
+  //Set value of normal components at postion point
+  double norm_rad = 0.6;
+  double norm_vert = 0.8;
+  double div_norm = 0.5;
+
+  //Compute the complementary parameter and output result for testing
+  double comp_param = Comp_param(beta_2, sum);
+  cout << "Complementary Parameter = " << comp_param << endl;
+
+  //Compute the complete elliptic integrals of the first and second kind and output the results for testing
+  double ellip1 = Ellip1(comp_param);
+  cout << "Complete Elliptic integral of the 1st kind = " << ellip1 << endl;
+
+  double ellip2 = Ellip2(comp_param);
+  cout << "Complete Elliptic integral of the 2nd kind = " << ellip2 << endl;
+
+  //Evaluate quantities a1, a2 etc. and output results for testing
   double a1 = A1(viscos_rat, sum_3_2, diff, beta_4, source_rad, alpha_2, alpha_4, source_rad_2, pos_rad_2, pos_rad, beta_2);
   cout << "a1 = " << a1 << endl;
 
@@ -80,6 +105,21 @@ int main()
 
   double a16 = A16(viscos_rat, alpha_2, sum_3_2, diff_2, vert_diff_3);
   cout << "a16 = " << a16 << endl;
+
+  //Compute the components of A and output results for testing
+  double matrix_A11 = Matrix_A(a1, a2, a3, a4, norm_rad, norm_vert, ellip1, ellip2);
+  cout << "A11 = " << matrix_A11 << endl;
+
+  //Compute the prefactor of C1 and C2 and output result for testing
+  double prefac = C_prefac(div_norm, bond, pos_vert, mdr, beta_2, sum_half);
+  cout << "Prefactor to C1 and C2 = " << prefac << endl;
+
+  //Compute the components of C and output results for testing
+  double vector_C1 = Vector_C1(alpha_2, vert_diff_2, norm_rad, pos_rad, vert_diff, norm_vert, beta_4, source_rad, prefac, ellip1, ellip2, diff, beta_2);
+  cout << "C1 = " << vector_C1 << endl;
+
+  double vector_C2 = Vector_C2(beta_2, norm_vert, pos_rad, vert_diff, norm_rad, source_rad, alpha_2, prefac, ellip1, ellip2, diff);
+  cout << "C2 = " << vector_C2 << endl;
 
   return 0;
 }

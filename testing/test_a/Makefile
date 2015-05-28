@@ -1,6 +1,6 @@
-OBJS=test_a.o ../../axisym.o
+OBJS=test_a.o ../../axisym.o ../../ellip.o
 EXE=test_a
-HEAD=../../const.h ../../axisym.h
+HEAD=../../const.h ../../axisym.h ../../ellip.h
 all: $(EXE)
 
 # This rule uses the automatic variables, '$^' and '$@'

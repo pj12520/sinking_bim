@@ -235,7 +235,7 @@ double Vector_C1(double alpha_2, double vert_diff_2, double norm_rad, double pos
 //Function to calculate the 2 component of C for a regular and intermediate interval
 double Vector_C2(double beta_2, double norm_vert, double pos_rad, double vert_diff, double norm_rad, double source_rad, double alpha_2, double prefac, double ellip1, double ellip2, double diff)
 {
-  double term1 = beta_2 * norm_vert - pos_rad * vert_diff * norm_rad;
+  double term1 = beta_2 * norm_vert - source_rad * vert_diff * norm_rad;
 
   double term2 = norm_rad * (source_rad * alpha_2 - pos_rad * beta_2);
 
