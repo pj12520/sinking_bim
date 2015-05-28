@@ -28,6 +28,12 @@ int main()
   double norm_vert = 0.8;
   double div_norm = 0.5;
 
+  //Set value of normal components at source point
+  double source_norm_rad = 3.0 / 13.0;
+  double source_norm_vert = 12.0 / 13.0;
+
+  double source_norm_vert_3 = source_norm_vert * source_norm_vert * source_norm_vert;
+
   //Set values for quantities that depend on location of source and position points
   double source_rad_2 = source_rad * source_rad;
   double pos_rad_2 = pos_rad * pos_rad;
@@ -79,5 +85,8 @@ int main()
   double matrix_A11_reg = Matrx_A11_reg(a1, a2, a3, a4, norm_rad, norm_vert, ellip1, ellip2, ellip2_var);
   cout << "The regular part of A11 = " << matrix_A11_reg << endl;
 
+  //Evaluate the function h as defined in the notes and output for testing
+  double h = H(viscos_rat, sum_3_2, vert_diff_2, beta_4, source_rad, arc_diff, alpha_8, alpha_4, beta_8, alpha_2, pos_rad_2, source_rad_2, pos_rad, norm_rad, diff_2, beta_2, source_norm_vert_3, source_norm_rad);
+  cout << "h = " << h << endl;
   return 0;
 }

@@ -139,19 +139,19 @@ double Matrx_A11_reg(double a1, double a2, double a3, double a4, double norm_rad
 }
 
 //Function to calculate the function h as defined in the notes
-double H(double viscos_rat, double sum_3_2, double vert_diff_2, double beta_4, double source_rad, double eps, double alpha_8, double alpha_4, double beta_8, double alpha_2, double pos_rad_2, double source_rad_2, double pos_rad, double norm_vert_3, double norm_rad, double diff_2, double beta_2)
+double H(double viscos_rat, double sum_3_2, double vert_diff_2, double beta_4, double source_rad, double eps, double alpha_8, double alpha_4, double beta_8, double alpha_2, double pos_rad_2, double source_rad_2, double pos_rad, double norm_rad, double diff_2, double beta_2, double source_norm_vert_3, double source_norm_rad)
 {
-  double prefac = (1.0 - viscos_rat) / (PI * sum_3_2 * vert_diff_2 * beta_4 * source_rad * eps);
+  double prefac = (1.0 - viscos_rat) / (PI * sum_3_2 * diff_2 * beta_4 * source_rad * eps);
 
   double term1 = source_rad * (- 8.0 * alpha_8 + 15.0 * alpha_4 * beta_4 - 3.0 * beta_8) / 2.0;
 
   double term2 = -2.0 * source_rad * alpha_2 * (2.0 * pos_rad_2 + source_rad_2) * (-alpha_4 + 3.0 * beta_4);
 
-  double term3 = pos_rad * beta_2 * (pos_rad_2 + 2.0 * source_rad) * (alpha_4 + 3.0 * beta_4);
+  double term3 = pos_rad * beta_2 * (pos_rad_2 + 2.0 * source_rad_2) * (alpha_4 + 3.0 * beta_4);
 
   double term4 = -3.0 * source_rad * pos_rad_2 * alpha_2 * beta_4;
 
-  double term5 = -norm_vert_3 * norm_rad * sum_3_2 * diff_2 * beta_4;
+  double term5 = source_norm_vert_3 * source_norm_rad * sum_3_2 * diff_2 * beta_4;
 
   double h = prefac * (norm_rad * source_rad * eps * (term1 + term2 + term3 + term4) + term5);
 
