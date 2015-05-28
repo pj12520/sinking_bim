@@ -133,9 +133,29 @@ double Matrix_A22_axisource(double viscos_rat, double vert_diff_3, double alpha_
 //Function to calculate the regular part of the A11 function
 double Matrx_A11_reg(double a1, double a2, double a3, double a4, double norm_rad, double norm_vert, double ellip1, double ellip2, double ellip2_var)
 {
-  double matrix_A11_reg = (a1 * norm_rad + a2 * norm_vert) * ellip1 + a4 * norm_vert * ellip2 * a3 * norm_rad * ellip2_var;
+  double matrix_A11_reg = (a1 * norm_rad + a2 * norm_vert) * ellip1 + a4 * norm_vert * ellip2 + a3 * norm_rad * ellip2_var;
 
   return matrix_A11_reg;
+}
+
+//Function to calculate the function h as defined in the notes
+double H(double viscos_rat, double sum_3_2, double vert_diff_2, double beta_4, double source_rad, double eps, double alpha_8, double alpha_4, double beta_8, double alpha_2, double pos_rad_2, double source_rad_2, double pos_rad, double norm_vert_3, double norm_rad, double diff_2, double beta_2)
+{
+  double prefac = (1.0 - viscos_rat) / (PI * sum_3_2 * vert_diff_2 * beta_4 * source_rad * eps);
+
+  double term1 = source_rad * (- 8.0 * alpha_8 + 15.0 * alpha_4 * beta_4 - 3.0 * beta_8) / 2.0;
+
+  double term2 = -2.0 * source_rad * alpha_2 * (2.0 * pos_rad_2 + source_rad_2) * (-alpha_4 + 3.0 * beta_4);
+
+  double term3 = pos_rad * beta_2 * (pos_rad_2 + 2.0 * source_rad) * (alpha_4 + 3.0 * beta_4);
+
+  double term4 = -3.0 * source_rad * pos_rad_2 * alpha_2 * beta_4;
+
+  double term5 = -norm_vert_3 * norm_rad * sum_3_2 * diff_2 * beta_4;
+
+  double h = prefac * (norm_rad * source_rad * eps * (term1 + term2 + term3 + term4) + term5);
+
+  return h;
 }
 
 //Function to calculate the 11 component of B for an intermediate and regular interval
