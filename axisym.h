@@ -88,6 +88,8 @@ double Vector_C1(double alpha_2, double vert_diff_2, double norm_rad, double pos
 //Function to calculate the 2 component of C for a regular and intermediate interval
 double Vector_C2(double beta_2, double norm_vert, double pos_rad, double vert_diff, double norm_rad, double source_rad, double alpha_2, double prefac, double ellip1, double ellip2, double diff);
 
+//Function to calculate the 2 component of C when the source point is on axis
+double vector_C2_axisym(double div_norm, double bond, double pos_vert, double norm_vert, double mdr, double alpha, double vert_diff_2, double alpha_2);
 
 
 #endif /* AXISYM_H */
