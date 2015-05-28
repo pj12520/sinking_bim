@@ -122,3 +122,11 @@ double Ellip1_sing(double comp_param)
 
   return ellip1_sing;
 }
+
+//Function to evaluate the complementary parameter used as the argument for the functions which compute the elliptic integrals
+double Comp_param(double beta_2, double sum)
+{
+  double comp_param = 1.0 - 2.0 * beta_2 / sum;
+
+  return comp_param;
+}
