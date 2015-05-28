@@ -48,5 +48,6 @@ int main()
 
   double vector_C2 = Vector_C2_axisource(div_norm, bond, pos_vert, mdr, alpha, vert_diff_2, alpha_2);
   cout << "C2 = " << vector_C2 << endl;
+
   return 0;
 }

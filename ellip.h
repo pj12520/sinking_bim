@@ -7,6 +7,9 @@
 //Function to evaluate the complete elliptic integral of the 1st kind (Abramovitch and Stegun 1964 page 591)
 double Ellip1(double comp_param);
 
+//Function to evaluate the variable part of the complete elliptic integral of the second kind
+double Ellip2_var(double comp_param);
+
 //Function to evaluate the complete elliptic integral of the 2nd kind (Abramovitch and Stegun 1964 page 591)
 double Ellip2(double comp_param);
 
