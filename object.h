@@ -33,6 +33,8 @@ struct interf_int
   vector<double> norm_rad;
   vector<double> norm_vert;
 
+  double div_norm; //Divergence of the normal vector
+
   double lower; //Lower bound of the interval
   double upper; //Upper bound of the interval
   double width; //Width of the interval
