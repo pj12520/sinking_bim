@@ -81,12 +81,13 @@ void Create_interf_int(vector<interf_int>* intervals, int n_int, double max_arc)
       //Create the abscissas for the Gauss-Legendre integration in each interval
       Abscissas(&(*intervals)[i].lower, &(*intervals)[i].upper, max_arc, n_int, &(*intervals)[i].arc, &(*intervals)[i].width, half_width, i);
 
-      //Set radial and vertical components of the integration points in each interval and components of normal vectors
+      //Set radial and vertical components of the integration points in each interval and components and divergence of normal vectors
       (*intervals)[i].rad.resize(4);
       (*intervals)[i].vert.resize(4);
 
       (*intervals)[i].norm_rad.resize(4);
       (*intervals)[i].norm_vert.resize(4);
+      (*intervals)[i].div_norm.resize(4);
 
       for (int j = 0; j < 4; j++)
 	{
