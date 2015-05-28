@@ -37,7 +37,7 @@ int main()
   //Testing - Test that sphere and interface are constructed correctly///////////////////////////////////
 
   //Produce functions r(theta), z(theta), z(r) for the sphere and r(s), z(s) and z(r) for the interface
-  Config(sphere, interf);
+  //Config(sphere, interf);
   //Output values of the interval bounds and midpoints for both the sphere and interface
   //////////////////////////////////////////////////////////////////////////////////////////////////////
 

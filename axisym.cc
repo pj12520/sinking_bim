@@ -114,6 +114,22 @@ double Matrix_A(double a1, double a2, double a3, double a4, double norm_rad, dou
   return matrix_A;
 }
 
+//Function to calculate the 21 component of A when the source point is on axis
+double Matrix_A21_axisource(double viscos_rat, double vert_diff_2, double pos_rad, double alpha_5)
+{
+  double matrix_A21 = 3.0 * (1.0 - viscos_rat) * vert_diff_2 * pos_rad / (2.0 * alpha_5);
+
+  return matrix_A21;
+}
+
+//Function to calculate the 22 component of A when the source point is on axis
+double Matrix_A22_axisource(double viscos_rat, double vert_diff_3, double alpha_5)
+{
+  double matrix_A22 = -3.0 * (1.0 - viscos_rat) * vert_diff_3 / (2.0 * alpha_5);
+
+  return matrix_A22;
+}
+
 //Function to calculate the 11 component of B for an intermediate and regular interval
 double Matrix_B11(double beta_2, double sum_half, double alpha_2, double vert_diff_2, double sum, double diff, double ellip1, double ellip2)
 {
