@@ -65,10 +65,13 @@ int main()
   //Compute the complementary parameter
   double comp_param = Comp_param(beta_2, sum);
 
-  //Compute the complete elliptic integrals of the first and second kind
+  //Compute the complete elliptic integrals of the first and second kind and output the regular part of K for testing
   double ellip1 = Ellip1(comp_param);
 
   double ellip2 = Ellip2(comp_param);
+
+  double ellip1_reg = Ellip1_reg(comp_param);
+  cout << "The regular part of the complete elliptic integral of the 1st kind = " << ellip1_reg << endl;
 
   double ellip2_var = ellip2 - 1.0;
 
@@ -88,5 +91,21 @@ int main()
   //Evaluate the function h as defined in the notes and output for testing
   double h = H(viscos_rat, sum_3_2, vert_diff_2, beta_4, source_rad, arc_diff, alpha_8, alpha_4, beta_8, alpha_2, pos_rad_2, source_rad_2, pos_rad, norm_rad, diff_2, beta_2, source_norm_vert_3, source_norm_rad);
   cout << "h = " << h << endl;
+
+  //Evaluate the regular parts of C1 and C2 and output results for testing
+  double prefac = C_prefac(div_norm, bond, pos_vert, mdr, beta_2, sum_half);
+
+  double vector_C1_reg = Vector_C1_reg(vert_diff, norm_rad, pos_rad, norm_vert, beta_4, alpha_2, vert_diff_2, source_rad, beta_2, prefac, ellip1, ellip2, diff, ellip1_reg);
+  cout << "The regular part of C1 = " << vector_C1_reg << endl;
+
+  double vector_C2_reg = Vector_C2_reg(source_rad, vert_diff, norm_rad, ellip1, alpha_2, pos_rad, beta_2, norm_vert, ellip2, diff, ellip1_reg, prefac);
+  cout << "The regular part of C2 = " << vector_C2_reg << endl;
+
+  double j1 = J1(prefac, alpha_2, norm_rad);
+  cout << "j1 = " << j1 << endl;
+
+  double j2 = J2(prefac, norm_vert);
+  cout << "j2 = " << j2 << endl;
+
   return 0;
 }

@@ -281,3 +281,47 @@ double Vector_C2_axisource(double div_norm, double bond, double pos_vert, double
 
   return vector_C2;
 }
+
+//Function to calculate the regular part of the C1 function
+double Vector_C1_reg(double vert_diff, double norm_rad, double pos_rad, double norm_vert, double beta_4, double alpha_2, double vert_diff_2, double source_rad, double beta_2, double prefac, double ellip1, double ellip2, double diff, double ellip1_reg)
+{
+  double term1 = vert_diff * (vert_diff * norm_rad + pos_rad * norm_vert);
+
+  double term2 = norm_rad * (2.0 * beta_4 - alpha_2 * (alpha_2 + vert_diff_2));
+
+  double term3 = norm_vert * vert_diff * (source_rad * beta_2 - pos_rad * alpha_2);
+
+  double vector_C1_reg = prefac * (term1 * ellip1 + ellip2 * (term2 + term3) / diff + alpha_2 * norm_rad * ellip1_reg);
+
+  return vector_C1_reg;
+}
+
+//Function to calculate the function j1 as defined in the notes
+double J1(double prefac, double alpha_2, double norm_rad)
+{
+  double j1 = prefac * alpha_2 * ellip1_b0 * norm_rad;
+
+  return j1;
+}
+
+//Function to calculate the regular part of the C2 function
+double Vector_C2_reg(double source_rad, double vert_diff, double norm_rad, double ellip1, double alpha_2, double pos_rad, double beta_2, double norm_vert, double ellip2, double diff, double ellip1_reg, double prefac)
+{
+  double term1 = - source_rad * vert_diff * norm_rad * ellip1;
+
+  double term2 = vert_diff * (norm_rad * (source_rad * alpha_2 - pos_rad * beta_2) + vert_diff * beta_2 * norm_vert) * ellip2 / diff;
+
+  double term3 = beta_2 * norm_vert * ellip1_reg;
+
+  double vector_C2_reg = prefac * (term1 + term2 + term3);
+
+  return vector_C2_reg;
+}
+
+//Function to calculate the function j2 as defined in the notes
+double J2(double prefac, double norm_vert)
+{
+  double j2 = prefac * norm_vert * ellip1_b0;
+
+  return j2;
+}

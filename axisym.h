@@ -97,5 +97,16 @@ double Vector_C2(double beta_2, double norm_vert, double pos_rad, double vert_di
 //Function to calculate the 2 component of C when the source point is on axis
 double Vector_C2_axisource(double div_norm, double bond, double pos_vert, double mdr, double alpha, double vert_diff_2, double alpha_2);
 
+//Function to calculate the regular part of the C1 function
+double Vector_C1_reg(double vert_diff, double norm_rad, double pos_rad, double norm_vert, double beta_4, double alpha_2, double vert_diff_2, double source_rad, double beta_2, double prefac, double ellip1, double ellip2, double diff, double ellip1_reg);
+
+//Function to calculate the function j1 as defined in the notes
+double J1(double prefac, double alpha_2, double norm_rad);
+
+//Function to calculate the regular part of the C2 function
+double Vector_C2_reg(double source_rad, double vert_diff, double norm_rad, double ellip1, double alpha_2, double pos_rad, double beta_2, double norm_vert, double ellip2, double diff, double ellip1_reg, double prefac);
+
+//Function to calculate the function j2 as defined in the notes
+double J2(double prefac, double norm_vert);
 
 #endif /* AXISYM_H */
