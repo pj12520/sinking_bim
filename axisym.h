@@ -79,4 +79,15 @@ double G1(double alpha_2, double beta_2, double sum_half);
 //Function to calculate the function g2 as defined in the notes
 double G2(double sum_half);
 
+//Function to calculate the prefactor in both components of C
+double C_prefac(double div_norm, double bond, double pos_vert, double mdr, double beta_2, double sum_half);
+
+//Function to calculate the 1 component of C for a regular and intermediate interval
+double Vector_C1(double alpha_2, double vert_diff_2, double norm_rad, double pos_rad, double vert_diff, double norm_vert, double beta_4, double source_rad, double prefac, double ellip1, double ellip2, double diff, double beta_2);
+
+//Function to calculate the 2 component of C for a regular and intermediate interval
+double Vector_C2(double beta_2, double norm_vert, double pos_rad, double vert_diff, double norm_rad, double source_rad, double alpha_2, double prefac, double ellip1, double ellip2, double diff);
+
+
+
 #endif /* AXISYM_H */

@@ -209,3 +209,39 @@ double G2(double sum_half)
 
   return g2;
 }
+
+//Function to calculate the prefactor in both components of C
+double C_prefac(double div_norm, double bond, double pos_vert, double mdr, double beta_2, double sum_half)
+{
+  double prefac = 9.0 * (div_norm - bond * pos_vert) / (4.0 * PI * mdr * bond * beta_2 * sum_half);
+
+  return prefac;
+}
+
+//Function to calculate the 1 component of C for a regular and intermediate interval
+double Vector_C1(double alpha_2, double vert_diff_2, double norm_rad, double pos_rad, double vert_diff, double norm_vert, double beta_4, double source_rad, double prefac, double ellip1, double ellip2, double diff, double beta_2)
+{
+  double term1 = (alpha_2 + vert_diff_2) * norm_rad + pos_rad * vert_diff * norm_vert;
+
+  double term2 = norm_rad * (2.0 * beta_4 - alpha_2 * (alpha_2 + vert_diff_2));
+
+  double term3 = norm_vert * vert_diff * (source_rad * beta_2 - pos_rad * alpha_2);
+
+  double vector_C1 = prefac * (term1 * ellip1 + (term2 + term3) * ellip2 / diff);
+
+  return vector_C1;
+}
+
+//Function to calculate the 2 component of C for a regular and intermediate interval
+double Vector_C2(double beta_2, double norm_vert, double pos_rad, double vert_diff, double norm_rad, double source_rad, double alpha_2, double prefac, double ellip1, double ellip2, double diff)
+{
+  double term1 = beta_2 * norm_vert - pos_rad * vert_diff * norm_rad;
+
+  double term2 = norm_rad * (source_rad * alpha_2 - pos_rad * beta_2);
+
+  double term3 = vert_diff * beta_2 * norm_vert;
+
+  double vector_C2 = prefac * (term1 * ellip1 + (term2 + term3) * vert_diff * ellip2 / diff);
+
+  return vector_C2;
+}

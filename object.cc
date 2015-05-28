@@ -96,6 +96,7 @@ void Create_interf_int(vector<interf_int>* intervals, int n_int, double max_arc)
 
 	  (*intervals)[i].norm_rad[j] = 0.0;
 	  (*intervals)[i].norm_vert[j] = 1.0;
+	  (*intervals)[i].div_norm[j] = 0.0;
 	}
     }
 
