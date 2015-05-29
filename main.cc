@@ -7,6 +7,7 @@
 #include "inout.h"
 #include "object.h"
 #include "testing.h"
+#include "build.h"
 
 using std::string;
 
@@ -52,6 +53,7 @@ int main()
 
   vector<double> known(order);
 
+  //Build the linear system
   return 0;
 }
 

@@ -54,6 +54,8 @@ struct surf
 {
   int n_int; //Number of intervals that discretise the interface
   vector<double> midpoints; //Values of arclength that give the midpoint of each interval
+  vector<double> mid_rad; //Values of the radial coordinate at the midpoint of each interval
+  vector<double> mid_vert; //Values of the vertical coordinate at the midpoint of each interval
   vector<interf_int> intervals; //Array of interval structures
 };
 
