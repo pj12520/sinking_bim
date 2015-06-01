@@ -15,6 +15,10 @@ using Gauss::Gauss_wt2;
 using Gauss::Gauss_wt3;
 using Gauss::Gauss_wt4;
 
+using ellip_poly::ellip1_b0;
+
+using math_const::PI;
+
 //Function to create the linear system
 void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere, surf interf, double viscos_rat)
 {
@@ -143,6 +147,8 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 
       source_rad_2 = source_rad * source_rad;
 
+      source_norm_vert_3 = interf.mid_norm_vert[i] * interf.mid_norm_vert[i] * interf.mid_norm_vert[i];
+
       //Loop over the intervals on the interface
       for (int j = 0; j < interf.n_int; j++)
 	{
@@ -177,7 +183,7 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 		}
 
 	      coeffs[i + interf.n_int][j] = interf.intervals[j].width * coeffs[i + interf.n_int][j] / 2.0;
-	      coeffs[i + interf.n_int][j + interf.n_int] = interf.intervals[j].width * coeffs[i + interf.n_int][j] / 2.0;
+	      coeffs[i + interf.n_int][j + interf.n_int] = interf.intervals[j].width * coeffs[i + interf.n_int][j + interf.n_int] / 2.0;
 
 	      if (j == i)
 		{
@@ -233,8 +239,6 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 		  a11[k] = A11(viscos_rat, vert_diff, alpha_6, alpha_2, beta_4, pos_rad_2, pos_rad_4, sum_3_2, diff_2, alpha_4);
 		  a12[k] = A12(viscos_rat, vert_diff_2, pos_rad_2, alpha_2, alpha_4, beta_4, sum_3_2, diff_2, interf.intervals[j].rad[k]);
 
-		  source_norm_vert_3 = interf.mid_norm_vert[i] * interf.mid_norm_vert[i] * interf.mid_norm_vert[i];
-
 		  if (i == j) //A11 needs to be handled differently as it is singular in the range of integration
 		    {
 		      matrix_A11[k] = Matrix_A11_reg(a1[k], a2[k], a3[k], a4[k], interf.intervals[j].norm_rad[k], interf.intervals[j].norm_vert[k], ellip1[k], ellip2[k], ellip2_var[k]);
@@ -246,31 +250,334 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 		    }
 		  else
 		    {
-
+		      matrix_A11[k] = Matrix_A(a1[k], a2[k], a3[k], a4[k], interf.intervals[j].norm_rad[k], interf.intervals[j].norm_vert[k], ellip1[k], ellip2[k]);
 		    }
 
+		  matrix_A12[k] = Matrix_A(a2[k], a6[k], a4[k], a8[k], interf.intervals[j].norm_rad[k], interf.intervals[j].norm_vert[k], ellip1[k], ellip2[k]);
+		  matrix_A21[k] = Matrix_A(a9[k], a10[k], a11[k], a12[k], interf.intervals[j].norm_rad[k], interf.intervals[j].norm_vert[k], ellip1[k], ellip2[k]);
+		  matrix_A22[k] = Matrix_A(a10[k], a14[k], a12[k], a16[k], interf.intervals[j].norm_rad[k], interf.intervals[j].norm_vert[k], ellip1[k], ellip2[k]);
 		}
-	    }
-	      
-	  //For the case that the source point is in the region of integration for an intermediate interval
-	  else if (i == j)
-	    {
-	      for (int k = 0; k < 4; k++) //Loop over integration points in interval
+
+	      //Perform the Gauss-Legendre integration
+	      coeffs[i][j] = 0.0;
+	      coeffs[i][j + interf.n_int] = 0.0;
+
+	      coeffs[i + interf.n_int][j] = 0.0;
+	      coeffs[i + interf.n_int][j + interf.n_int] = 0.0;
+
+	      for (int k = 0; k < 4; k++)
 		{
-		  //Define temporary variables
-		  vert_diff = source[1] - (*intervals)[j].vert[k];
+		  coeffs[i][j] += matrix_A11[k] * Gauss_int_wts[k];
+		  coeffs[i][j + interf.n_int] += matrix_A12[k] * Gauss_int_wts[k];
+
+		  coeffs[i + interf.n_int][j] += matrix_A21[k] * Gauss_int_wts[k];
+		  coeffs[i + interf.n_int][j + interf.n_int] += matrix_A22[k] * Gauss_int_wts[k];
+		}
+
+	      coeffs[i][j] = interf.intervals[j].width * coeffs[i][j] / 2.0;
+	      coeffs[i][j + interf.n_int] = interf.intervals[j].width * coeffs[i][j + interf.n_int] / 2.0;
+
+	      coeffs[i + interf.n_int][j] = interf.intervals[j].width * coeffs[i + interf.n_int][j] / 2.0;
+	      coeffs[i + interf.n_int][j + interf.n_int] = interf.intervals[j].width * coeffs[i + interf.n_int][j] / 2.0;
+
+	      if (j == i)
+		{
+		  coeffs[i][j] -= (1.0 + viscos_rat) / 2.0;
+		  coeffs[i + interf.n_int][j + interf.n_int] -= (1.0 + viscos_rat) / 2.0;
+		}
+
+	    }
+	}
+
+      //Loop over intervals on the sphere
+      for (int j = 0; j < sphere.n_int; j++)
+	{
+	  //Consider the case that the source point is on axis
+	  if (i == 0)
+	    {
+	      //Loop over the integration points in the interval and find the values of the integrands
+	      for (int k = 0; k < 4; k++)
+		{
+		  vert_diff = source_vert - sphere.intervals[j].vert[k];
 		  vert_diff_2 = vert_diff * vert_diff;
 
-		  alpha_2 = source[0] * source[0] + (*intervals)[j].rad[k] * (*intervals)[j].rad[k] + vert_diff_2;
+		  alpha_2 = sphere.intervals[j].rad[k] * sphere.intervals[j].rad[k] + vert_diff_2;
+		  alpha = sqrt(alpha_2);
+		  alpha_3 = alpha_2 * alpha;
 
-		  beta_2 = 2.0 * source[0] * (*intervals)[j].rad[k];
+		  matrix_B21[k] = Matrix_B21_axisource(vert_diff, sphere.intervals[j].rad[k], alpha_3);
+		  matrix_B22[k] = Matrix_B22_axisource(vert_diff_2, alpha, alpha_2);
+		}
+
+	      //Perform the Gauss-Legendre integration (Riley Hobson and Bence 2006 page 1006)
+	      coeffs[i][j+ 2 * interf.n_int] = 0.0;
+	      coeffs[i][j + 2 * interf.n_int + sphere.n_int] = 0.0;
+
+	      coeffs[i + interf.n_int][j + 2 * interf.n_int] = 0.0;
+	      coeffs[i + interf.n_int][j + 2 * interf.n_int + sphere.n_int] = 0.0;
+
+	      for (int k = 0; k < 4; k++)
+		{
+		  coeffs[i + interf.n_int][j + 2 * interf.n_int] += matrix_B21[k] * Gauss_int_wts[k];
+		  coeffs[i + interf.n_int][j + 2 * interf.n_int + sphere.n_int] += matrix_B22[k] * Gauss_int_wts[k];
+		}
+
+	      coeffs[i + interf.n_int][j + 2 * interf.n_int] = interf.intervals[j].width * coeffs[i + interf.n_int][j + 2 * interf.n_int] / 2.0;
+	      coeffs[i + interf.n_int][j + 2 * interf.n_int + sphere.n_int] = interf.intervals[j].width * coeffs[i + interf.n_int][j + 2 * interf.n_int + sphere.n_int] / 2.0;
+	    }
+
+	  else //For the case that the source point is not on axis
+	    {
+	      //Loop over the integration points in the interval and find the values of the integrands
+	      for (int k = 0; k < 4; k++)
+		{
+		  pos_rad_2 = sphere.intervals[j].rad[k] * sphere.intervals[j].rad[k];
+
+		  vert_diff = source_vert - sphere.intervals[j].vert[k];
+		  vert_diff_2 = vert_diff * vert_diff;
+
+		  alpha_2 = sphere.intervals[j].rad[k] * sphere.intervals[j].rad[k] + vert_diff_2;
+		  beta_2 = 2.0 * source_rad * sphere.intervals[j].rad[k];
 
 		  sum = alpha_2 + beta_2;
 		  sum_half = sqrt(sum);
 
 		  diff = alpha_2 - beta_2;
 
-		  comp_param = 1.0 - 2.0 * beta_2 / sum;
+		  comp_param = Comp_param(beta_2, sum);
+		  ellip1[k] = Ellip1(comp_param);
+		  ellip2[k] = Ellip2(comp_param);
+
+		  matrix_B11[k] = Matrix_B11(beta_2, sum_half, alpha_2, vert_diff_2, sum, diff, ellip1[k], ellip2[k]);
+		  matrix_B12[k] = Matrix_B12(vert_diff, source_rad, sum_half, alpha_2, diff, ellip2[k], ellip1[k]);
+		  matrix_B21[k] = Matrix_B21(vert_diff, sphere.intervals[j].rad[k], sum_half, alpha_2, diff, ellip2[k], ellip1[k]);
+		  matrix_B22[k] = Matrix_B22(sum_half, vert_diff_2, diff, ellip1[k], ellip2[k]);
+		}
+
+	      //Perform the Gauss-Legendre integration (Riley Hobson and Bence 2006 page 1006)
+	      coeffs[i][j+ 2 * interf.n_int] = 0.0;
+	      coeffs[i][j + 2 * interf.n_int + sphere.n_int] = 0.0;
+
+	      coeffs[i + interf.n_int][j + 2 * interf.n_int] = 0.0;
+	      coeffs[i + interf.n_int][j + 2 * interf.n_int + sphere.n_int] = 0.0;
+
+	      for (int k = 0; k < 4; k++)
+		{
+		  coeffs[i][j+ 2 * interf.n_int] += matrix_B11[k] * Gauss_int_wts[k];
+		  coeffs[i][j + 2 * interf.n_int + sphere.n_int] += matrix_B12[k] * Gauss_int_wts[k];
+
+		  coeffs[i + interf.n_int][j + 2 * interf.n_int] += matrix_B21[k] * Gauss_int_wts[k];
+		  coeffs[i + interf.n_int][j + 2 * interf.n_int + sphere.n_int] += matrix_B22[k] * Gauss_int_wts[k];
+		}
+
+	      coeffs[i][j+ 2 * interf.n_int] = interf.intervals[j].width * coeffs[i][j+ 2 * interf.n_int] / 2.0;
+	      coeffs[i][j + 2 * interf.n_int + sphere.n_int] = interf.intervals[j].width * coeffs[i][j + 2 * interf.n_int + sphere.n_int] / 2.0;
+
+	      coeffs[i + interf.n_int][j + 2 * interf.n_int] = interf.intervals[j].width * coeffs[i + interf.n_int][j + 2 * interf.n_int] / 2.0;
+	      coeffs[i + interf.n_int][j + 2 * interf.n_int + sphere.n_int] = interf.intervals[j].width * coeffs[i + interf.n_int][j + 2 * interf.n_int + sphere.n_int] / 2.0;
+	    }  
+	}
+      //Complete the last column of the matrix
+      coeffs[i][2 * (interf.n_int + sphere.n_int)] = 0.0;
+      coeffs[i + interf.n_int][2 * (interf.n_int + sphere.n_int)] = 0.0;
+    }
+
+
+  //Loop over the source points on the sphere	      
+  for (int i = 0; i < interf.n_int; i++)
+    {
+      if (i == 0)
+	{
+	  source_rad = 0.0;
+	  source_vert = sphere.height + 1.0;
+
+	  source_rad_2 = 0.0;
+	}
+      else if (i == sphere.n_int - 1)
+	{
+	  source_rad = 0.0;
+	  source_vert = sphere.height - 1.0;
+
+	  source_rad_2 = 0.0;
+	}
+      else
+	{
+	  source_rad = sin(sphere.midpoints[i]);
+	  source_vert = sphere.height + cos(sphere.midpoints[i]);
+	}
+
+      //Loop over the intervals on the interface
+      for (int j = 0; j < interf.n_int; j++)
+	{
+	  //For the case that the source point is on axis
+	  if (i == 0 || i == sphere.n_int - 1)
+	    {
+	      //Loop over the integration points in the interval and find the values of the integrands
+	      for (int k = 0; k < 4; k++)
+		{
+		  vert_diff = source_vert - interf.intervals[j].vert[k];
+		  vert_diff_2 = vert_diff * vert_diff;
+		  vert_diff_3 = vert_diff_2 * vert_diff;
+
+		  alpha_2 = interf.intervals[j].rad[k] * interf.intervals[j].rad[k] + vert_diff_2;
+		  alpha_5 = pow(alpha_2, 2.5);
+
+		  matrix_A21[k] = Matrix_A21_axisource(viscos_rat, vert_diff_2, interf.intervals[j].rad[k], alpha_5);
+		  matrix_A22[k] = Matrix_A22_axisource(viscos_rat, vert_diff_3, alpha_5);
+		}
+
+	      //Perform the Gauss-Legendre integration (Riley Hobson and Bence 2006 page 1006)
+	      coeffs[i + 2 * interf.n_int][j] = 0.0;
+	      coeffs[i + 2 * interf.n_int][j + interf.n_int] = 0.0;
+
+	      coeffs[i + 2 * interf.n_int + sphere.n_int][j] = 0.0;
+	      coeffs[i + 2 * interf.n_int + sphere.n_int][j + interf.n_int] = 0.0;
+
+	      for (int k = 0; k < 4; k++)
+		{
+		  coeffs[i + 2 * interf.n_int + sphere.n_int][j] += matrix_A21[k] * Gauss_int_wts[k];
+		  coeffs[i + 2 * interf.n_int + sphere.n_int][j + interf.n_int] += matrix_A22[k] * Gauss_int_wts[k];
+		}
+
+	      coeffs[i + 2 * interf.n_int + sphere.n_int][j] = interf.intervals[j].width * coeffs[i + 2 * interf.n_int + sphere.n_int][j] / 2.0;
+	      coeffs[i + 2 * interf.n_int + sphere.n_int][j + interf.n_int] = interf.intervals[j].width * coeffs[i + 2* interf.n_int + sphere.n_int][j + interf.n_int] / 2.0;
+	    }
+
+	  //For the case that the source point is not on axis
+	  else 
+	    {
+	      //Loop over the integration points in the interval and find the values of the integrands
+	      for (int k = 0; k < 4; k++)
+		{
+		  pos_rad_2 = interf.intervals[j].rad[k];
+		  pos_rad_4 = pos_rad_2 * pos_rad_2;
+
+		  vert_diff = source_vert - interf.intervals[j].vert[k];
+		  vert_diff_2 = vert_diff * vert_diff;
+	      
+		  alpha_2 = source_rad_2 + pos_rad_2 + vert_diff_2;
+		  beta_2 = 2.0 * source_rad * interf.intervals[j].rad[k];
+
+		  alpha_4 = alpha_2 * alpha_2;
+		  beta_4 = beta_2 * beta_2;
+
+		  alpha_6 = alpha_4 * alpha_2;
+
+		  alpha_8 = alpha_4 * alpha_4;
+		  beta_8 = beta_4 * beta_4;
+
+		  sum = alpha_2 + beta_2;
+		  sum_3_2 = pow(sum, 1.5);
+
+		  diff = alpha_2 - beta_2;
+		  diff_2 = diff * diff;
+
+		  comp_param = Comp_param(beta_2, sum);
+		  ellip1[k] = Ellip1(comp_param);
+		  ellip2[k] = Ellip2(comp_param);
+
+		  a1[k] = A1(viscos_rat, sum_3_2, diff, beta_4, source_rad, alpha_2, alpha_4, source_rad_2, pos_rad_2, interf.intervals[j].rad[k], beta_2);
+		  a2[k] = A2(viscos_rat, vert_diff, alpha_4, beta_4, alpha_2, vert_diff_2, sum_3_2, diff, beta_2);
+		  a3[k] = A3(viscos_rat, sum_3_2, diff_2, beta_4, source_rad, alpha_8, alpha_4, beta_8, pos_rad_2, source_rad_2, alpha_2, interf.intervals[j].rad[k], beta_2);
+		  a4[k] = A4(viscos_rat, vert_diff, beta_2, alpha_2, alpha_4, beta_4, vert_diff_2, sum_3_2, diff);
+
+		  a6[k] = A6(viscos_rat, vert_diff_2, source_rad_2, alpha_2, sum_3_2, diff, source_rad);
+		  a8[k] = A8(viscos_rat, vert_diff_2, alpha_4, beta_4, source_rad_2, alpha_2, sum_3_2, diff, source_rad);
+
+		  a9[k] = A9(viscos_rat, vert_diff, alpha_4, beta_4, pos_rad_2, alpha_2, pos_rad_4, sum_3_2, diff);
+		  a10[k] = A10(viscos_rat, vert_diff_2, alpha_2, pos_rad_2, sum_3_2, diff, interf.intervals[j].rad[k]);
+		  a11[k] = A11(viscos_rat, vert_diff, alpha_6, alpha_2, beta_4, pos_rad_2, pos_rad_4, sum_3_2, diff_2, alpha_4);
+		  a12[k] = A12(viscos_rat, vert_diff_2, pos_rad_2, alpha_2, alpha_4, beta_4, sum_3_2, diff_2, interf.intervals[j].rad[k]);
+
+		  matrix_A11[k] = Matrix_A(a1[k], a2[k], a3[k], a4[k], interf.intervals[j].norm_rad[k], interf.intervals[j].norm_vert[k], ellip1[k], ellip2[k]);
+		  matrix_A12[k] = Matrix_A(a2[k], a6[k], a4[k], a8[k], interf.intervals[j].norm_rad[k], interf.intervals[j].norm_vert[k], ellip1[k], ellip2[k]);
+		  matrix_A21[k] = Matrix_A(a9[k], a10[k], a11[k], a12[k], interf.intervals[j].norm_rad[k], interf.intervals[j].norm_vert[k], ellip1[k], ellip2[k]);
+		  matrix_A22[k] = Matrix_A(a10[k], a14[k], a12[k], a16[k], interf.intervals[j].norm_rad[k], interf.intervals[j].norm_vert[k], ellip1[k], ellip2[k]);
+		}
+
+	      //Perform the Gauss-Legendre integration
+	      coeffs[i + 2 * interf.n_int][j] = 0.0;
+	      coeffs[i + 2 * interf.n_int][j + interf.n_int] = 0.0;
+
+	      coeffs[i + 2 * interf.n_int + sphere.n_int][j] = 0.0;
+	      coeffs[i + 2 * interf.n_int + sphere.n_int][j + interf.n_int] = 0.0;
+
+	      for (int k = 0; k < 4; k++)
+		{
+		  coeffs[i + 2 * interf.n_int][j] += matrix_A11[k] * Gauss_int_wts[k];
+		  coeffs[i + 2 * interf.n_int][j + interf.n_int] += matrix_A12[k] * Gauss_int_wts[k];
+
+		  coeffs[i + 2 * interf.n_int + sphere.n_int][j] += matrix_A21[k] * Gauss_int_wts[k];
+		  coeffs[i + 2 * interf.n_int + sphere.n_int][j + interf.n_int] += matrix_A22[k] * Gauss_int_wts[k];
+		}
+
+	      coeffs[i + 2 * interf.n_int][j] = interf.intervals[j].width * coeffs[i + 2 * interf.n_int][j] / 2.0;
+	      coeffs[i + 2 * interf.n_int][j + interf.n_int] = interf.intervals[j].width * coeffs[i + 2 * interf.n_int][j + interf.n_int] / 2.0;
+
+	      coeffs[i + 2 * interf.n_int + sphere.n_int][j] = interf.intervals[j].width * coeffs[i + 2 * interf.n_int + sphere.n_int][j] / 2.0;
+	      coeffs[i + 2 * interf.n_int + sphere.n_int][j + interf.n_int] = interf.intervals[j].width * coeffs[i + 2 * interf.n_int + sphere.n_int][j] / 2.0;
+
+	    }
+	
+	}
+
+      //Loop over intervals on the sphere
+      for (int j = 0; j < sphere.n_int; j++) 
+	{
+	  //For the case that the source point is at theta = 0 or PI
+	  if (i == 0 || i == sphere.n_int - 1)
+	    {
+	      //Loop over the integration points in the interval and find values of the integrands
+	      for (int k = 0; k < 4; k++)
+		{
+		  //Define temporary variables for this loop
+		  vert_diff = source_vert - sphere.intervals[j].vert[k];
+		  vert_diff_2 = vert_diff * vert_diff;
+
+		  alpha_2 = sphere.intervals[j].rad[k] * sphere.intervals[j].rad[k] + vert_diff_2;
+		  alpha = sqrt(alpha_2);
+		  alpha_3 = alpha_2 * alpha;
+	      
+		  matrix_B21[k] = Matrix_B21_axisource(vert_diff, sphere.intervals[j].rad[k], alpha_3);
+		  matrix_B22[k] = Matrix_B22_axisource(vert_diff_2, alpha, alpha_2);	    
+		}
+
+	      //Perform the Gauss Legendre integration (Riley Hobson and Bence 2006 page 1006)
+	      coeffs[i + 2 * interf.n_int][j+ 2 * interf.n_int] = 0.0;
+	      coeffs[i + 2 * interf.n_int][j + 2 * interf.n_int + sphere.n_int] = 0.0;
+
+	      coeffs[i + 2 * interf.n_int + sphere.n_int][j + 2 * interf.n_int] = 0.0;
+	      coeffs[i + 2 * interf.n_int + sphere.n_int][j + 2 * interf.n_int + sphere.n_int] = 0.0;
+
+	      for (int k = 0; k < 4; k++)
+		{
+		  coeffs[i + 2 * interf.n_int][j + 2 * interf.n_int] += matrix_B21[k] * Gauss_int_wts[k];
+		  coeffs[i + 2 * interf.n_int][j + 2 * interf.n_int + sphere.n_int] += matrix_B22[k] * Gauss_int_wts[k];
+		}
+
+	      coeffs[i + 2 * interf.n_int + sphere.n_int][j + 2 * interf.n_int] = interf.intervals[j].width * coeffs[i + 2 * interf.n_int + sphere.n_int][j + 2 * interf.n_int] / 2.0;
+	      coeffs[i + 2 * interf.n_int + sphere.n_int][j + 2 * interf.n_int + sphere.n_int] = interf.intervals[j].width * coeffs[i + 2 * interf.n_int + sphere.n_int][j + 2 * interf.n_int + sphere.n_int] / 2.0;
+	    }
+
+	  //For the case that the source point is in the region of integration for an intermediate interval
+	  else if (i == j)
+	    {
+	      for (int k = 0; k < 4; k++) //Loop over integration points in interval
+		{
+		  //Define temporary variables
+		  vert_diff = source_vert - sphere.intervals[j].vert[k];
+		  vert_diff_2 = vert_diff * vert_diff;
+
+		  alpha_2 = source_rad * source_rad + sphere.intervals[j].rad[k] * sphere.intervals[j].rad[k] + vert_diff_2;
+
+		  beta_2 = 2.0 * source_rad * sphere.intervals[j].rad[k];
+
+		  sum = alpha_2 + beta_2;
+		  sum_half = sqrt(sum);
+
+		  diff = alpha_2 - beta_2;
+
+		  comp_param = Comp_param(beta_2, sum);
 
 		  ellip1_reg[k] = Ellip1_reg(comp_param);
 		  ellip1_sing[k] = Ellip1_sing(comp_param);
@@ -281,40 +588,41 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 		  matrix_B11_reg[k] = Matrix_B11_reg(beta_2, sum_half, alpha_2, vert_diff_2, sum, diff, ellip1_reg[k], ellip1_sing[k], ellip2[k]);
 		  matrix_B22_reg[k] = Matrix_B22_reg(sum_half, vert_diff_2, diff, ellip1_reg[k], ellip2[k]);
 
-		  matrix_B12[k] = Matrix_B12(vert_diff, source[0], sum_half, alpha_2, diff, ellip2[k], ellip1[k]);
-		  matrix_B21[k] = Matrix_B21(vert_diff, (*intervals)[j].rad[k], sum_half, alpha_2, diff, ellip2[k], ellip1[k]);
+		  matrix_B12[k] = Matrix_B12(vert_diff, source_rad, sum_half, alpha_2, diff, ellip2[k], ellip1[k]);
+		  matrix_B21[k] = Matrix_B21(vert_diff, sphere.intervals[j].rad[k], sum_half, alpha_2, diff, ellip2[k], ellip1[k]);
 
 		  g1[k] = G1(alpha_2, beta_2, sum_half);
 		  g2[k] = G2(sum_half);
 		}
 
 	      //Perform the Gauss Legendre integration
-	      coeffs[i - 1][j - 1] = 0.0;
-	      coeffs[i - 1][j + n_int - 2] = 0.0;
-	      coeffs[i + n_int - 2][j - 1] = 0.0;
-	      coeffs[i + n_int - 2][j + n_int - 2] = 0.0;
+	      coeffs[i + 2 * interf.n_int][j+ 2 * interf.n_int] = 0.0;
+	      coeffs[i + 2 * interf.n_int][j + 2 * interf.n_int + sphere.n_int] = 0.0;
+
+	      coeffs[i + 2 * interf.n_int + sphere.n_int][j + 2 * interf.n_int] = 0.0;
+	      coeffs[i + 2 * interf.n_int + sphere.n_int][j + 2 * interf.n_int + sphere.n_int] = 0.0;
 	      
 	      for (int k = 0; k < 4; k++)
 		{
-		  theta_diff = (*intervals)[j].theta[k] - midpoints[i];
+		  theta_diff = sphere.intervals[j].theta[k] - sphere.midpoints[i];
 		  theta_diff_2 = theta_diff * theta_diff;
 
-		  coeffs[i - 1][j - 1] += (matrix_B11_reg[k] + g1[k] * log(4.0 * source[0] * source[0] * diff / (sum * theta_diff_2)) + 2.0 * (g1[k] + ellip1_b0 / (4.0 * PI * source[0])) * log(fabs(theta_diff) / (2.0 * source[0]))) * Gauss_int_wts[k];
+		  coeffs[i + 2 * interf.n_int][j+ 2 * interf.n_int] += (matrix_B11_reg[k] + g1[k] * log(4.0 * source_rad_2 * diff / (sum * theta_diff_2)) + 2.0 * (g1[k] + ellip1_b0 / (4.0 * PI * source_rad)) * log(fabs(theta_diff) / (2.0 * source_rad))) * Gauss_int_wts[k];
 
-		  coeffs[i - 1][j + n_int - 2] += matrix_B12[k] * Gauss_int_wts[k];
+		  coeffs[i + 2 * interf.n_int][j + 2 * interf.n_int + sphere.n_int] += matrix_B12[k] * Gauss_int_wts[k];
 		  
-		  coeffs[i + n_int - 2][j - 1] += matrix_B21[k] * Gauss_int_wts[k];
+		  coeffs[i + 2 * interf.n_int + sphere.n_int][j + 2 * interf.n_int] += matrix_B21[k] * Gauss_int_wts[k];
 
-		  coeffs[i + n_int - 2][j + n_int - 2] += (matrix_B22_reg[k] + g2[k] * log(4.0 * source[0] * source[0] * diff / (sum * theta_diff_2)) + 2.0 * (g2[k] + ellip1_b0 / (4.0 * PI * source[0])) * log(fabs(theta_diff) / (2.0 * source[0]))) * Gauss_int_wts[k];
+		  coeffs[i + 2 * interf.n_int + sphere.n_int][j + 2 * interf.n_int + sphere.n_int] += (matrix_B22_reg[k] + g2[k] * log(4.0 * source_rad_2 * diff / (sum * theta_diff_2)) + 2.0 * (g2[k] + ellip1_b0 / (4.0 * PI * source_rad)) * log(fabs(theta_diff) / (2.0 * source_rad))) * Gauss_int_wts[k];
 		}
 
-	      coeffs[i - 1][j - 1] = (*intervals)[j].width * coeffs[i - 1][j - 1] / 2.0 - ellip1_b0 / (2.0 * (n_int - 1.0) * source[0]) * (log(PI / (4.0 * (n_int - 1.0) * source[0])) - 1.0);
+	      coeffs[i + 2 * interf.n_int][j+ 2 * interf.n_int] = sphere.intervals[j].width * coeffs[i + 2 * interf.n_int][j+ 2 * interf.n_int] / 2.0 - ellip1_b0 / (2.0 * (sphere.n_int - 1.0) * source_rad) * (log(PI / (4.0 * (sphere.n_int - 1.0) * source_rad)) - 1.0);
 
-	      coeffs[i - 1][j + n_int - 2] = (*intervals)[j].width * coeffs[i - 1][j + n_int - 2] / 2.0;
+	      coeffs[i + 2 * interf.n_int][j + 2 * interf.n_int + sphere.n_int] = sphere.intervals[j].width * coeffs[i + 2 * interf.n_int][j + 2 * interf.n_int + sphere.n_int] / 2.0;
 
-	      coeffs[i + n_int - 2][j - 1] = (*intervals)[j].width * coeffs[i + n_int - 2][j - 1] / 2.0;
+	      coeffs[i + 2 * interf.n_int + sphere.n_int][j + 2 * interf.n_int] = sphere.intervals[j].width * coeffs[i + 2 * interf.n_int + sphere.n_int][j + 2 * interf.n_int] / 2.0;
 
-	      coeffs[i + n_int - 2][j + n_int - 2] = (*intervals)[j].width * coeffs[i + n_int - 2][j + n_int - 2] / 2.0 - ellip1_b0 / (2.0 * (n_int - 1.0) * source[0]) * (log(PI / (4.0 * (n_int - 1.0) * source[0])) - 1.0);
+	      coeffs[i + 2 * interf.n_int + sphere.n_int][j + 2 * interf.n_int + sphere.n_int] = sphere.intervals[j].width * coeffs[i + 2 * interf.n_int + sphere.n_int][j + 2 * interf.n_int + sphere.n_int] / 2.0 - ellip1_b0 / (2.0 * (sphere.n_int - 1.0) * source_rad) * (log(PI / (4.0 * (sphere.n_int - 1.0) * source_rad)) - 1.0);
 	    }
 
 	  else
@@ -322,57 +630,53 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 	      for (int k = 0; k < 4; k++) //Loop over integration points in interval
 		{
 		  //Define temporary variables
-		  vert_diff = source[1] - (*intervals)[j].vert[k];
+		  vert_diff = source_rad - sphere.intervals[j].vert[k];
 		  vert_diff_2 = vert_diff * vert_diff;
 
-		  alpha_2 = source[0] * source[0] + (*intervals)[j].rad[k] * (*intervals)[j].rad[k] + vert_diff_2;
+		  alpha_2 = source_rad * source_rad + sphere.intervals[j].rad[k] * sphere.intervals[j].rad[k] + vert_diff_2;
 
-		  beta_2 = 2.0 * source[0] * (*intervals)[j].rad[k];
+		  beta_2 = 2.0 * source_rad * sphere.intervals[j].rad[k];
 
 		  sum = alpha_2 + beta_2;
 		  sum_half = sqrt(sum);
 
 		  diff = alpha_2 - beta_2;
 
-		  comp_param = 1.0 - 2.0 * beta_2 / sum;
+		  comp_param = Comp_param(beta_2, sum);
 
 		  ellip1[k] = Ellip1(comp_param);
 		  ellip2[k] = Ellip2(comp_param);
 
 		  matrix_B11[k] = Matrix_B11(beta_2, sum_half, alpha_2, vert_diff_2, sum, diff, ellip1[k], ellip2[k]);
-		  matrix_B12[k] = Matrix_B12(vert_diff, source[0], sum_half, alpha_2, diff, ellip2[k], ellip1[k]);
-		  matrix_B21[k] = Matrix_B21(vert_diff, (*intervals)[j].rad[k], sum_half, alpha_2, diff, ellip2[k], ellip1[k]);
+		  matrix_B12[k] = Matrix_B12(vert_diff, source_rad, sum_half, alpha_2, diff, ellip2[k], ellip1[k]);
+		  matrix_B21[k] = Matrix_B21(vert_diff, sphere.intervals[j].rad[k], sum_half, alpha_2, diff, ellip2[k], ellip1[k]);
 		  matrix_B22[k] = Matrix_B22(sum_half, vert_diff_2, diff, ellip1[k], ellip2[k]);
 		}
 
 	      //Perform the Gauss Legendre integration
-	      if (j != 0 && j != n_int - 1)
-		{
-		  coeffs[i - 1][j - 1] = 0.0;
-		  coeffs[i + n_int - 2][j - 1] = 0.0;
-		}
-	      coeffs[i - 1][j + n_int - 2] = 0.0;
-	      coeffs[i + n_int - 2][j + n_int - 2] = 0.0;
+	      coeffs[i + 2 * interf.n_int][j+ 2 * interf.n_int] = 0.0;
+	      coeffs[i + 2 * interf.n_int][j + 2 * interf.n_int + sphere.n_int] = 0.0;
+
+	      coeffs[i + 2 * interf.n_int + sphere.n_int][j + 2 * interf.n_int] = 0.0;
+	      coeffs[i + 2 * interf.n_int + sphere.n_int][j + 2 * interf.n_int + sphere.n_int] = 0.0;
 
 	      for (int k = 0; k < 4; k++)
 		{
-		  if (j != 0 && j != n_int - 1)
-		    {
-		      coeffs[i - 1][j - 1] += matrix_B11[k] * Gauss_int_wts[k];
-		      coeffs[i + n_int - 2][j - 1] += matrix_B21[k] * Gauss_int_wts[k];
-		    }
-		  coeffs[i - 1][j + n_int - 2] += matrix_B12[k] * Gauss_int_wts[k];
-		  coeffs[i + n_int - 2][j + n_int - 2] += matrix_B22[k] * Gauss_int_wts[k];
+		  coeffs[i + 2 * interf.n_int][j+ 2 * interf.n_int] += matrix_B11[k] * Gauss_int_wts[k];
+		  coeffs[i + 2 * interf.n_int][j + 2 * interf.n_int + sphere.n_int] += matrix_B21[k] * Gauss_int_wts[k];
+
+		  coeffs[i + 2 * interf.n_int + sphere.n_int][j + 2 * interf.n_int] += matrix_B12[k] * Gauss_int_wts[k];
+		  coeffs[i + 2 * interf.n_int + sphere.n_int][j + 2 * interf.n_int + sphere.n_int] += matrix_B22[k] * Gauss_int_wts[k];
 		}
-	      if (j != 0 && j != n_int - 1)
-		{
-		  coeffs[i - 1][j - 1] = (*intervals)[j].width * coeffs[i - 1][j - 1] / 2.0;
-		  coeffs[i + n_int - 2][j - 1] = (*intervals)[j].width * coeffs[i + n_int - 2][j - 1] / 2.0;
-		}
-	      coeffs[i - 1][j + n_int - 2] = (*intervals)[j].width * coeffs[i - 1][j + n_int - 2] / 2.0;
-	      coeffs[i + n_int - 2][j + n_int - 2] = (*intervals)[j].width * coeffs[i + n_int - 2][j + n_int - 2] / 2.0;
+
+	      coeffs[i + 2 * interf.n_int][j+ 2 * interf.n_int] = sphere.intervals[j].width * coeffs[i + 2 * interf.n_int][j+ 2 * interf.n_int] / 2.0;
+	      coeffs[i + 2 * interf.n_int][j + 2 * interf.n_int + sphere.n_int] = sphere.intervals[j].width * coeffs[i + 2 * interf.n_int][j + 2 * interf.n_int + sphere.n_int] / 2.0;
+
+	      coeffs[i + 2 * interf.n_int + sphere.n_int][j + 2 * interf.n_int] = sphere.intervals[j].width * coeffs[i + 2 * interf.n_int + sphere.n_int][j + 2 * interf.n_int] / 2.0;
+	      coeffs[i + 2 * interf.n_int + sphere.n_int][j + 2 * interf.n_int + sphere.n_int] = sphere.intervals[j].width * coeffs[i + 2 * interf.n_int + sphere.n_int][j + 2 * interf.n_int + sphere.n_int] / 2.0;
 	    }
 	}
+
     }
 
 }
