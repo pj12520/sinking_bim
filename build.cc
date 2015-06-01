@@ -20,7 +20,7 @@ using ellip_poly::ellip1_b0;
 using math_const::PI;
 
 //Function to create the linear system
-void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere, surf interf, double viscos_rat)
+void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere, surf interf, double viscos_rat, double bond, double mdr)
 {
   //Temporary vector object to store the matrix of coefficients and known vector
   vector<vector<double> > coeffs((*matrix).size());
@@ -29,6 +29,9 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
     {
       coeffs[i].resize((*matrix)[i].size());
     }
+
+  vector<double> temp1(interf.n_int); //Vectors to store temporary values used in the calculation of the known vector. Needs to be resized in the calculation
+  vector<double> temp2(interf.n_int); 
 
   vector<double> Gauss_int_wts(4); //Vector to store weights used for 4-pt Gaussian quadrature
 
@@ -127,6 +130,8 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 
   vector<double> g1(4);
   vector<double> g2(4);
+
+  vector<double> prefac(4);
 
   vector<double> vector_C1(4);
   vector<double> vector_C2(4);
@@ -580,7 +585,7 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 		  comp_param = Comp_param(beta_2, sum);
 
 		  ellip1_reg[k] = Ellip1_reg(comp_param);
-		  ellip1_sing[k] = Ellip1_sing(comp_param);
+		  //		  ellip1_sing[k] = Ellip1_sing(comp_param);
 
 		  ellip1[k] = Ellip1(comp_param);
 		  ellip2[k] = Ellip2(comp_param);
@@ -695,4 +700,94 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
     }
 
   coeffs[2 * (interf.n_int + sphere.n_int)][2 * (interf.n_int + sphere.n_int)] = 0.0;
+
+  //Fill up the known vector as defined in the notes
+
+  //Start looping over the source points on the interface
+  for (int i = 0; i < interf.n_int; i++)
+    {
+      source_rad = interf.mid_rad[i];
+      source_vert = interf.mid_vert[i];
+
+      source_rad_2 = source_rad * source_rad;
+
+      known[i] = 0.0;
+      known[i + interf.n_int] = 0.0;
+
+      //Loop over the intervals on the interface
+      for (int j = 0; j < interf.n_int; j++)
+	{
+	  temp1[j] = 0.0;
+	  temp2[j] = 0.0;
+
+	  //For the case that the source point is on axis
+	  if (i == 0)
+	    {
+	      //Loop over the integration points in the interval and find the values of the integrands
+	      for (int k = 0; k < 4; k++)
+		{
+		  vert_diff = source_vert - interf.intervals[j].vert[k];
+		  vert_diff_2 = vert_diff * vert_diff;
+
+		  alpha_2 = interf.intervals[j].rad[k] * interf.intervals[j].rad[k] + vert_diff_2;
+		  alpha = sqrt(alpha_2);
+
+		  vector_C2[k] = Vector_C2_axisource(interf.intervals[j].div_norm[k], bond, interf.intervals[j].vert[k], mdr, alpha, vert_diff_2, alpha_2);
+
+		  temp2[j] += vector_C2[k] * Gauss_int_wts[k];
+		}
+
+	      known[i + interf.n_int] += interf.intervals[j].width * temp2[j] / 2.0;
+	    }
+
+	  //For the case that the integration point is in the interval
+	  else if (i == j)
+	    {
+	      //Loop over the integration points in the interval and find the values of the integrands
+	      for (int k = 0; k < 4; k++)
+		{
+		  vert_diff = source_vert - interf.intervals[j].vert[k];
+		  vert_diff_2 = vert_diff * vert_diff;
+
+		  alpha_2 = source_rad_2 + interf.intervals[j].rad[k] * interf.intervals[j].rad[k] + vert_diff_2;
+		  beta_2 = 2.0 * source_rad * interf.intervals[j].rad[k];
+
+		  beta_4 = beta_2 * beta_2;
+
+		  sum = alpha_2 + beta_2;
+		  sum_half = sqrt(sum);
+
+		  diff = alpha_2 - beta_2;
+
+		  prefac[k] = C_prefac(interf.intervals[j].div_norm[k], bond, interf.intervals[j].vert[k], mdr, beta_2, sum_half);
+
+		  comp_param = Comp_param(beta_2, sum);
+
+		  ellip1_reg[k] = Ellip1_reg(comp_param);
+
+		  ellip1[k] = Ellip1(comp_param);
+		  ellip2[k] = Ellip2(comp_param);
+
+		  vector_C1_reg[k] = Vector_C1_reg(vert_diff, interf.intervals[j].norm_rad[k], interf.intervals[j].rad[k], interf.intervals[j].norm_vert[k], beta_4, alpha_2, vert_diff_2, source_rad, beta_2, prefac[k], ellip1[k], ellip2[k], diff, ellip1_reg[k]);
+
+		  vector_C2_reg[k] = Vector_C2_reg(source_rad, vert_diff, interf.intervals[j].norm_rad[k], ellip1[k], alpha_2, interf.intervals[j].rad[k], beta_2, interf.intervals[j].norm_vert[k], ellip2[k], diff, ellip1_reg[k], prefac[k]);
+
+		  j1[k] = (prefac[k], alpha_2, interf.intervals[j].norm_rad[k]);
+		  j2[k] = (prefac[k], interf.intervals[j].norm_vert[k]);
+		}
+
+	    }
+
+	  //For the case that the source point is off axis and the integral is regular
+	  else
+	    {
+	      //Loop over the integration points in the interval and find the values of the integrands
+	      for (int k = 0; k < 4; k++)
+		{
+
+		}
+	    }
+
+	}
+    }
 }
