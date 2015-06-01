@@ -76,6 +76,8 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
   double arc_diff; //Separation in arc length between source and integration point when they are both in the same interval on the interface
   double arc_diff_2; //arc_diff squared
 
+  double source_norm_vert_3; //Cube of the vertical component of the normal vector at the source point
+
   //Vectors to contain temporary values of the elliptic integrals at the integration points
   vector<double> ellip1(4);
   vector<double> ellip2(4);
@@ -214,9 +216,9 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 		  diff_2 = diff * diff;
 
 		  comp_param = Comp_param(beta_2, sum);
-		  ellip1 = Ellip1(comp_param);
-		  ellip2 = Ellip2(comp_param);
-		  ellip2_var = Ellip2_var(comp_param);
+		  ellip1[k] = Ellip1(comp_param);
+		  ellip2[k] = Ellip2(comp_param);
+		  ellip2_var[k] = Ellip2_var(comp_param);
 
 		  a1[k] = A1(viscos_rat, sum_3_2, diff, beta_4, source_rad, alpha_2, alpha_4, source_rad_2, pos_rad_2, interf.intervals[j].rad[k], beta_2);
 		  a2[k] = A2(viscos_rat, vert_diff, alpha_4, beta_4, alpha_2, vert_diff_2, sum_3_2, diff, beta_2);
@@ -231,11 +233,15 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 		  a11[k] = A11(viscos_rat, vert_diff, alpha_6, alpha_2, beta_4, pos_rad_2, pos_rad_4, sum_3_2, diff_2, alpha_4);
 		  a12[k] = A12(viscos_rat, vert_diff_2, pos_rad_2, alpha_2, alpha_4, beta_4, sum_3_2, diff_2, interf.intervals[j].rad[k]);
 
+		  source_norm_vert_3 = interf.mid_norm_vert[i] * interf.mid_norm_vert[i] * interf.mid_norm_vert[i];
+
 		  if (i == j) //A11 needs to be handled differently as it is singular in the range of integration
 		    {
-		      matrix_A11[k] = Matrix_A11_reg(a1, a2, a3, a4, interf.intervals[j].norm_rad[k], interf.intervals[j].norm_vert[k], ellip1, ellip2, ellip2_var);
+		      matrix_A11[k] = Matrix_A11_reg(a1[k], a2[k], a3[k], a4[k], interf.intervals[j].norm_rad[k], interf.intervals[j].norm_vert[k], ellip1[k], ellip2[k], ellip2_var[k]);
 
 		      arc_diff = interf.midpoints[i] - interf.intervals[j].arc[k];
+
+		      h[k] = H(viscos_rat, sum_3_2, vert_diff_2, beta_4, source_rad, arc_diff, alpha_8, alpha_4, beta_8, alpha_2, pos_rad_2, source_rad_2, interf.intervals[j].rad[k], interf.intervals[j].norm_rad[k], diff_2, beta_2, source_norm_vert_3, interf.mid_norm_rad[i]);
 
 		    }
 		  else

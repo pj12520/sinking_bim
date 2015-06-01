@@ -56,6 +56,10 @@ struct surf
   vector<double> midpoints; //Values of arclength that give the midpoint of each interval
   vector<double> mid_rad; //Values of the radial coordinate at the midpoint of each interval
   vector<double> mid_vert; //Values of the vertical coordinate at the midpoint of each interval
+
+  vector<double> mid_norm_rad; //Radial component of the normal vector at the midpoint of each interval
+  vector<double> mid_norm_vert; //Vertical component of the normal vector at the midpoint of each interval
+
   vector<interf_int> intervals; //Array of interval structures
 };
 

@@ -50,7 +50,7 @@ double Matrix_A21_axisource(double viscos_rat, double vert_diff_2, double pos_ra
 double Matrix_A22_axisource(double viscos_rat, double vert_diff_3, double alpha_5);
 
 //Function to calculate the regular part of the A11 function
-double Matrx_A11_reg(double a1, double a2, double a3, double a4, double norm_rad, double norm_vert, double ellip1, double ellip2, double ellip2_var);
+double Matrix_A11_reg(double a1, double a2, double a3, double a4, double norm_rad, double norm_vert, double ellip1, double ellip2, double ellip2_var);
 
 //Function to calculate the function h as defined in the notes
 double H(double viscos_rat, double sum_3_2, double vert_diff_2, double beta_4, double source_rad, double eps, double alpha_8, double alpha_4, double beta_8, double alpha_2, double pos_rad_2, double source_rad_2, double pos_rad, double norm_rad, double diff_2, double beta_2, double source_norm_vert_3, double source_norm_rad);

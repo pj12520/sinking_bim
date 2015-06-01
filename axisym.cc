@@ -131,7 +131,7 @@ double Matrix_A22_axisource(double viscos_rat, double vert_diff_3, double alpha_
 }
 
 //Function to calculate the regular part of the A11 function
-double Matrx_A11_reg(double a1, double a2, double a3, double a4, double norm_rad, double norm_vert, double ellip1, double ellip2, double ellip2_var)
+double Matrix_A11_reg(double a1, double a2, double a3, double a4, double norm_rad, double norm_vert, double ellip1, double ellip2, double ellip2_var)
 {
   double matrix_A11_reg = (a1 * norm_rad + a2 * norm_vert) * ellip1 + a4 * norm_vert * ellip2 + a3 * norm_rad * ellip2_var;
 
