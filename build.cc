@@ -86,6 +86,8 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 
   double source_norm_vert_3; //Cube of the vertical component of the normal vector at the source point
 
+  int sing_test;
+
   //Vectors to contain temporary values of the elliptic integrals at the integration points
   vector<double> ellip1(4);
   vector<double> ellip2(4);
@@ -148,10 +150,7 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
   //Start looping over the source points on the interface
   for (int i = 0; i < interf.n_int; i++)
     {
-      source_rad = interf.mid_rad[i];
-      source_vert = interf.mid_vert[i];
-
-      source_rad_2 = source_rad * source_rad;
+      Interf_source(&source_vert, &source_rad, interf.mid_rad[i], interf.mid_vert[i], &source_rad_2);
 
       source_norm_vert_3 = interf.mid_norm_vert[i] * interf.mid_norm_vert[i] * interf.mid_norm_vert[i];
 
@@ -161,21 +160,9 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 	  //For the case that the source point is on axis
 	  if (i == 0)
 	    {
-	      //Loop over the integration points in the interval and find the values of the integrands
-	      for (int k = 0; k < 4; k++)
-		{
-		  vert_diff = source_vert - interf.intervals[j].vert[k];
-		  vert_diff_2 = vert_diff * vert_diff;
-		  vert_diff_3 = vert_diff_2 * vert_diff;
+	      A_axisource(source_vert, &(interf.intervals[j].vert), &(interf.intervals[j].rad), viscos_rat, &matrix_A21, &matrix_A22);
 
-		  alpha_2 = interf.intervals[j].rad[k] * interf.intervals[j].rad[k] + vert_diff_2;
-		  alpha_5 = pow(alpha_2, 2.5);
-
-		  matrix_A21[k] = Matrix_A21_axisource(viscos_rat, vert_diff_2, interf.intervals[j].rad[k], alpha_5);
-		  matrix_A22[k] = Matrix_A22_axisource(viscos_rat, vert_diff_3, alpha_5);
-		}
-
-	      //Perform the Gauss-Legendre integration (Riley Hobson and Bence 2006 page 1006)
+	      //Perform the Gauss-Legendre integration
 	      coeffs[i][j] = 0.0;
 	      coeffs[i][j + interf.n_int] = 0.0;
 
@@ -201,68 +188,16 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 	  //For the case that the source point is not on axis
 	  else 
 	    {
-	      //Loop over the integration points in the interval and find the values of the integrands
-	      for (int k = 0; k < 4; k++)
+	      if (i == j)
 		{
-		  pos_rad_2 = interf.intervals[j].rad[k];
-		  pos_rad_4 = pos_rad_2 * pos_rad_2;
-
-		  vert_diff = source_vert - interf.intervals[j].vert[k];
-		  vert_diff_2 = vert_diff * vert_diff;
-	      
-		  alpha_2 = source_rad_2 + pos_rad_2 + vert_diff_2;
-		  beta_2 = 2.0 * source_rad * interf.intervals[j].rad[k];
-
-		  alpha_4 = alpha_2 * alpha_2;
-		  beta_4 = beta_2 * beta_2;
-
-		  alpha_6 = alpha_4 * alpha_2;
-
-		  alpha_8 = alpha_4 * alpha_4;
-		  beta_8 = beta_4 * beta_4;
-
-		  sum = alpha_2 + beta_2;
-		  sum_3_2 = pow(sum, 1.5);
-
-		  diff = alpha_2 - beta_2;
-		  diff_2 = diff * diff;
-
-		  comp_param = Comp_param(beta_2, sum);
-		  ellip1[k] = Ellip1(comp_param);
-		  ellip2[k] = Ellip2(comp_param);
-		  ellip2_var[k] = Ellip2_var(comp_param);
-
-		  a1[k] = A1(viscos_rat, sum_3_2, diff, beta_4, source_rad, alpha_2, alpha_4, source_rad_2, pos_rad_2, interf.intervals[j].rad[k], beta_2);
-		  a2[k] = A2(viscos_rat, vert_diff, alpha_4, beta_4, alpha_2, vert_diff_2, sum_3_2, diff, beta_2);
-		  a3[k] = A3(viscos_rat, sum_3_2, diff_2, beta_4, source_rad, alpha_8, alpha_4, beta_8, pos_rad_2, source_rad_2, alpha_2, interf.intervals[j].rad[k], beta_2);
-		  a4[k] = A4(viscos_rat, vert_diff, beta_2, alpha_2, alpha_4, beta_4, vert_diff_2, sum_3_2, diff);
-
-		  a6[k] = A6(viscos_rat, vert_diff_2, source_rad_2, alpha_2, sum_3_2, diff, source_rad);
-		  a8[k] = A8(viscos_rat, vert_diff_2, alpha_4, beta_4, source_rad_2, alpha_2, sum_3_2, diff, source_rad);
-
-		  a9[k] = A9(viscos_rat, vert_diff, alpha_4, beta_4, pos_rad_2, alpha_2, pos_rad_4, sum_3_2, diff);
-		  a10[k] = A10(viscos_rat, vert_diff_2, alpha_2, pos_rad_2, sum_3_2, diff, interf.intervals[j].rad[k]);
-		  a11[k] = A11(viscos_rat, vert_diff, alpha_6, alpha_2, beta_4, pos_rad_2, pos_rad_4, sum_3_2, diff_2, alpha_4);
-		  a12[k] = A12(viscos_rat, vert_diff_2, pos_rad_2, alpha_2, alpha_4, beta_4, sum_3_2, diff_2, interf.intervals[j].rad[k]);
-
-		  if (i == j) //A11 needs to be handled differently as it is singular in the range of integration
-		    {
-		      matrix_A11[k] = Matrix_A11_reg(a1[k], a2[k], a3[k], a4[k], interf.intervals[j].norm_rad[k], interf.intervals[j].norm_vert[k], ellip1[k], ellip2[k], ellip2_var[k]);
-
-		      arc_diff = interf.midpoints[i] - interf.intervals[j].arc[k];
-
-		      h[k] = H(viscos_rat, sum_3_2, vert_diff_2, beta_4, source_rad, arc_diff, alpha_8, alpha_4, beta_8, alpha_2, pos_rad_2, source_rad_2, interf.intervals[j].rad[k], interf.intervals[j].norm_rad[k], diff_2, beta_2, source_norm_vert_3, interf.mid_norm_rad[i]);
-
-		    }
-		  else
-		    {
-		      matrix_A11[k] = Matrix_A(a1[k], a2[k], a3[k], a4[k], interf.intervals[j].norm_rad[k], interf.intervals[j].norm_vert[k], ellip1[k], ellip2[k]);
-		    }
-
-		  matrix_A12[k] = Matrix_A(a2[k], a6[k], a4[k], a8[k], interf.intervals[j].norm_rad[k], interf.intervals[j].norm_vert[k], ellip1[k], ellip2[k]);
-		  matrix_A21[k] = Matrix_A(a9[k], a10[k], a11[k], a12[k], interf.intervals[j].norm_rad[k], interf.intervals[j].norm_vert[k], ellip1[k], ellip2[k]);
-		  matrix_A22[k] = Matrix_A(a10[k], a14[k], a12[k], a16[k], interf.intervals[j].norm_rad[k], interf.intervals[j].norm_vert[k], ellip1[k], ellip2[k]);
+		  sing_test = 1;
 		}
+	      else
+		{
+		  sing_test = 0;
+		}
+
+	      A(&(interf.intervals[j].rad), source_vert, &(interf.intervals[j].vert), source_rad_2, viscos_rat, interf.midpoints[i], &(interf.intervals[j].arc), &h, &matrix_A11, &matrix_A12, &matrix_A21, &matrix_A22, source_rad, sing_test, &(interf.intervals[j].norm_rad), &(interf.intervals[j].norm_vert), source_norm_vert_3, interf.mid_norm_rad[i]);
 
 	      //Perform the Gauss-Legendre integration
 	      coeffs[i][j] = 0.0;
@@ -273,7 +208,7 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 
 	      for (int k = 0; k < 4; k++)
 		{
-		  coeffs[i][j] += matrix_A11[k] * Gauss_int_wts[k];
+		  coeffs[i][j] += (matrix_A11[k] + h[k]) * Gauss_int_wts[k];
 		  coeffs[i][j + interf.n_int] += matrix_A12[k] * Gauss_int_wts[k];
 
 		  coeffs[i + interf.n_int][j] += matrix_A21[k] * Gauss_int_wts[k];
@@ -301,19 +236,7 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 	  //Consider the case that the source point is on axis
 	  if (i == 0)
 	    {
-	      //Loop over the integration points in the interval and find the values of the integrands
-	      for (int k = 0; k < 4; k++)
-		{
-		  vert_diff = source_vert - sphere.intervals[j].vert[k];
-		  vert_diff_2 = vert_diff * vert_diff;
-
-		  alpha_2 = sphere.intervals[j].rad[k] * sphere.intervals[j].rad[k] + vert_diff_2;
-		  alpha = sqrt(alpha_2);
-		  alpha_3 = alpha_2 * alpha;
-
-		  matrix_B21[k] = Matrix_B21_axisource(vert_diff, sphere.intervals[j].rad[k], alpha_3);
-		  matrix_B22[k] = Matrix_B22_axisource(vert_diff_2, alpha, alpha_2);
-		}
+	      B_axisource(source_vert, &(sphere.intervals[j].vert), &(sphere.intervals[j].rad), &matrix_B21, &matrix_B22);
 
 	      //Perform the Gauss-Legendre integration (Riley Hobson and Bence 2006 page 1006)
 	      coeffs[i][j+ 2 * interf.n_int] = 0.0;
@@ -328,37 +251,14 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 		  coeffs[i + interf.n_int][j + 2 * interf.n_int + sphere.n_int] += matrix_B22[k] * Gauss_int_wts[k];
 		}
 
-	      coeffs[i + interf.n_int][j + 2 * interf.n_int] = interf.intervals[j].width * coeffs[i + interf.n_int][j + 2 * interf.n_int] / 2.0;
-	      coeffs[i + interf.n_int][j + 2 * interf.n_int + sphere.n_int] = interf.intervals[j].width * coeffs[i + interf.n_int][j + 2 * interf.n_int + sphere.n_int] / 2.0;
+	      coeffs[i + interf.n_int][j + 2 * interf.n_int] = sphere.intervals[j].width * coeffs[i + interf.n_int][j + 2 * interf.n_int] / 2.0;
+	      coeffs[i + interf.n_int][j + 2 * interf.n_int + sphere.n_int] = sphere.intervals[j].width * coeffs[i + interf.n_int][j + 2 * interf.n_int + sphere.n_int] / 2.0;
 	    }
 
 	  else //For the case that the source point is not on axis
 	    {
-	      //Loop over the integration points in the interval and find the values of the integrands
-	      for (int k = 0; k < 4; k++)
-		{
-		  pos_rad_2 = sphere.intervals[j].rad[k] * sphere.intervals[j].rad[k];
-
-		  vert_diff = source_vert - sphere.intervals[j].vert[k];
-		  vert_diff_2 = vert_diff * vert_diff;
-
-		  alpha_2 = sphere.intervals[j].rad[k] * sphere.intervals[j].rad[k] + vert_diff_2;
-		  beta_2 = 2.0 * source_rad * sphere.intervals[j].rad[k];
-
-		  sum = alpha_2 + beta_2;
-		  sum_half = sqrt(sum);
-
-		  diff = alpha_2 - beta_2;
-
-		  comp_param = Comp_param(beta_2, sum);
-		  ellip1[k] = Ellip1(comp_param);
-		  ellip2[k] = Ellip2(comp_param);
-
-		  matrix_B11[k] = Matrix_B11(beta_2, sum_half, alpha_2, vert_diff_2, sum, diff, ellip1[k], ellip2[k]);
-		  matrix_B12[k] = Matrix_B12(vert_diff, source_rad, sum_half, alpha_2, diff, ellip2[k], ellip1[k]);
-		  matrix_B21[k] = Matrix_B21(vert_diff, sphere.intervals[j].rad[k], sum_half, alpha_2, diff, ellip2[k], ellip1[k]);
-		  matrix_B22[k] = Matrix_B22(sum_half, vert_diff_2, diff, ellip1[k], ellip2[k]);
-		}
+	      sing_test = 0;
+	      B(&(sphere.intervals[j].rad), source_vert, &(sphere.intervals[j].vert), &matrix_B11, &matrix_B12, &matrix_B21, &matrix_B22, source_rad, source_rad_2, sing_test, &g1, &g2);
 
 	      //Perform the Gauss-Legendre integration (Riley Hobson and Bence 2006 page 1006)
 	      coeffs[i][j+ 2 * interf.n_int] = 0.0;
@@ -379,8 +279,8 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 	      coeffs[i][j+ 2 * interf.n_int] = interf.intervals[j].width * coeffs[i][j+ 2 * interf.n_int] / 2.0;
 	      coeffs[i][j + 2 * interf.n_int + sphere.n_int] = interf.intervals[j].width * coeffs[i][j + 2 * interf.n_int + sphere.n_int] / 2.0;
 
-	      coeffs[i + interf.n_int][j + 2 * interf.n_int] = interf.intervals[j].width * coeffs[i + interf.n_int][j + 2 * interf.n_int] / 2.0;
-	      coeffs[i + interf.n_int][j + 2 * interf.n_int + sphere.n_int] = interf.intervals[j].width * coeffs[i + interf.n_int][j + 2 * interf.n_int + sphere.n_int] / 2.0;
+	      coeffs[i + interf.n_int][j + 2 * interf.n_int] = sphere.intervals[j].width * coeffs[i + interf.n_int][j + 2 * interf.n_int] / 2.0;
+	      coeffs[i + interf.n_int][j + 2 * interf.n_int + sphere.n_int] = sphere.intervals[j].width * coeffs[i + interf.n_int][j + 2 * interf.n_int + sphere.n_int] / 2.0;
 	    }  
 	}
       //Complete the last column of the matrix
@@ -418,19 +318,7 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 	  //For the case that the source point is on axis
 	  if (i == 0 || i == sphere.n_int - 1)
 	    {
-	      //Loop over the integration points in the interval and find the values of the integrands
-	      for (int k = 0; k < 4; k++)
-		{
-		  vert_diff = source_vert - interf.intervals[j].vert[k];
-		  vert_diff_2 = vert_diff * vert_diff;
-		  vert_diff_3 = vert_diff_2 * vert_diff;
-
-		  alpha_2 = interf.intervals[j].rad[k] * interf.intervals[j].rad[k] + vert_diff_2;
-		  alpha_5 = pow(alpha_2, 2.5);
-
-		  matrix_A21[k] = Matrix_A21_axisource(viscos_rat, vert_diff_2, interf.intervals[j].rad[k], alpha_5);
-		  matrix_A22[k] = Matrix_A22_axisource(viscos_rat, vert_diff_3, alpha_5);
-		}
+	      A_axisource(source_vert, &(interf.intervals[j].vert), &(interf.intervals[j].rad), viscos_rat, &matrix_A21, &matrix_A22);
 
 	      //Perform the Gauss-Legendre integration (Riley Hobson and Bence 2006 page 1006)
 	      coeffs[i + 2 * interf.n_int][j] = 0.0;
@@ -452,54 +340,9 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 	  //For the case that the source point is not on axis
 	  else 
 	    {
-	      //Loop over the integration points in the interval and find the values of the integrands
-	      for (int k = 0; k < 4; k++)
-		{
-		  pos_rad_2 = interf.intervals[j].rad[k];
-		  pos_rad_4 = pos_rad_2 * pos_rad_2;
+	      sing_test = 0;
 
-		  vert_diff = source_vert - interf.intervals[j].vert[k];
-		  vert_diff_2 = vert_diff * vert_diff;
-	      
-		  alpha_2 = source_rad_2 + pos_rad_2 + vert_diff_2;
-		  beta_2 = 2.0 * source_rad * interf.intervals[j].rad[k];
-
-		  alpha_4 = alpha_2 * alpha_2;
-		  beta_4 = beta_2 * beta_2;
-
-		  alpha_6 = alpha_4 * alpha_2;
-
-		  alpha_8 = alpha_4 * alpha_4;
-		  beta_8 = beta_4 * beta_4;
-
-		  sum = alpha_2 + beta_2;
-		  sum_3_2 = pow(sum, 1.5);
-
-		  diff = alpha_2 - beta_2;
-		  diff_2 = diff * diff;
-
-		  comp_param = Comp_param(beta_2, sum);
-		  ellip1[k] = Ellip1(comp_param);
-		  ellip2[k] = Ellip2(comp_param);
-
-		  a1[k] = A1(viscos_rat, sum_3_2, diff, beta_4, source_rad, alpha_2, alpha_4, source_rad_2, pos_rad_2, interf.intervals[j].rad[k], beta_2);
-		  a2[k] = A2(viscos_rat, vert_diff, alpha_4, beta_4, alpha_2, vert_diff_2, sum_3_2, diff, beta_2);
-		  a3[k] = A3(viscos_rat, sum_3_2, diff_2, beta_4, source_rad, alpha_8, alpha_4, beta_8, pos_rad_2, source_rad_2, alpha_2, interf.intervals[j].rad[k], beta_2);
-		  a4[k] = A4(viscos_rat, vert_diff, beta_2, alpha_2, alpha_4, beta_4, vert_diff_2, sum_3_2, diff);
-
-		  a6[k] = A6(viscos_rat, vert_diff_2, source_rad_2, alpha_2, sum_3_2, diff, source_rad);
-		  a8[k] = A8(viscos_rat, vert_diff_2, alpha_4, beta_4, source_rad_2, alpha_2, sum_3_2, diff, source_rad);
-
-		  a9[k] = A9(viscos_rat, vert_diff, alpha_4, beta_4, pos_rad_2, alpha_2, pos_rad_4, sum_3_2, diff);
-		  a10[k] = A10(viscos_rat, vert_diff_2, alpha_2, pos_rad_2, sum_3_2, diff, interf.intervals[j].rad[k]);
-		  a11[k] = A11(viscos_rat, vert_diff, alpha_6, alpha_2, beta_4, pos_rad_2, pos_rad_4, sum_3_2, diff_2, alpha_4);
-		  a12[k] = A12(viscos_rat, vert_diff_2, pos_rad_2, alpha_2, alpha_4, beta_4, sum_3_2, diff_2, interf.intervals[j].rad[k]);
-
-		  matrix_A11[k] = Matrix_A(a1[k], a2[k], a3[k], a4[k], interf.intervals[j].norm_rad[k], interf.intervals[j].norm_vert[k], ellip1[k], ellip2[k]);
-		  matrix_A12[k] = Matrix_A(a2[k], a6[k], a4[k], a8[k], interf.intervals[j].norm_rad[k], interf.intervals[j].norm_vert[k], ellip1[k], ellip2[k]);
-		  matrix_A21[k] = Matrix_A(a9[k], a10[k], a11[k], a12[k], interf.intervals[j].norm_rad[k], interf.intervals[j].norm_vert[k], ellip1[k], ellip2[k]);
-		  matrix_A22[k] = Matrix_A(a10[k], a14[k], a12[k], a16[k], interf.intervals[j].norm_rad[k], interf.intervals[j].norm_vert[k], ellip1[k], ellip2[k]);
-		}
+	      A(&(interf.intervals[j].rad), source_vert, &(interf.intervals[j].vert), source_rad_2, viscos_rat, interf.midpoints[i], &(interf.intervals[j].arc), &h, &matrix_A11, &matrix_A12, &matrix_A21, &matrix_A22, source_rad, sing_test, &(interf.intervals[j].norm_rad), &(interf.intervals[j].norm_vert), source_norm_vert_3, interf.mid_norm_rad[i]);
 
 	      //Perform the Gauss-Legendre integration
 	      coeffs[i + 2 * interf.n_int][j] = 0.0;
@@ -533,20 +376,7 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 	  //For the case that the source point is at theta = 0 or PI
 	  if (i == 0 || i == sphere.n_int - 1)
 	    {
-	      //Loop over the integration points in the interval and find values of the integrands
-	      for (int k = 0; k < 4; k++)
-		{
-		  //Define temporary variables for this loop
-		  vert_diff = source_vert - sphere.intervals[j].vert[k];
-		  vert_diff_2 = vert_diff * vert_diff;
-
-		  alpha_2 = sphere.intervals[j].rad[k] * sphere.intervals[j].rad[k] + vert_diff_2;
-		  alpha = sqrt(alpha_2);
-		  alpha_3 = alpha_2 * alpha;
-	      
-		  matrix_B21[k] = Matrix_B21_axisource(vert_diff, sphere.intervals[j].rad[k], alpha_3);
-		  matrix_B22[k] = Matrix_B22_axisource(vert_diff_2, alpha, alpha_2);	    
-		}
+	      B_axisource(source_vert, &(sphere.intervals[j].vert), &(sphere.intervals[j].rad), &matrix_B21, &matrix_B22);
 
 	      //Perform the Gauss Legendre integration (Riley Hobson and Bence 2006 page 1006)
 	      coeffs[i + 2 * interf.n_int][j+ 2 * interf.n_int] = 0.0;
@@ -561,46 +391,24 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 		  coeffs[i + 2 * interf.n_int][j + 2 * interf.n_int + sphere.n_int] += matrix_B22[k] * Gauss_int_wts[k];
 		}
 
-	      coeffs[i + 2 * interf.n_int + sphere.n_int][j + 2 * interf.n_int] = interf.intervals[j].width * coeffs[i + 2 * interf.n_int + sphere.n_int][j + 2 * interf.n_int] / 2.0;
-	      coeffs[i + 2 * interf.n_int + sphere.n_int][j + 2 * interf.n_int + sphere.n_int] = interf.intervals[j].width * coeffs[i + 2 * interf.n_int + sphere.n_int][j + 2 * interf.n_int + sphere.n_int] / 2.0;
+	      coeffs[i + 2 * interf.n_int + sphere.n_int][j + 2 * interf.n_int] = sphere.intervals[j].width * coeffs[i + 2 * interf.n_int + sphere.n_int][j + 2 * interf.n_int] / 2.0;
+	      coeffs[i + 2 * interf.n_int + sphere.n_int][j + 2 * interf.n_int + sphere.n_int] = sphere.intervals[j].width * coeffs[i + 2 * interf.n_int + sphere.n_int][j + 2 * interf.n_int + sphere.n_int] / 2.0;
 	    }
 
 	  //For the case that the source point is in the region of integration for an intermediate interval
-	  else if (i == j)
+	  if (i == j)
 	    {
-	      for (int k = 0; k < 4; k++) //Loop over integration points in interval
-		{
-		  //Define temporary variables
-		  vert_diff = source_vert - sphere.intervals[j].vert[k];
-		  vert_diff_2 = vert_diff * vert_diff;
+	      sing_test = 1;
+	    }
+	  else
+	    {
+	      sing_test = 0;
+	    }
 
-		  alpha_2 = source_rad * source_rad + sphere.intervals[j].rad[k] * sphere.intervals[j].rad[k] + vert_diff_2;
+	  B(&(sphere.intervals[j].rad), source_vert, &(sphere.intervals[j].vert), &matrix_B11, &matrix_B12, &matrix_B21, &matrix_B22, source_rad, source_rad_2, sing_test, &g1, &g2);
 
-		  beta_2 = 2.0 * source_rad * sphere.intervals[j].rad[k];
-
-		  sum = alpha_2 + beta_2;
-		  sum_half = sqrt(sum);
-
-		  diff = alpha_2 - beta_2;
-
-		  comp_param = Comp_param(beta_2, sum);
-
-		  ellip1_reg[k] = Ellip1_reg(comp_param);
-		  //		  ellip1_sing[k] = Ellip1_sing(comp_param);
-
-		  ellip1[k] = Ellip1(comp_param);
-		  ellip2[k] = Ellip2(comp_param);
-
-		  matrix_B11_reg[k] = Matrix_B11_reg(beta_2, sum_half, alpha_2, vert_diff_2, sum, diff, ellip1_reg[k], ellip1_sing[k], ellip2[k]);
-		  matrix_B22_reg[k] = Matrix_B22_reg(sum_half, vert_diff_2, diff, ellip1_reg[k], ellip2[k]);
-
-		  matrix_B12[k] = Matrix_B12(vert_diff, source_rad, sum_half, alpha_2, diff, ellip2[k], ellip1[k]);
-		  matrix_B21[k] = Matrix_B21(vert_diff, sphere.intervals[j].rad[k], sum_half, alpha_2, diff, ellip2[k], ellip1[k]);
-
-		  g1[k] = G1(alpha_2, beta_2, sum_half);
-		  g2[k] = G2(sum_half);
-		}
-
+	  if (i == j)
+	    {
 	      //Perform the Gauss Legendre integration
 	      coeffs[i + 2 * interf.n_int][j+ 2 * interf.n_int] = 0.0;
 	      coeffs[i + 2 * interf.n_int][j + 2 * interf.n_int + sphere.n_int] = 0.0;
@@ -633,31 +441,6 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 
 	  else
 	    {
-	      for (int k = 0; k < 4; k++) //Loop over integration points in interval
-		{
-		  //Define temporary variables
-		  vert_diff = source_rad - sphere.intervals[j].vert[k];
-		  vert_diff_2 = vert_diff * vert_diff;
-
-		  alpha_2 = source_rad * source_rad + sphere.intervals[j].rad[k] * sphere.intervals[j].rad[k] + vert_diff_2;
-		  beta_2 = 2.0 * source_rad * sphere.intervals[j].rad[k];
-
-		  sum = alpha_2 + beta_2;
-		  sum_half = sqrt(sum);
-
-		  diff = alpha_2 - beta_2;
-
-		  comp_param = Comp_param(beta_2, sum);
-
-		  ellip1[k] = Ellip1(comp_param);
-		  ellip2[k] = Ellip2(comp_param);
-
-		  matrix_B11[k] = Matrix_B11(beta_2, sum_half, alpha_2, vert_diff_2, sum, diff, ellip1[k], ellip2[k]);
-		  matrix_B12[k] = Matrix_B12(vert_diff, source_rad, sum_half, alpha_2, diff, ellip2[k], ellip1[k]);
-		  matrix_B21[k] = Matrix_B21(vert_diff, sphere.intervals[j].rad[k], sum_half, alpha_2, diff, ellip2[k], ellip1[k]);
-		  matrix_B22[k] = Matrix_B22(sum_half, vert_diff_2, diff, ellip1[k], ellip2[k]);
-		}
-
 	      //Perform the Gauss Legendre integration
 	      coeffs[i + 2 * interf.n_int][j+ 2 * interf.n_int] = 0.0;
 	      coeffs[i + 2 * interf.n_int][j + 2 * interf.n_int + sphere.n_int] = 0.0;
@@ -706,10 +489,7 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
   //Start looping over the source points on the interface
   for (int i = 0; i < interf.n_int; i++)
     {
-      source_rad = interf.mid_rad[i];
-      source_vert = interf.mid_vert[i];
-
-      source_rad_2 = source_rad * source_rad;
+      Interf_source(&source_rad, &source_vert, interf.mid_rad[i], interf.mid_vert[i], &source_rad_2);
 
       known[i] = 0.0;
       known[i + interf.n_int] = 0.0;
@@ -726,10 +506,9 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 	      //Loop over the integration points in the interval and find the values of the integrands
 	      for (int k = 0; k < 4; k++)
 		{
-		  vert_diff = source_vert - interf.intervals[j].vert[k];
-		  vert_diff_2 = vert_diff * vert_diff;
+		  Vert_diff(&vert_diff, source_vert, interf.intervals[j].vert[k], &vert_diff_2);
 
-		  alpha_2 = interf.intervals[j].rad[k] * interf.intervals[j].rad[k] + vert_diff_2;
+		  alpha_2 = Alpha_2_axisource(interf.intervals[j].rad[k], vert_diff_2);
 		  alpha = sqrt(alpha_2);
 
 		  vector_C2[k] = Vector_C2_axisource(interf.intervals[j].div_norm[k], bond, interf.intervals[j].vert[k], mdr, alpha, vert_diff_2, alpha_2);
@@ -746,11 +525,10 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 	      //Loop over the integration points in the interval and find the values of the integrands
 	      for (int k = 0; k < 4; k++)
 		{
-		  vert_diff = source_vert - interf.intervals[j].vert[k];
-		  vert_diff_2 = vert_diff * vert_diff;
+		  Vert_diff(&vert_diff, source_vert, interf.intervals[j].vert[k], &vert_diff_2);
 
-		  alpha_2 = source_rad_2 + interf.intervals[j].rad[k] * interf.intervals[j].rad[k] + vert_diff_2;
-		  beta_2 = 2.0 * source_rad * interf.intervals[j].rad[k];
+		  alpha_2 = Alpha_2(source_rad_2, interf.intervals[j].rad[k] * interf.intervals[j].rad[k], vert_diff_2);
+		  beta_2 = Beta_2(source_rad, interf.intervals[j].rad[k]);
 
 		  beta_4 = beta_2 * beta_2;
 
@@ -761,12 +539,9 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 
 		  prefac[k] = C_prefac(interf.intervals[j].div_norm[k], bond, interf.intervals[j].vert[k], mdr, beta_2, sum_half);
 
-		  comp_param = Comp_param(beta_2, sum);
-
+		  Stand_ellip(beta_2, sum, &comp_param, &ellip1[k], &ellip2[k]);
 		  ellip1_reg[k] = Ellip1_reg(comp_param);
 
-		  ellip1[k] = Ellip1(comp_param);
-		  ellip2[k] = Ellip2(comp_param);
 
 		  vector_C1_reg[k] = Vector_C1_reg(vert_diff, interf.intervals[j].norm_rad[k], interf.intervals[j].rad[k], interf.intervals[j].norm_vert[k], beta_4, alpha_2, vert_diff_2, source_rad, beta_2, prefac[k], ellip1[k], ellip2[k], diff, ellip1_reg[k]);
 
@@ -792,11 +567,10 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 	      for (int k = 0; k < 4; k++)
 		{
 		  //Define temporary variables
-		  vert_diff = source_rad - sphere.intervals[j].vert[k];
-		  vert_diff_2 = vert_diff * vert_diff;
+		  Vert_diff(&vert_diff, source_vert, interf.intervals[j].vert[k], &vert_diff_2);
 
-		  alpha_2 = source_rad * source_rad + sphere.intervals[j].rad[k] * sphere.intervals[j].rad[k] + vert_diff_2;
-		  beta_2 = 2.0 * source_rad * sphere.intervals[j].rad[k];
+		  alpha_2 = Alpha_2(source_rad_2, interf.intervals[j].rad[k] * interf.intervals[j].rad[k], vert_diff_2);
+		  beta_2 = Beta_2(source_rad, interf.intervals[j].rad[k]);
 
 		  beta_4 = beta_2 * beta_2;
 
@@ -807,10 +581,7 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 
 		  prefac[k] = C_prefac(interf.intervals[j].div_norm[k], bond, interf.intervals[j].vert[k], mdr, beta_2, sum_half);
 
-		  comp_param = Comp_param(beta_2, sum);
-
-		  ellip1[k] = Ellip1(comp_param);
-		  ellip2[k] = Ellip2(comp_param);
+		  Stand_ellip(beta_2, sum, &comp_param, &ellip1[k], &ellip2[k]);
 
 		  vector_C1[k] = Vector_C1(alpha_2, vert_diff_2, interf.intervals[j].norm_rad[k], interf.intervals[j].rad[k], vert_diff, interf.intervals[j].norm_vert[k], beta_4, source_rad, prefac[k], ellip1[k], ellip2[k], diff, beta_2);
 
@@ -870,10 +641,9 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 	      //Loop over the integration points in the interval and find the values of the integrands
 	      for (int k = 0; k < 4; k++)
 		{
-		  vert_diff = source_vert - interf.intervals[j].vert[k];
-		  vert_diff_2 = vert_diff * vert_diff;
+		  Vert_diff(&vert_diff, source_vert, interf.intervals[j].vert[k], &vert_diff_2);
 
-		  alpha_2 = interf.intervals[j].rad[k] * interf.intervals[j].rad[k] + vert_diff_2;
+		  alpha_2 = Alpha_2_axisource(interf.intervals[j].rad[k], vert_diff_2);
 		  alpha = sqrt(alpha_2);
 
 		  vector_C2[k] = Vector_C2_axisource(interf.intervals[j].div_norm[k], bond, interf.intervals[j].vert[k], mdr, alpha, vert_diff_2, alpha_2);
@@ -891,11 +661,10 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 	      for (int k = 0; k < 4; k++)
 		{
 		  //Define temporary variables
-		  vert_diff = source_rad - sphere.intervals[j].vert[k];
-		  vert_diff_2 = vert_diff * vert_diff;
+		  Vert_diff(&vert_diff, source_vert, interf.intervals[j].vert[k], &vert_diff_2);
 
-		  alpha_2 = source_rad * source_rad + sphere.intervals[j].rad[k] * sphere.intervals[j].rad[k] + vert_diff_2;
-		  beta_2 = 2.0 * source_rad * sphere.intervals[j].rad[k];
+		  alpha_2 = source_rad * source_rad + interf.intervals[j].rad[k] * interf.intervals[j].rad[k] + vert_diff_2;
+		  beta_2 = Beta_2(source_rad, interf.intervals[j].rad[k]);
 
 		  beta_4 = beta_2 * beta_2;
 
@@ -906,10 +675,7 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 
 		  prefac[k] = C_prefac(interf.intervals[j].div_norm[k], bond, interf.intervals[j].vert[k], mdr, beta_2, sum_half);
 
-		  comp_param = Comp_param(beta_2, sum);
-
-		  ellip1[k] = Ellip1(comp_param);
-		  ellip2[k] = Ellip2(comp_param);
+		  Stand_ellip(beta_2, sum, &comp_param, &ellip1[k], &ellip2[k]);
 
 		  vector_C1[k] = Vector_C1(alpha_2, vert_diff_2, interf.intervals[j].norm_rad[k], interf.intervals[j].rad[k], vert_diff, interf.intervals[j].norm_vert[k], beta_4, source_rad, prefac[k], ellip1[k], ellip2[k], diff, beta_2);
 
