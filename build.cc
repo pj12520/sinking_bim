@@ -7,6 +7,7 @@
 #include "const.h"
 #include "axisym.h"
 #include "ellip.h"
+#include "build_sup.h"
 
 using std::vector;
 
