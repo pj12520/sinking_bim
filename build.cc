@@ -503,18 +503,7 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 	  //For the case that the source point is on axis
 	  if (i == 0)
 	    {
-	      //Loop over the integration points in the interval and find the values of the integrands
-	      for (int k = 0; k < 4; k++)
-		{
-		  Vert_diff(&vert_diff, source_vert, interf.intervals[j].vert[k], &vert_diff_2);
-
-		  alpha_2 = Alpha_2_axisource(interf.intervals[j].rad[k], vert_diff_2);
-		  alpha = sqrt(alpha_2);
-
-		  vector_C2[k] = Vector_C2_axisource(interf.intervals[j].div_norm[k], bond, interf.intervals[j].vert[k], mdr, alpha, vert_diff_2, alpha_2);
-
-		  temp2[j] += vector_C2[k] * Gauss_int_wts[k];
-		}
+	      C_axisource(source_vert, &(interf.intervals[j].vert), &(interf.intervals[j].rad), &(interf.intervals[j].div_norm), &(temp2[j]), &Gauss_int_wts, bond, mdr);
 
 	      known[i + interf.n_int] += interf.intervals[j].width * temp2[j] / 2.0;
 	    }
@@ -638,18 +627,7 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 	  //For the case that the source point is on axis
 	  if (i == 0 || i == sphere.n_int - 1)
 	    {
-	      //Loop over the integration points in the interval and find the values of the integrands
-	      for (int k = 0; k < 4; k++)
-		{
-		  Vert_diff(&vert_diff, source_vert, interf.intervals[j].vert[k], &vert_diff_2);
-
-		  alpha_2 = Alpha_2_axisource(interf.intervals[j].rad[k], vert_diff_2);
-		  alpha = sqrt(alpha_2);
-
-		  vector_C2[k] = Vector_C2_axisource(interf.intervals[j].div_norm[k], bond, interf.intervals[j].vert[k], mdr, alpha, vert_diff_2, alpha_2);
-
-		  temp2[j] += vector_C2[k] * Gauss_int_wts[k];
-		}
+	      C_axisource(source_vert, &(interf.intervals[j].vert), &(interf.intervals[j].rad), &(interf.intervals[j].div_norm), &(temp2[j]), &Gauss_int_wts, bond, mdr);
 
 	      known[i + 2 * interf.n_int + sphere.n_int] += interf.intervals[j].width * temp2[j] / 2.0;
 	    }

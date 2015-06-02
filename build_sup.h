@@ -34,6 +34,9 @@ void B_axisource(double source_vert, vector<double>* pos_vert, vector<double>* p
 //Function to calculate the components of B when the source point is off axis
 void B(vector<double>* pos_rad, double source_vert, vector<double>* pos_vert, vector<double>* matrix_B11, vector<double>* matrix_B12, vector<double>* matrix_B21, vector<double>* matrix_B22, double source_rad, double source_rad_2, int sing_test, vector<double>* g1, vector<double>*g2);
 
+//Function to calculate the components of C when the source point is on axis
+void C_axisource(double source_vert, vector<double>* pos_vert, vector<double>* pos_rad, vector<double>* pos_div_norm, double *temp2, vector<double>* Gauss_int_wts, double bond, double mdr);
+
 #endif /* BUILD_SUP_H */
 
 
