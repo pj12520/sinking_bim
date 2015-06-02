@@ -639,7 +639,6 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 		  vert_diff_2 = vert_diff * vert_diff;
 
 		  alpha_2 = source_rad * source_rad + sphere.intervals[j].rad[k] * sphere.intervals[j].rad[k] + vert_diff_2;
-
 		  beta_2 = 2.0 * source_rad * sphere.intervals[j].rad[k];
 
 		  sum = alpha_2 + beta_2;
@@ -791,10 +790,139 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 	      //Loop over the integration points in the interval and find the values of the integrands
 	      for (int k = 0; k < 4; k++)
 		{
+		  //Define temporary variables
+		  vert_diff = source_rad - sphere.intervals[j].vert[k];
+		  vert_diff_2 = vert_diff * vert_diff;
 
+		  alpha_2 = source_rad * source_rad + sphere.intervals[j].rad[k] * sphere.intervals[j].rad[k] + vert_diff_2;
+		  beta_2 = 2.0 * source_rad * sphere.intervals[j].rad[k];
+
+		  beta_4 = beta_2 * beta_2;
+
+		  sum = alpha_2 + beta_2;
+		  sum_half = sqrt(sum);
+
+		  diff = alpha_2 - beta_2;
+
+		  prefac[k] = C_prefac(interf.intervals[j].div_norm[k], bond, interf.intervals[j].vert[k], mdr, beta_2, sum_half);
+
+		  comp_param = Comp_param(beta_2, sum);
+
+		  ellip1[k] = Ellip1(comp_param);
+		  ellip2[k] = Ellip2(comp_param);
+
+		  vector_C1[k] = Vector_C1(alpha_2, vert_diff_2, interf.intervals[j].norm_rad[k], interf.intervals[j].rad[k], vert_diff, interf.intervals[j].norm_vert[k], beta_4, source_rad, prefac[k], ellip1[k], ellip2[k], diff, beta_2);
+
+		  vector_C2[k] = Vector_C2(beta_2, interf.intervals[j].norm_vert[k], interf.intervals[j].rad[k], vert_diff, interf.intervals[j].norm_rad[k], source_rad, alpha_2, prefac[k], ellip1[k], ellip2[k], diff);
+
+		  temp1[j] += vector_C1[k] * Gauss_int_wts[k];
+
+		  temp2[j] += vector_C2[k] * Gauss_int_wts[k];
 		}
+
+	      known[i] += interf.intervals[j].width * temp1[j] / 2.0; 
+	      known[i + interf.n_int] += interf.intervals[j].width * temp1[j] / 2.0; 
+	    }
+	}
+    }
+
+  //Resize the temp vectors
+  temp1.resize(sphere.n_int);
+  temp2.resize(sphere.n_int);
+  //Loop over the source points on the sphere
+  for (int i = 0; i < sphere.n_int; i++)
+    {
+      if (i == 0)
+	{
+	  source_rad = 0.0;
+	  source_vert = sphere.height + 1.0;
+
+	  source_rad_2 = 0.0;
+	}
+      else if (i == sphere.n_int - 1)
+	{
+	  source_rad = 0.0;
+	  source_vert = sphere.height - 1.0;
+
+	  source_rad_2 = 0.0;
+	}
+      else
+	{
+	  source_rad = sin(sphere.midpoints[i]);
+	  source_vert = sphere.height + cos(sphere.midpoints[i]);
+	}
+
+      source_rad_2 = source_rad * source_rad;
+
+      known[i + 2 * interf.n_int] = 0.0;
+      known[i + 2 * interf.n_int + sphere.n_int] = 0.0;
+
+      //Loop over the intervals on the interface
+      for (int j = 0; j < interf.n_int; j++)
+	{
+	  temp1[j] = 0.0;
+	  temp2[j] = 0.0;
+
+	  //For the case that the source point is on axis
+	  if (i == 0 || i == sphere.n_int - 1)
+	    {
+	      //Loop over the integration points in the interval and find the values of the integrands
+	      for (int k = 0; k < 4; k++)
+		{
+		  vert_diff = source_vert - interf.intervals[j].vert[k];
+		  vert_diff_2 = vert_diff * vert_diff;
+
+		  alpha_2 = interf.intervals[j].rad[k] * interf.intervals[j].rad[k] + vert_diff_2;
+		  alpha = sqrt(alpha_2);
+
+		  vector_C2[k] = Vector_C2_axisource(interf.intervals[j].div_norm[k], bond, interf.intervals[j].vert[k], mdr, alpha, vert_diff_2, alpha_2);
+
+		  temp2[j] += vector_C2[k] * Gauss_int_wts[k];
+		}
+
+	      known[i + 2 * interf.n_int + sphere.n_int] += interf.intervals[j].width * temp2[j] / 2.0;
 	    }
 
+	  //For the case that the source point is off axis and the integral is regular
+	  else
+	    {
+	      //Loop over the integration points in the interval and find the values of the integrands
+	      for (int k = 0; k < 4; k++)
+		{
+		  //Define temporary variables
+		  vert_diff = source_rad - sphere.intervals[j].vert[k];
+		  vert_diff_2 = vert_diff * vert_diff;
+
+		  alpha_2 = source_rad * source_rad + sphere.intervals[j].rad[k] * sphere.intervals[j].rad[k] + vert_diff_2;
+		  beta_2 = 2.0 * source_rad * sphere.intervals[j].rad[k];
+
+		  beta_4 = beta_2 * beta_2;
+
+		  sum = alpha_2 + beta_2;
+		  sum_half = sqrt(sum);
+
+		  diff = alpha_2 - beta_2;
+
+		  prefac[k] = C_prefac(interf.intervals[j].div_norm[k], bond, interf.intervals[j].vert[k], mdr, beta_2, sum_half);
+
+		  comp_param = Comp_param(beta_2, sum);
+
+		  ellip1[k] = Ellip1(comp_param);
+		  ellip2[k] = Ellip2(comp_param);
+
+		  vector_C1[k] = Vector_C1(alpha_2, vert_diff_2, interf.intervals[j].norm_rad[k], interf.intervals[j].rad[k], vert_diff, interf.intervals[j].norm_vert[k], beta_4, source_rad, prefac[k], ellip1[k], ellip2[k], diff, beta_2);
+
+		  vector_C2[k] = Vector_C2(beta_2, interf.intervals[j].norm_vert[k], interf.intervals[j].rad[k], vert_diff, interf.intervals[j].norm_rad[k], source_rad, alpha_2, prefac[k], ellip1[k], ellip2[k], diff);
+
+		  temp1[j] += vector_C1[k] * Gauss_int_wts[k];
+
+		  temp2[j] += vector_C2[k] * Gauss_int_wts[k];
+		}
+
+	      known[i + 2 * interf.n_int] += interf.intervals[j].width * temp1[j] / 2.0; 
+	      known[i + 2 * interf.n_int + sphere.n_int] += interf.intervals[j].width * temp1[j] / 2.0; 
+	    }
 	}
+
     }
 }
