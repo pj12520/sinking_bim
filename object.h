@@ -59,6 +59,7 @@ struct surf
 
   vector<double> mid_norm_rad; //Radial component of the normal vector at the midpoint of each interval
   vector<double> mid_norm_vert; //Vertical component of the normal vector at the midpoint of each interval
+  vector<double> mid_div_norm;
 
   vector<interf_int> intervals; //Array of interval structures
 };

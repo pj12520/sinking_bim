@@ -774,9 +774,16 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 
 		  j1[k] = (prefac[k], alpha_2, interf.intervals[j].norm_rad[k]);
 		  j2[k] = (prefac[k], interf.intervals[j].norm_vert[k]);
+
+		  temp1[j] += (vector_C1_reg[k] + j1[k] * log(fabs(arc_diff) * sum / (2.0 * source_rad * diff)) + (9.0 * (interf.mid_div_norm[j] - bond* interf.mid_vert[j]) * ellip1_b0 * interf.mid_norm_rad[j] / (8.0 * PI * mdr * bond * source_rad) - j1[k]) * log(fabs(arc_diff) / 2.0 * source_rad)) * Gauss_int_wts[k];
+
+		  temp2[j] += (vector_C2_reg[k] + j2[k] * log(fabs(arc_diff) * sum / (2.0 * source_rad * diff)) + (9.0 * (interf.mid_div_norm[j] - bond* interf.mid_vert[j]) * ellip1_b0 * interf.mid_norm_vert[j] / (8.0 * PI * mdr * bond * source_rad) - j2[k]) * log(fabs(arc_diff) / 2.0 * source_rad)) * Gauss_int_wts[k];
 		}
 
-	    }
+	      known[i] += interf.intervals[j].width * temp1[j] / 2.0 - 9.0 * (interf.mid_div_norm[j] - bond* interf.mid_vert[j]) * ellip1_b0 * interf.mid_norm_rad[j] * interf.midpoints[interf.n_int - 1] / (8.0 * PI * mdr * bond * source_rad * (interf.n_int - 1.0)) * (log(interf.midpoints[interf.n_int - 1] / (4.0 * source_rad * (interf.n_int - 1.0))) - 1.0);
+
+	      known[i + interf.n_int] += interf.intervals[j].width * temp2[j] / 2.0 - 9.0 * (interf.mid_div_norm[j] - bond* interf.mid_vert[j]) * ellip1_b0 * interf.mid_norm_rad[j] * interf.midpoints[interf.n_int - 1] / (8.0 * PI * mdr * bond * source_rad * (interf.n_int - 1.0)) * (log(interf.midpoints[interf.n_int - 1] / (4.0 * source_rad * (interf.n_int - 1.0))) - 1.0);
+	    }	      
 
 	  //For the case that the source point is off axis and the integral is regular
 	  else

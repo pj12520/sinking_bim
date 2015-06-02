@@ -40,6 +40,7 @@ void Create_interf(surf *interf, int n_int, double max_arc)
 
   (*interf).mid_norm_rad.resize(n_int);
   (*interf).mid_norm_vert.resize(n_int);
+  (*interf).mid_div_norm.resize(n_int);
 
   for (int i = 0; i < n_int; i++)
     {
@@ -48,6 +49,7 @@ void Create_interf(surf *interf, int n_int, double max_arc)
 
       (*interf).mid_norm_rad[i] = 0.0;
       (*interf).mid_norm_vert[i] = 1.0;
+      (*interf).mid_div_norm[i] = 0.0;
     }
   Create_interf_int(&(*interf).intervals, n_int, max_arc);
 }
