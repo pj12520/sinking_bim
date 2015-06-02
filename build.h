@@ -5,6 +5,6 @@
 #pragma once
 
 //Function to create the linear system
-void Build(vector<vector<double> >* matrix, vector<double> vector, particle sphere, surf interf, double viscos_rat, double bond, double mdr);
+void Build(vector<vector<double> >* matrix, vector<double>* vector, particle sphere, surf interf, double viscos_rat, double bond, double mdr);
 
 #endif /* BUILD_H */

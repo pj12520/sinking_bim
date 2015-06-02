@@ -925,4 +925,19 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 	}
 
     }
+
+  //Move calculated matrix and vector elements into objects that were passed into function
+
+  for (int i = 0; i < coeffs.size(); i++)
+    {
+      for (int j = 0; j < coeffs[i].size(); j++)
+	{
+	  (*matrix)[i][j] = coeffs[i][j];
+	}
+    }
+
+  for (int i = 0; i < known.size(); i++)
+    {
+      (*vec)[i] = known[i];
+    }
 }

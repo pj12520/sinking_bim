@@ -54,6 +54,7 @@ int main()
   vector<double> known(order);
 
   //Build the linear system
+  Build(&coeffs, &known, sphere, interf, input.viscos_rat, input.bond, input.mdr);
   return 0;
 }
 
