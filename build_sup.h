@@ -32,10 +32,13 @@ void A(vector<double>* pos_rad, double source_vert, vector<double>* pos_vert, do
 void B_axisource(double source_vert, vector<double>* pos_vert, vector<double>* pos_rad, vector<double>* matrix_B21, vector<double>* matrix_B22);
 
 //Function to calculate the components of B when the source point is off axis
-void B(vector<double>* pos_rad, double source_vert, vector<double>* pos_vert, vector<double>* matrix_B11, vector<double>* matrix_B12, vector<double>* matrix_B21, vector<double>* matrix_B22, double source_rad, double source_rad_2, int sing_test, vector<double>* g1, vector<double>*g2);
+void B(vector<double>* pos_rad, double source_vert, vector<double>* pos_vert, vector<double>* matrix_B11, vector<double>* matrix_B12, vector<double>* matrix_B21, vector<double>* matrix_B22, double source_rad, double source_rad_2, int sing_test, vector<double>* g1, vector<double>*g2, double *sum, double *diff);
 
 //Function to calculate the components of C when the source point is on axis
 void C_axisource(double source_vert, vector<double>* pos_vert, vector<double>* pos_rad, vector<double>* pos_div_norm, double *temp2, vector<double>* Gauss_int_wts, double bond, double mdr);
+
+//Function to calculate the components of C when the source point is off axis
+void C(double source_vert, double source_rad_2, double source_rad, vector<double>* pos_vert, vector<double>* pos_rad, vector<double>* pos_div_norm, double bond, double mdr, int sing_test, vector<double>* pos_norm_rad, vector<double>* pos_norm_vert, double *temp1, double *temp2, double mid_div_norm, double mid_vert, double mid_norm_rad, double mid_norm_vert, vector<double>* pos_arc, double midpoint, vector<double>* Gauss_int_wts);
 
 #endif /* BUILD_SUP_H */
 

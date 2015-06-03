@@ -16,6 +16,7 @@ double A1(double viscos_rat, double sum_3_2, double diff, double beta_4, double 
 {
   double a1 = ((1.0 - viscos_rat) / (PI * sum_3_2 * diff * beta_4)) * (source_rad * alpha_2 * (4.0 * alpha_4 - 18.0 * source_rad_2 * pos_rad_2) - (2.0 * pos_rad_2 + source_rad_2) * source_rad * (2.0 * alpha_4 - 3.0 * beta_4) - (pos_rad_2 + 2.0 * source_rad_2) * pos_rad * alpha_2 * beta_2 + source_rad * pos_rad_2 * beta_4);
 
+  //  cout << sum_3_2 << '\t' << diff << '\t' << beta_4 << '\t' << a1 << endl;
   return a1;
 }
 

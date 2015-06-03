@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <iomanip>
 
 #include "inout.h"
 #include "object.h"
@@ -9,6 +10,7 @@
 using std::cout;
 using std::endl;
 using std:: ofstream;
+using std::setw;
 
 //Function to test that the dimensionless input file is read correctly
 void In_test(dimless_in input)
@@ -72,5 +74,32 @@ void Config(particle sphere, surf interf)
       interf_out << i << '\t' << interf.intervals[i].lower << '\t' << interf.midpoints[i] << '\t' << interf.intervals[i].upper << endl;
     }
   interf_out.close();
+}
 
+//Function to print out the matrix of coefficients and the known vector so the elements can be compared with that calculated analytically
+void Lin_sys_test(vector<vector<double> >* coeffs, vector<double>* known)
+{
+  ofstream matrix_out;
+  matrix_out.open("testing/lin_sys/matrix.dat");
+
+  for (int i = 0; i < (*coeffs).size(); i++)
+    {
+      for (int j = 0; j < (*coeffs)[i].size(); j++)
+	{
+	  matrix_out << setw(12) << (*coeffs)[i][j] << '\t';
+	}
+      matrix_out << endl;
+    }
+
+  matrix_out.close();
+
+  ofstream vector_out;
+  vector_out.open("testing/lin_sys/vector.dat");
+
+  for (int i = 0; i < (*known).size(); i++)
+    {
+      vector_out << (*known)[i] << endl;
+    }
+
+  vector_out.close();
 }

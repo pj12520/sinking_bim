@@ -55,6 +55,25 @@ int main()
 
   //Build the linear system
   Build(&coeffs, &known, sphere, interf, input.viscos_rat, input.bond, input.mdr);
+
+  //Testing-Test the creation of the linear system/////////////////////////////////
+  Lin_sys_test(&coeffs, &known);
+  //////////////////////////////////////////////////////////////////////////////////
+
+  //Solve the linear system 
+
+  //Perform the 1st time step
+
+  //Start for loop  
+
+  //Describe the interface using a cubic spline (perform redistribution of points here)
+
+  //Build linear system
+
+  //Solve linear system
+
+  //Iterate system in time
+
   return 0;
 }
 
