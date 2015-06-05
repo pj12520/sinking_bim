@@ -36,8 +36,6 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
       coeffs[i].resize((*matrix)[i].size());
     }
 
-  vector<double> temp1(interf.n_int); //Vectors to store temporary values used in the calculation of the known vector. Needs to be resized in the calculation
-  vector<double> temp2(interf.n_int); 
 
   vector<double> Gauss_int_wts(4); //Vector to store weights used for 4-pt Gaussian quadrature
 
@@ -83,6 +81,9 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 
   vector<double> g1(4);
   vector<double> g2(4);
+
+  vector<double> temp1(interf.n_int); //Vectors to store temporary values used in the calculation of the known vector. Needs to be resized in the calculation
+  vector<double> temp2(interf.n_int); 
 
   //Fill up the matrix as defined in the notes
 
@@ -281,8 +282,8 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 	      //Perform the Gauss Legendre integration (Riley Hobson and Bence 2006 page 1006)
 	      for (int k = 0; k < 4; k++)
 		{
-		  coeffs[i + 2 * interf.n_int][j + 2 * interf.n_int] += matrix_B21[k] * Gauss_int_wts[k];
-		  coeffs[i + 2 * interf.n_int][j + 2 * interf.n_int + sphere.n_int] += matrix_B22[k] * Gauss_int_wts[k];
+		  coeffs[i + 2 * interf.n_int + sphere.n_int][j + 2 * interf.n_int] += matrix_B21[k] * Gauss_int_wts[k];
+		  coeffs[i + 2 * interf.n_int + sphere.n_int][j + 2 * interf.n_int + sphere.n_int] += matrix_B22[k] * Gauss_int_wts[k];
 		}
 
 	      coeffs[i + 2 * interf.n_int + sphere.n_int][j + 2 * interf.n_int] = sphere.intervals[j].width * coeffs[i + 2 * interf.n_int + sphere.n_int][j + 2 * interf.n_int] / 2.0;
@@ -337,13 +338,13 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 		  for (int k = 0; k < 4; k++)
 		    {
 		      coeffs[i + 2 * interf.n_int][j+ 2 * interf.n_int] += matrix_B11[k] * Gauss_int_wts[k];
-		      coeffs[i + 2 * interf.n_int][j + 2 * interf.n_int + sphere.n_int] += matrix_B21[k] * Gauss_int_wts[k];
+		      coeffs[i + 2 * interf.n_int][j + 2 * interf.n_int + sphere.n_int] += matrix_B12[k] * Gauss_int_wts[k];
 
-		      coeffs[i + 2 * interf.n_int + sphere.n_int][j + 2 * interf.n_int] += matrix_B12[k] * Gauss_int_wts[k];
+		      coeffs[i + 2 * interf.n_int + sphere.n_int][j + 2 * interf.n_int] += matrix_B21[k] * Gauss_int_wts[k];
 		      coeffs[i + 2 * interf.n_int + sphere.n_int][j + 2 * interf.n_int + sphere.n_int] += matrix_B22[k] * Gauss_int_wts[k];
 		    }
 
-		  coeffs[i + 2 * interf.n_int][j+ 2 * interf.n_int] = sphere.intervals[j].width * coeffs[i + 2 * interf.n_int][j+ 2 * interf.n_int] / 2.0;
+		  coeffs[i + 2 * interf.n_int][j+ 2 * interf.n_int] = sphere.intervals[j].width * coeffs[i + 2 * interf.n_int][j + 2 * interf.n_int] / 2.0;
 		  coeffs[i + 2 * interf.n_int][j + 2 * interf.n_int + sphere.n_int] = sphere.intervals[j].width * coeffs[i + 2 * interf.n_int][j + 2 * interf.n_int + sphere.n_int] / 2.0;
 
 		  coeffs[i + 2 * interf.n_int + sphere.n_int][j + 2 * interf.n_int] = sphere.intervals[j].width * coeffs[i + 2 * interf.n_int + sphere.n_int][j + 2 * interf.n_int] / 2.0;
