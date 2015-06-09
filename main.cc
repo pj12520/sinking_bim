@@ -43,7 +43,7 @@ int main()
   //////////////////////////////////////////////////////////////////////////////////////////////////////
 
   //Create the matrix of coefficients and the known vector for the linear system
-  int order = 2 * (input.n_int + input.n_sphere) + 1;
+  int order = 2 * (input.n_int + input.n_sphere - 1);
 
   vector<vector<double> > coeffs(order);
   for (int i = 0; i < order; i++)

@@ -12,6 +12,7 @@
 #include "build_sup.h"
 
 using std::vector;
+using std::iterator;
 
 using std::cout; //Using for debugging purposes only. Can be removed when program is operational
 using std::endl;
@@ -29,11 +30,11 @@ using math_const::PI;
 void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere, surf interf, double viscos_rat, double bond, double mdr)
 {
   //Temporary vector object to store the matrix of coefficients and known vector
-  vector<vector<double> > coeffs((*matrix).size());
-  vector<double> known((*vec).size());
+  vector<vector<double> > coeffs((*matrix).size() + 3);
+  vector<double> known((*vec).size() + 3);
   for (int i = 0; i < coeffs.size(); i++)
     {
-      coeffs[i].resize((*matrix)[i].size());
+      coeffs[i].resize((*matrix)[i].size() + 3);
     }
 
 
@@ -470,6 +471,34 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
     }
   //Final row of known vector
   known[2 * (interf.n_int + sphere.n_int)] = 3.0;
+
+  //Now remove degenerate rows and columns from matrix and vector
+  vector<unsigned> to_delete(3);
+  to_delete[0] = 0;
+  to_delete[1] = 2 * interf.n_int - 1;
+  to_delete[2] = 2 * interf.n_int + sphere.n_int - 3;
+
+  //vector<int>::iterator test = coeffs.begin();
+  for (int i = 0; i < 3; i++)
+    {
+      if (coeffs.size() > to_delete[i])
+      {
+        coeffs.erase (coeffs.begin() + to_delete[i]);
+      }
+
+      if (known.size() > to_delete[i])
+	{
+	  known.erase(known.begin() + to_delete[i]);
+	}
+
+      for (int j = 0; j < coeffs[i].size(); j++)
+	{
+	  if (coeffs[i].size() > to_delete[i])
+	    {
+	      coeffs[j].erase(coeffs[j].begin() + to_delete[i]);
+	    }
+	}
+    }
 
   //Move calculated matrix and vector elements into objects that were passed into function
 
