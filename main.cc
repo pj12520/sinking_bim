@@ -8,6 +8,7 @@
 #include "object.h"
 #include "testing.h"
 #include "build.h"
+#include "solve.h"
 
 using std::string;
 
@@ -63,8 +64,9 @@ int main()
   //Solve the linear system 
   vector<double> unknown(order);
 
-  Solve(n_int, &coeffs, &known, &unknown);
+  Solve(order, &coeffs, &known, &unknown);
 
+  cout << unknown[unknown.size() - 1] << endl;
   //Perform the 1st time step
 
   //Start for loop  

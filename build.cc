@@ -45,7 +45,6 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 	  coeffs[i][j] = 0.0;
 	}
       known[i] = 0.0;
-      cout << i << " " << coeffs[i].size() << endl;
     }
 
   vector<double> Gauss_int_wts(4); //Vector to store weights used for 4-pt Gaussian quadrature
@@ -147,7 +146,6 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 	      for (int k = 0; k < 4; k++)
 		{
 		  coeffs[i][j] += (matrix_A11[k] + h[k]) * Gauss_int_wts[k];
-		  //cout << i << '\t' << j << '\t' << '\t' << k << '\t' << matrix_A11[k] << endl;
 		  coeffs[i][j + interf.n_int] += matrix_A12[k] * Gauss_int_wts[k];
 
 		  coeffs[i + interf.n_int][j] += matrix_A21[k] * Gauss_int_wts[k];
@@ -320,9 +318,6 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 		    {
 		      theta_diff = sphere.intervals[j].theta[k] - sphere.midpoints[i];
 		      theta_diff_2 = theta_diff * theta_diff;
-
-		      //		  cout << i << '\t' << j << '\t' << k << '\t' << matrix_B11[k] << endl;
-		      //		  cout << i << '\t' << j << '\t' << k << '\t' << matrix_B12[k] << endl;
 
 		      coeffs[i + 2 * interf.n_int][j+ 2 * interf.n_int] += (matrix_B11_reg[k] + g1[k] * log(4.0 * source_rad_2 * diff / (sum * theta_diff_2)) + 2.0 * (g1[k] + ellip1_b0 / (4.0 * PI * source_rad)) * log(fabs(theta_diff) / (2.0 * source_rad))) * Gauss_int_wts[k];
 
@@ -503,10 +498,6 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 	}
     }
 
-  for (int i = 0; i < coeffs.size(); i++)
-    {
-      cout << i << " " << coeffs[i].size() << endl;
-    }
   //Remove degenerate rows
   vector<vector<double > > hold1(coeffs.size() - 1);
   vector<vector<double > > hold2(coeffs.size() - 2);
@@ -549,15 +540,12 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
     }
 
   //Move calculated matrix and vector elements into objects that were passed into function
-
   for (int i = 0; i < hold3.size(); i++)
     {
       for (int j = 0; j < hold3[i].size(); j++)
 	{
 	  (*matrix)[i][j] = hold3[i][j];
-	  //	  cout << hold3[i][j] << '\t';
 	}
-      //      cout << endl;
     }
 
   for (int i = 0; i < known.size(); i++)

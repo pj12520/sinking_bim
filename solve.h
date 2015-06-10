@@ -4,6 +4,8 @@
 #define __SOLVE_H__
 #pragma once
 
+//Function to solve the linear system of equations
+void Solve(int order, vector<vector<double> >* coeffs, vector<double>* known, vector<double>* unknown);
 
 
 #endif /* SOLVE_H */
