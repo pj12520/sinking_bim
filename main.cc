@@ -61,6 +61,9 @@ int main()
   //////////////////////////////////////////////////////////////////////////////////
 
   //Solve the linear system 
+  vector<double> unknown(order);
+
+  Solve(n_int, &coeffs, &known, &unknown);
 
   //Perform the 1st time step
 

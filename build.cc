@@ -4,7 +4,7 @@
 #include <math.h>
 
 #include <iostream> //Used for debugging purposes only. Can be removed when program is operational
-
+#include <typeinfo> //Used for debugging purposes only. Can be removed when program is operational
 #include "object.h"
 #include "const.h"
 #include "axisym.h"
@@ -34,9 +34,19 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
   vector<double> known((*vec).size() + 3);
   for (int i = 0; i < coeffs.size(); i++)
     {
-      coeffs[i].resize((*matrix)[i].size() + 3);
+      coeffs[i].resize((*matrix).size() + 3);
     }
 
+  //Initialise all elements with zeros
+  for (int i = 0; i < coeffs.size(); i++)
+    {
+      for (int j = 0; j < coeffs[i].size(); j++)
+	{
+	  coeffs[i][j] = 0.0;
+	}
+      known[i] = 0.0;
+      cout << i << " " << coeffs[i].size() << endl;
+    }
 
   vector<double> Gauss_int_wts(4); //Vector to store weights used for 4-pt Gaussian quadrature
 
@@ -201,9 +211,8 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 	}
     }
 
-
   //Loop over the source points on the sphere	      
-  for (int i = 0; i < interf.n_int; i++)
+  for (int i = 0; i < sphere.n_int; i++)
     {
       if (i == 0)
 	{
@@ -358,12 +367,12 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
       coeffs[i + 2 * interf.n_int + sphere.n_int][2 * (interf.n_int + sphere.n_int)] = 1.0;
     }
 
-
   //Complete the last row of the matrix
   for (int j = 2 * interf.n_int + sphere.n_int; j < 2 * (interf.n_int + sphere.n_int); j++)
     {
       coeffs[2 * (interf.n_int + sphere.n_int)][j] = 1.0;
     }
+
 
   //Fill up the known vector as defined in the notes
 
@@ -472,42 +481,83 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
   //Final row of known vector
   known[2 * (interf.n_int + sphere.n_int)] = 3.0;
 
-  //Now remove degenerate rows and columns from matrix and vector
+  //Now remove degenerate columns from matrix elements from vector
   vector<unsigned> to_delete(3);
   to_delete[0] = 0;
   to_delete[1] = 2 * interf.n_int - 1;
   to_delete[2] = 2 * interf.n_int + sphere.n_int - 3;
 
-  //vector<int>::iterator test = coeffs.begin();
   for (int i = 0; i < 3; i++)
     {
-      if (coeffs.size() > to_delete[i])
-      {
-        coeffs.erase (coeffs.begin() + to_delete[i]);
-      }
-
       if (known.size() > to_delete[i])
 	{
 	  known.erase(known.begin() + to_delete[i]);
 	}
 
-      for (int j = 0; j < coeffs[i].size(); j++)
+      for (int j = 0; j < coeffs.size(); j++)
 	{
-	  if (coeffs[i].size() > to_delete[i])
+	  if (coeffs[j].size() > to_delete[i])
 	    {
 	      coeffs[j].erase(coeffs[j].begin() + to_delete[i]);
 	    }
 	}
     }
 
-  //Move calculated matrix and vector elements into objects that were passed into function
-
   for (int i = 0; i < coeffs.size(); i++)
     {
-      for (int j = 0; j < coeffs[i].size(); j++)
+      cout << i << " " << coeffs[i].size() << endl;
+    }
+  //Remove degenerate rows
+  vector<vector<double > > hold1(coeffs.size() - 1);
+  vector<vector<double > > hold2(coeffs.size() - 2);
+  vector<vector<double > > hold3(coeffs.size() - 3);
+
+  for (int i = 0; i < hold1.size(); i++)
+    {
+      hold1[i].resize(coeffs[i + 1].size());
+      
+      hold1[i] = coeffs[i + 1]; 
+
+    }
+
+  for (int i = 0; i < 2 * interf.n_int - 1; i++)
+    {
+      hold2[i].resize(hold1[i].size());
+      
+      hold2[i] = hold1[i]; 
+    }
+
+  for (int i = 2 * interf.n_int - 1; i < hold2.size(); i++)
+    {
+      hold2[i].resize(hold1[i + 1].size());
+      
+      hold2[i] = hold1[i + 1]; 
+    }
+
+  for (int i = 0; i < 2 * interf.n_int + sphere.n_int - 3; i++)
+    {
+      hold3[i].resize(hold2[i].size());
+      
+      hold3[i] = hold2[i]; 
+    }
+
+  for (int i = 2 * interf.n_int + sphere.n_int - 3; i < hold3.size(); i++)
+    {
+      hold3[i].resize(hold2[i + 1].size());
+      
+      hold3[i] = hold2[i + 1]; 
+    }
+
+  //Move calculated matrix and vector elements into objects that were passed into function
+
+  for (int i = 0; i < hold3.size(); i++)
+    {
+      for (int j = 0; j < hold3[i].size(); j++)
 	{
-	  (*matrix)[i][j] = coeffs[i][j];
+	  (*matrix)[i][j] = hold3[i][j];
+	  //	  cout << hold3[i][j] << '\t';
 	}
+      //      cout << endl;
     }
 
   for (int i = 0; i < known.size(); i++)
