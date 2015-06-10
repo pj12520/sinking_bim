@@ -66,7 +66,10 @@ int main()
 
   Solve(order, &coeffs, &known, &unknown);
 
-  cout << unknown[unknown.size() - 1] << endl;
+  for (int i = 0; i < unknown.size(); i++)
+    {
+      cout << i << " " << unknown[i] << endl;
+    }
   //Perform the 1st time step
 
   //Start for loop  

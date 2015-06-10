@@ -124,7 +124,7 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 	      if (j == i)
 		{
 		  coeffs[i][j] -= (1.0 + viscos_rat) / 2.0;
-		  coeffs[i + interf.n_int][j + interf.n_int] -= (1.0 + viscos_rat) / 2.0;
+		  coeffs[i + interf.n_int][j + interf.n_int] -= (1.0 + viscos_rat) / 4.0;
 		}
 	    }
 
@@ -183,28 +183,30 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 
 	      coeffs[i + interf.n_int][j + 2 * interf.n_int] = sphere.intervals[j].width * coeffs[i + interf.n_int][j + 2 * interf.n_int] / 2.0;
 	      coeffs[i + interf.n_int][j + 2 * interf.n_int + sphere.n_int] = sphere.intervals[j].width * coeffs[i + interf.n_int][j + 2 * interf.n_int + sphere.n_int] / 2.0;
+	      //	      cout << i << " " << j << " " << coeffs[i + interf.n_int][j + 2 * interf.n_int + sphere.n_int] << " " << endl;
 	    }
 
 	  else //For the case that the source point is not on axis
 	    {
 	      sing_test = 0;
-	      B(&(sphere.intervals[j].rad), source_vert, &(sphere.intervals[j].vert), &matrix_B11, &matrix_B12, &matrix_B21, &matrix_B22, source_rad, source_rad_2, sing_test, &g1, &g2, &sum, &diff);
+	      B(&(sphere.intervals[j].rad), source_vert, &(sphere.intervals[j].vert), &matrix_B11, &matrix_B12, &matrix_B21, &matrix_B22, source_rad, source_rad_2, sing_test, &g1, &g2, &sum, &diff, &matrix_B11_reg, &matrix_B22_reg);
 
 	      //Perform the Gauss-Legendre integration (Riley Hobson and Bence 2006 page 1006)
 	      for (int k = 0; k < 4; k++)
 		{
-		  coeffs[i][j+ 2 * interf.n_int] += matrix_B11[k] * Gauss_int_wts[k];
+		  coeffs[i][j + 2 * interf.n_int] += matrix_B11[k] * Gauss_int_wts[k];
 		  coeffs[i][j + 2 * interf.n_int + sphere.n_int] += matrix_B12[k] * Gauss_int_wts[k];
 
 		  coeffs[i + interf.n_int][j + 2 * interf.n_int] += matrix_B21[k] * Gauss_int_wts[k];
 		  coeffs[i + interf.n_int][j + 2 * interf.n_int + sphere.n_int] += matrix_B22[k] * Gauss_int_wts[k];
 		}
 
-	      coeffs[i][j+ 2 * interf.n_int] = interf.intervals[j].width * coeffs[i][j+ 2 * interf.n_int] / 2.0;
-	      coeffs[i][j + 2 * interf.n_int + sphere.n_int] = interf.intervals[j].width * coeffs[i][j + 2 * interf.n_int + sphere.n_int] / 2.0;
+	      coeffs[i][j + 2 * interf.n_int] = sphere.intervals[j].width * coeffs[i][j+ 2 * interf.n_int] / 2.0;
+	      coeffs[i][j + 2 * interf.n_int + sphere.n_int] = sphere.intervals[j].width * coeffs[i][j + 2 * interf.n_int + sphere.n_int] / 2.0;
 
 	      coeffs[i + interf.n_int][j + 2 * interf.n_int] = sphere.intervals[j].width * coeffs[i + interf.n_int][j + 2 * interf.n_int] / 2.0;
 	      coeffs[i + interf.n_int][j + 2 * interf.n_int + sphere.n_int] = sphere.intervals[j].width * coeffs[i + interf.n_int][j + 2 * interf.n_int + sphere.n_int] / 2.0;
+
 	    }  
 	}
     }
@@ -309,7 +311,7 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 		  sing_test = 0;
 		}
 
-	      B(&(sphere.intervals[j].rad), source_vert, &(sphere.intervals[j].vert), &matrix_B11, &matrix_B12, &matrix_B21, &matrix_B22, source_rad, source_rad_2, sing_test, &g1, &g2, &sum, &diff);
+	      B(&(sphere.intervals[j].rad), source_vert, &(sphere.intervals[j].vert), &matrix_B11, &matrix_B12, &matrix_B21, &matrix_B22, source_rad, source_rad_2, sing_test, &g1, &g2, &sum, &diff, &matrix_B11_reg, &matrix_B22_reg);
 
 	      if (i == j)
 		{
@@ -359,7 +361,7 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 	}
 
       //Complete the last column of the matrix
-      coeffs[i + 2 * interf.n_int + sphere.n_int][2 * (interf.n_int + sphere.n_int)] = 1.0;
+      coeffs[i + 2 * interf.n_int + sphere.n_int][2 * (interf.n_int + sphere.n_int)] = -1.0;
     }
 
   //Complete the last row of the matrix
@@ -367,7 +369,6 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
     {
       coeffs[2 * (interf.n_int + sphere.n_int)][j] = 1.0;
     }
-
 
   //Fill up the known vector as defined in the notes
 
@@ -387,7 +388,7 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 	    {
 	      C_axisource(source_vert, &(interf.intervals[j].vert), &(interf.intervals[j].rad), &(interf.intervals[j].div_norm), &(temp2[j]), &Gauss_int_wts, bond, mdr);
 
-	      known[i + interf.n_int] += interf.intervals[j].width * temp2[j] / 2.0;
+	      known[i + interf.n_int] -= interf.intervals[j].width * temp2[j] / 2.0;
 	    }
 	  else
 	    {
@@ -404,15 +405,16 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 
 	      if (i == j)
 		{
-		  known[i] += interf.intervals[j].width * temp1[j] / 2.0 - 9.0 * (interf.mid_div_norm[j] - bond* interf.mid_vert[j]) * ellip1_b0 * interf.mid_norm_rad[j] * interf.midpoints[interf.n_int - 1] / (8.0 * PI * mdr * bond * source_rad * (interf.n_int - 1.0)) * (log(interf.midpoints[interf.n_int - 1] / (4.0 * source_rad * (interf.n_int - 1.0))) - 1.0);
+		  known[i] -= interf.intervals[j].width * temp1[j] / 2.0 - 9.0 * (interf.mid_div_norm[j] - bond* interf.mid_vert[j]) * ellip1_b0 * interf.mid_norm_rad[j] * interf.midpoints[interf.n_int - 1] / (8.0 * PI * mdr * bond * source_rad * (interf.n_int - 1.0)) * (log(interf.midpoints[interf.n_int - 1] / (4.0 * source_rad * (interf.n_int - 1.0))) - 1.0);
 
-		  known[i + interf.n_int] += interf.intervals[j].width * temp2[j] / 2.0 - 9.0 * (interf.mid_div_norm[j] - bond* interf.mid_vert[j]) * ellip1_b0 * interf.mid_norm_rad[j] * interf.midpoints[interf.n_int - 1] / (8.0 * PI * mdr * bond * source_rad * (interf.n_int - 1.0)) * (log(interf.midpoints[interf.n_int - 1] / (4.0 * source_rad * (interf.n_int - 1.0))) - 1.0);
+		  known[i + interf.n_int] -= interf.intervals[j].width * temp2[j] / 2.0 - 9.0 * (interf.mid_div_norm[j] - bond* interf.mid_vert[j]) * ellip1_b0 * interf.mid_norm_rad[j] * interf.midpoints[interf.n_int - 1] / (8.0 * PI * mdr * bond * source_rad * (interf.n_int - 1.0)) * (log(interf.midpoints[interf.n_int - 1] / (4.0 * source_rad * (interf.n_int - 1.0))) - 1.0);
+		  //		  cout << i << " " << known[i + interf.n_int] << " " << j << " " << temp2[j] << endl;
 		}	      
 
 	      else
 		{
-		  known[i] += interf.intervals[j].width * temp1[j] / 2.0; 
-		  known[i + interf.n_int] += interf.intervals[j].width * temp1[j] / 2.0; 
+		  known[i] -= interf.intervals[j].width * temp1[j] / 2.0; 
+		  known[i + interf.n_int] -= interf.intervals[j].width * temp1[j] / 2.0; 
 		}
 	    }
 	}
@@ -457,7 +459,7 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 	    {
 	      C_axisource(source_vert, &(interf.intervals[j].vert), &(interf.intervals[j].rad), &(interf.intervals[j].div_norm), &(temp2[j]), &Gauss_int_wts, bond, mdr);
 
-	      known[i + 2 * interf.n_int + sphere.n_int] += interf.intervals[j].width * temp2[j] / 2.0;
+	      known[i + 2 * interf.n_int + sphere.n_int] -= interf.intervals[j].width * temp2[j] / 2.0;
 	    }
 
 	  //For the case that the source point is off axis and the integral is regular
@@ -467,14 +469,14 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 
 	      C(source_vert, source_rad_2, source_rad, &(interf.intervals[j].vert), &(interf.intervals[j].rad), (&interf.intervals[j].div_norm), bond, mdr, sing_test, (&interf.intervals[j].norm_rad), (&interf.intervals[j].norm_vert), &(temp1[j]), &(temp2[j]), interf.mid_div_norm[j], interf.mid_vert[j], interf.mid_norm_rad[j], interf.mid_norm_vert[j], &(interf.intervals[j].arc), interf.midpoints[j], &Gauss_int_wts);
 
-	      known[i + 2 * interf.n_int] += interf.intervals[j].width * temp1[j] / 2.0; 
-	      known[i + 2 * interf.n_int + sphere.n_int] += interf.intervals[j].width * temp1[j] / 2.0; 
+	      known[i + 2 * interf.n_int] -= interf.intervals[j].width * temp1[j] / 2.0; 
+	      known[i + 2 * interf.n_int + sphere.n_int] -= interf.intervals[j].width * temp1[j] / 2.0; 
 	    }
 	}
 
     }
   //Final row of known vector
-  known[2 * (interf.n_int + sphere.n_int)] = 3.0;
+  known[2 * (interf.n_int + sphere.n_int)] = -3.0;
 
   //Now remove degenerate columns from matrix elements from vector
   vector<unsigned> to_delete(3);
@@ -484,6 +486,11 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 
   for (int i = 0; i < 3; i++)
     {
+      if (coeffs.size() > to_delete[i])
+	{
+	  coeffs.erase(coeffs.begin() + to_delete[i]);
+	}
+
       if (known.size() > to_delete[i])
 	{
 	  known.erase(known.begin() + to_delete[i]);
@@ -499,6 +506,7 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
     }
 
   //Remove degenerate rows
+  /*
   vector<vector<double > > hold1(coeffs.size() - 1);
   vector<vector<double > > hold2(coeffs.size() - 2);
   vector<vector<double > > hold3(coeffs.size() - 3);
@@ -538,13 +546,13 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
       
       hold3[i] = hold2[i + 1]; 
     }
-
+  */
   //Move calculated matrix and vector elements into objects that were passed into function
-  for (int i = 0; i < hold3.size(); i++)
+  for (int i = 0; i < coeffs.size(); i++)
     {
-      for (int j = 0; j < hold3[i].size(); j++)
+      for (int j = 0; j < coeffs[i].size(); j++)
 	{
-	  (*matrix)[i][j] = hold3[i][j];
+	  (*matrix)[i][j] = coeffs[i][j];
 	}
     }
 

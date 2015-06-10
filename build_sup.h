@@ -32,7 +32,7 @@ void A(vector<double>* pos_rad, double source_vert, vector<double>* pos_vert, do
 void B_axisource(double source_vert, vector<double>* pos_vert, vector<double>* pos_rad, vector<double>* matrix_B21, vector<double>* matrix_B22);
 
 //Function to calculate the components of B when the source point is off axis
-void B(vector<double>* pos_rad, double source_vert, vector<double>* pos_vert, vector<double>* matrix_B11, vector<double>* matrix_B12, vector<double>* matrix_B21, vector<double>* matrix_B22, double source_rad, double source_rad_2, int sing_test, vector<double>* g1, vector<double>*g2, double *sum, double *diff);
+void B(vector<double>* pos_rad, double source_vert, vector<double>* pos_vert, vector<double>* matrix_B11, vector<double>* matrix_B12, vector<double>* matrix_B21, vector<double>* matrix_B22, double source_rad, double source_rad_2, int sing_test, vector<double>* g1, vector<double>*g2, double *sum, double *diff, vector<double>* matrix_B11_reg, vector<double>* matrix_B22_reg);
 
 //Function to calculate the components of C when the source point is on axis
 void C_axisource(double source_vert, vector<double>* pos_vert, vector<double>* pos_rad, vector<double>* pos_div_norm, double *temp2, vector<double>* Gauss_int_wts, double bond, double mdr);

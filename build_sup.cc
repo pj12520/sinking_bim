@@ -62,7 +62,7 @@ void Stand_ellip(double beta_2, double sum, double *comp_param, double *ellip1, 
 {
   *comp_param = Comp_param(beta_2, sum);
   *ellip1 = Ellip1(*comp_param);
-  *ellip2 = Ellip1(*comp_param);
+  *ellip2 = Ellip2(*comp_param);
 }
 
 //Function to calculate the components of A when the source point is on axis
@@ -102,7 +102,7 @@ void A(vector<double>* pos_rad, double source_vert, vector<double>* pos_vert, do
 
       double alpha_4 = alpha_2 * alpha_2;
       double beta_4 = beta_2 * beta_2;
-      //      cout << k << '\t' << source_rad << endl;
+
       double alpha_6 = alpha_4 * alpha_2;
 
       double alpha_8 = alpha_4 * alpha_4;
@@ -139,7 +139,6 @@ void A(vector<double>* pos_rad, double source_vert, vector<double>* pos_vert, do
       a14[k] = A14(viscos_rat, vert_diff_3, sum_3_2, diff);
       a16[k] = A16(viscos_rat, alpha_2, sum_3_2, diff_2, vert_diff_3);
 
-      //      cout << k << '\t' << a1[k] << endl;
       double arc_diff;
       if (sing_test == 1) //A11 needs to be handled differently as it is singular in the range of integration
 	{
@@ -181,7 +180,7 @@ void B_axisource(double source_vert, vector<double>* pos_vert, vector<double>* p
 }
 
 //Function to calculate the components of B when the source point is off axis
-void B(vector<double>* pos_rad, double source_vert, vector<double>* pos_vert, vector<double>* matrix_B11, vector<double>* matrix_B12, vector<double>* matrix_B21, vector<double>* matrix_B22, double source_rad, double source_rad_2, int sing_test, vector<double>* g1, vector<double>*g2, double *sum, double *diff)
+void B(vector<double>* pos_rad, double source_vert, vector<double>* pos_vert, vector<double>* matrix_B11, vector<double>* matrix_B12, vector<double>* matrix_B21, vector<double>* matrix_B22, double source_rad, double source_rad_2, int sing_test, vector<double>* g1, vector<double>*g2, double *sum, double *diff, vector<double>* matrix_B11_reg, vector<double>* matrix_B22_reg)
 {
   //Loop over the integration points in the interval and find the values of the integrands
   for (int k = 0; k < 4; k++)
@@ -211,8 +210,8 @@ void B(vector<double>* pos_rad, double source_vert, vector<double>* pos_vert, ve
 	  ellip1_reg[k] = Ellip1_reg(comp_param);
 	  ellip1_sing[k] = Ellip1_sing(comp_param);
 
-	  (*matrix_B11)[k] = Matrix_B11_reg(beta_2, sum_half, alpha_2, vert_diff_2, *sum, *diff, ellip1_reg[k], ellip1_sing[k], ellip2[k]);
-	  (*matrix_B22)[k] = Matrix_B22_reg(sum_half, vert_diff_2, *diff, ellip1_reg[k], ellip2[k]);
+	  (*matrix_B11_reg)[k] = Matrix_B11_reg(beta_2, sum_half, alpha_2, vert_diff_2, *sum, *diff, ellip1_reg[k], ellip1_sing[k], ellip2[k]);
+	  (*matrix_B22_reg)[k] = Matrix_B22_reg(sum_half, vert_diff_2, *diff, ellip1_reg[k], ellip2[k]);
 
 	  (*g1)[k] = G1(alpha_2, beta_2, sum_half);
 	  (*g2)[k] = G2(sum_half);
@@ -295,8 +294,8 @@ void C(double source_vert, double source_rad_2, double source_rad, vector<double
 
 	  vector_C2[k] = Vector_C2_reg(source_rad, vert_diff, (*pos_norm_rad)[k], ellip1[k], alpha_2, (*pos_rad)[k], beta_2, (*pos_norm_vert)[k], ellip2[k], diff, ellip1_reg[k], prefac[k]);
 
-	  j1[k] = (prefac[k], alpha_2, (*pos_norm_rad)[k]);
-	  j2[k] = (prefac[k], (*pos_norm_vert)[k]);
+	  j1[k] = J1(prefac[k], alpha_2, (*pos_norm_rad)[k]);
+	  j2[k] = J2(prefac[k], (*pos_norm_vert)[k]);
 
 	  double arc_diff = (*pos_arc)[k] - midpoint;
 

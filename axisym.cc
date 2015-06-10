@@ -211,7 +211,7 @@ double Matrix_B22_axisource(double vert_diff_2, double alpha, double alpha_2)
 double Matrix_B11_reg(double beta_2, double sum_half, double alpha_2, double vert_diff_2, double sum, double diff, double ellip1_reg, double ellip1_sing, double ellip2)
 {
   double matrix_B11_reg = ((alpha_2 + vert_diff_2) * ellip1_reg + vert_diff_2 * ellip1_sing - (sum + alpha_2 * vert_diff_2 / diff) * ellip2) / (2.0 * PI * beta_2 * sum_half);
-
+  // cout << ellip2 << " " << matrix_B11_reg <<endl;
   return matrix_B11_reg;
 }
 
