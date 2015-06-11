@@ -63,5 +63,9 @@ int main()
     }
 
   matrix.erase(matrix.begin() + 4);
+  for (int i = 0; i < matrix[i].size(); i++)
+    {
+
+    }
   return 0;
 }

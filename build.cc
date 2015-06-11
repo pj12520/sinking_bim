@@ -367,7 +367,7 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
   //Complete the last row of the matrix
   for (int j = 2 * interf.n_int + sphere.n_int; j < 2 * (interf.n_int + sphere.n_int); j++)
     {
-      coeffs[2 * (interf.n_int + sphere.n_int)][j] = 1.0;
+      coeffs[2 * (interf.n_int + sphere.n_int)][j] = sphere.intervals[j - (2 * interf.n_int + sphere.n_int)].width;
     }
 
   //Fill up the known vector as defined in the notes

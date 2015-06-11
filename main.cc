@@ -65,11 +65,7 @@ int main()
   vector<double> unknown(order);
 
   Solve(order, &coeffs, &known, &unknown);
-
-  for (int i = 0; i < unknown.size(); i++)
-    {
-      cout << i << " " << unknown[i] << endl;
-    }
+  cout << unknown[unknown.size() - 1] << endl;
   //Perform the 1st time step
 
   //Start for loop  
