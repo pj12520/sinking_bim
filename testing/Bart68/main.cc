@@ -52,19 +52,11 @@ int main()
 
   double factor;
   //Define number of terms used to approximate infinite series
-  int n_terms;
+  int n_terms = 10;
 
   //Objects to output data to two data files, one sorted by viscosity ratio and one by sphere position
   ofstream viscos_sort;
   ofstream pos_sort;
-
-  //Open data files
-  viscos_sort.open("viscos_sort.dat");
-  pos_sort.open("pos_sort.dat");
-
-  //Write headings to files
-  viscos_sort << setw(20) << "Viscosity Ratio" << setw(20) << "Position" << setw(20) << "Velocity" << endl;
-  pos_sort << setw(20) << "Position" << setw(20) << "Viscosity Ratio" << setw(20) << "Velocity" << endl;
 
   //Loop over sphere positions
   for (int i = 0; i < pos.size(); i++)
@@ -87,7 +79,7 @@ int main()
 
 	      T = 4.0 * sinh((k + 0.5) * alpha) * sinh((k + 0.5) * alpha) - (2.0 * k + 1.0) * (2.0 * k + 1.0) * sinh(alpha) * sinh(alpha);
 
-	      sum += k * (k + 1.0) / ((2.0 * k - 1.0) * (2.0 * k + 3.0)) * ((X + Y) / (V + T) - 1.0);
+	      sum += k * (k + 1.0) / ((2.0 * k - 1.0) * (2.0 * k + 3.0)) * ((X + viscos_rat[j] * Y) / (V + viscos_rat[j] * T) - 1.0);
 	    }
 
 	  factor = 4.0 * sinh(alpha) * sum / 3.0;
@@ -96,12 +88,29 @@ int main()
 	}
     }
 
+  //Open data files
+  viscos_sort.open("viscos_sort.dat");
+  pos_sort.open("pos_sort.dat");
+
+  //Write headings to files
+  viscos_sort << setw(20) << "Viscosity Ratio" << setw(20) << "Position" << setw(20) << "Velocity" << endl;
+  pos_sort << setw(20) << "Position" << setw(20) << "Viscosity Ratio" << setw(20) << "Velocity" << endl;
+
   //Output viscosity sorted data
   for (int i = 0; i < viscos_rat.size(); i++)
     {
       for (int j = 0; j < pos.size(); j++)
 	{
-	  viscos_sort << setw(20) << viscos_rat[i] << setw(20) << pos[j] << setw(20) << sols[i][j]
+	  viscos_sort << setw(20) << viscos_rat[i] << setw(20) << pos[j] << setw(20) << sols[j][i] << endl;
+	}
+    }
+
+  //Output position sorted data
+  for (int i = 0; i < pos.size(); i++)
+    {
+      for (int j = 0; j < viscos_rat.size(); j++)
+	{
+	  pos_sort << setw(20) << pos[i] << setw(20) << viscos_rat[j] << setw(20) << sols[i][j] << endl;
 	}
     }
 

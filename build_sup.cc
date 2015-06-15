@@ -126,7 +126,7 @@ void A(vector<double>* pos_rad, double source_vert, vector<double>* pos_vert, do
       a1[k] = A1(viscos_rat, sum_3_2, diff, beta_4, source_rad, alpha_2, alpha_4, source_rad_2, pos_rad_2, (*pos_rad)[k], beta_2);
       a2[k] = A2(viscos_rat, vert_diff, alpha_4, beta_4, alpha_2, vert_diff_2, sum_3_2, diff, beta_2);
       a3[k] = A3(viscos_rat, sum_3_2, diff_2, beta_4, source_rad, alpha_8, alpha_4, beta_8, pos_rad_2, source_rad_2, alpha_2, (*pos_rad)[k], beta_2);
-      a4[k] = A4(viscos_rat, vert_diff, beta_2, alpha_2, alpha_4, beta_4, vert_diff_2, sum_3_2, diff);
+      a4[k] = A4(viscos_rat, vert_diff, beta_2, alpha_2, alpha_4, beta_4, vert_diff_2, sum_3_2, diff, diff_2);
 
       a6[k] = A6(viscos_rat, vert_diff_2, source_rad_2, alpha_2, sum_3_2, diff, source_rad);
       a8[k] = A8(viscos_rat, vert_diff_2, alpha_4, beta_4, source_rad_2, alpha_2, sum_3_2, diff, source_rad);
@@ -138,7 +138,7 @@ void A(vector<double>* pos_rad, double source_vert, vector<double>* pos_vert, do
 
       a14[k] = A14(viscos_rat, vert_diff_3, sum_3_2, diff);
       a16[k] = A16(viscos_rat, alpha_2, sum_3_2, diff_2, vert_diff_3);
-
+      //            cout << k << '\t' << a4[k] << '\t' << source_rad << '\t' << source_vert << '\t' << (*pos_rad)[k] << '\t' << (*pos_vert)[k] << '\t' << diff << endl;
       double arc_diff;
       if (sing_test == 1) //A11 needs to be handled differently as it is singular in the range of integration
 	{
@@ -152,6 +152,7 @@ void A(vector<double>* pos_rad, double source_vert, vector<double>* pos_vert, do
       else
 	{
 	  (*matrix_A11)[k] = Matrix_A(a1[k], a2[k], a3[k], a4[k], (*pos_norm_rad)[k], (*pos_norm_vert)[k], ellip1[k], ellip2[k]);
+	  //	  cout << k << '\t' << (*matrix_A11)[k] << '\t' << a1[k] << '\t' << a2[k] << '\t' << a3[k] << '\t' << a4[k] << endl;
 	}
 
       (*matrix_A12)[k] = Matrix_A(a2[k], a6[k], a4[k], a8[k], (*pos_norm_rad)[k], (*pos_norm_vert)[k], ellip1[k], ellip2[k]);

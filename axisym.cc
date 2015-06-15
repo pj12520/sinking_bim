@@ -36,10 +36,10 @@ double A3(double viscos_rat, double sum_3_2, double diff_2, double beta_4, doubl
   return a3;
 }
 //Function to calculate the quantity a4 as defined in the notes
-double A4(double viscos_rat, double vert_diff, double beta_2, double alpha_2, double alpha_4, double beta_4, double vert_diff_2, double sum_3_2, double diff)
+double A4(double viscos_rat, double vert_diff, double beta_2, double alpha_2, double alpha_4, double beta_4, double vert_diff_2, double sum_3_2, double diff, double diff_2)
 {
-  double a4 = - (1.0 - viscos_rat) * vert_diff * beta_2 * (-alpha_2 * (alpha_4 - 5.0 * beta_4) - (alpha_2 - vert_diff_2)* (alpha_4 + 3.0 * beta_4)) / (PI * sum_3_2 * diff * beta_4);
-
+  double a4 = - (1.0 - viscos_rat) * vert_diff * beta_2 * (alpha_2 * (alpha_4 - 5.0 * beta_4) + (alpha_2 - vert_diff_2)* (alpha_4 + 3.0 * beta_4)) / (PI * sum_3_2 * diff_2 * beta_4);
+  //cout << a4 << '\t' << -vert_diff * beta_2 * (1.0 - viscos_rat) << endl;
   return a4;
 }
 

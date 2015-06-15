@@ -3,6 +3,7 @@
 #include <string>
 
 #include <iostream> //Currently only included for debugging purposes. Can be removed when program is functional
+#include <iomanip> //Currently only included for debugging purposes. Can be removed when program is functional
 
 #include "inout.h"
 #include "object.h"
@@ -14,6 +15,7 @@ using std::string;
 
 using std::cout; //Currently only used for debugging purposes. Can be removed when program is functional
 using std::endl; //Currently only used for debugging purposes. Can be removed when program is functional
+using std::setw; //Currently only used for debugging purposes. Can be removed when program is functional
 
 int main()
 {
@@ -65,7 +67,11 @@ int main()
   vector<double> unknown(order);
 
   Solve(order, &coeffs, &known, &unknown);
-  cout << unknown[unknown.size() - 1] << endl;
+
+  //Testing - Test the solution for the sphere velocity ///////////////////////////
+  cout << setw(20) << input.viscos_rat << setw(20) << input.init_height << setw(20) << unknown[unknown.size() - 1] << endl;
+  ////////////////////////////////////////////////////////////////////////////////
+
   //Perform the 1st time step
 
   //Start for loop  
