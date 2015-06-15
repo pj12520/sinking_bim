@@ -129,7 +129,7 @@ void A(vector<double>* pos_rad, double source_vert, vector<double>* pos_vert, do
       a4[k] = A4(viscos_rat, vert_diff, beta_2, alpha_2, alpha_4, beta_4, vert_diff_2, sum_3_2, diff, diff_2);
 
       a6[k] = A6(viscos_rat, vert_diff_2, source_rad_2, alpha_2, sum_3_2, diff, source_rad);
-      a8[k] = A8(viscos_rat, vert_diff_2, alpha_4, beta_4, source_rad_2, alpha_2, sum_3_2, diff, source_rad);
+      a8[k] = A8(viscos_rat, vert_diff_2, alpha_4, beta_4, source_rad_2, alpha_2, sum_3_2, diff, source_rad, diff_2);
       
       a9[k] = A9(viscos_rat, vert_diff, alpha_4, beta_4, pos_rad_2, alpha_2, pos_rad_4, sum_3_2, diff);
       a10[k] = A10(viscos_rat, vert_diff_2, alpha_2, pos_rad_2, sum_3_2, diff, (*pos_rad)[k]);
@@ -152,10 +152,10 @@ void A(vector<double>* pos_rad, double source_vert, vector<double>* pos_vert, do
       else
 	{
 	  (*matrix_A11)[k] = Matrix_A(a1[k], a2[k], a3[k], a4[k], (*pos_norm_rad)[k], (*pos_norm_vert)[k], ellip1[k], ellip2[k]);
-	  //	  cout << k << '\t' << (*matrix_A11)[k] << '\t' << a1[k] << '\t' << a2[k] << '\t' << a3[k] << '\t' << a4[k] << endl;
 	}
 
       (*matrix_A12)[k] = Matrix_A(a2[k], a6[k], a4[k], a8[k], (*pos_norm_rad)[k], (*pos_norm_vert)[k], ellip1[k], ellip2[k]);
+      //	  	  cout << k << '\t' << (*matrix_A12)[k] << '\t' << a2[k] << '\t' << a6[k] << '\t' << a4[k] << '\t' << a8[k] << endl;
       (*matrix_A21)[k] = Matrix_A(a9[k], a10[k], a11[k], a12[k], (*pos_norm_rad)[k], (*pos_norm_vert)[k], ellip1[k], ellip2[k]);
       (*matrix_A22)[k] = Matrix_A(a10[k], a14[k], a12[k], a16[k], (*pos_norm_rad)[k], (*pos_norm_vert)[k], ellip1[k], ellip2[k]);
     }

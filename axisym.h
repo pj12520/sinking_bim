@@ -20,7 +20,7 @@ double A4(double viscos_rat, double vert_diff, double beta_2, double alpha_2, do
 double A6(double viscos_rat, double vert_diff_2, double source_rad_2, double alpha_2, double sum_3_2, double diff, double source_rad);
 
 //Function to calculate the quantity a8 as defined in the notes
-double A8(double viscos_rat, double vert_diff_2, double alpha_4, double beta_4, double source_rad_2, double alpha_2, double sum_3_2, double diff, double source_rad);
+double A8(double viscos_rat, double vert_diff_2, double alpha_4, double beta_4, double source_rad_2, double alpha_2, double sum_3_2, double diff, double source_rad, double diff_2);
 
 //Function to calculate the quantity a9 as defined in the notes
 double A9(double viscos_rat, double vert_diff, double alpha_4, double beta_4, double pos_rad_2, double alpha_2, double pos_rad_4, double sum_3_2, double diff);

@@ -123,8 +123,8 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 
 	      if (j == i)
 		{
-		  coeffs[i][j] += (1.0 + viscos_rat) / 2.0;
-		  coeffs[i + interf.n_int][j + interf.n_int] += (1.0 + viscos_rat) / 2.0;
+		  coeffs[i][j] -= (1.0 + viscos_rat) / 2.0;
+		  coeffs[i + interf.n_int][j + interf.n_int] -= (1.0 + viscos_rat) / 2.0;
 		}
 	    }
 
@@ -160,8 +160,8 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 
 	      if (j == i)
 		{
-		  coeffs[i][j] += (1.0 + viscos_rat) / 2.0;
-		  coeffs[i + interf.n_int][j + interf.n_int] += (1.0 + viscos_rat) / 2.0;
+		  coeffs[i][j] -= (1.0 + viscos_rat) / 2.0;
+		  coeffs[i + interf.n_int][j + interf.n_int] -= (1.0 + viscos_rat) / 2.0;
 		}
 	    }
 	}
@@ -209,6 +209,7 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 
 	    }  
 	}
+
     }
 
   //Loop over the source points on the sphere	      

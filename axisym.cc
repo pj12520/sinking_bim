@@ -52,9 +52,9 @@ double A6(double viscos_rat, double vert_diff_2, double source_rad_2, double alp
 }
 
 //Function to calculate the quantity a8 as defined in the notes
-double A8(double viscos_rat, double vert_diff_2, double alpha_4, double beta_4, double source_rad_2, double alpha_2, double sum_3_2, double diff, double source_rad)
+double A8(double viscos_rat, double vert_diff_2, double alpha_4, double beta_4, double source_rad_2, double alpha_2, double sum_3_2, double diff, double source_rad, double diff_2)
 {
-  double a8 = (1.0 - viscos_rat) * vert_diff_2 * (alpha_4 + 3.0 * beta_4 - 8.0 * source_rad_2 * alpha_2) / (2.0 * PI * sum_3_2 * diff * source_rad);
+  double a8 = (1.0 - viscos_rat) * vert_diff_2 * (alpha_4 + 3.0 * beta_4 - 8.0 * source_rad_2 * alpha_2) / (2.0 * PI * sum_3_2 * diff_2 * source_rad);
 
   return a8;
 }
