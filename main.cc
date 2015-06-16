@@ -10,6 +10,9 @@
 #include "testing.h"
 #include "build.h"
 #include "solve.h"
+#include "vel.h"
+#include "interp_1d.h"
+///#include "interface_interp.h"
 
 using std::string;
 
@@ -67,20 +70,31 @@ int main()
   vector<double> unknown(order);
 
   Solve(order, &coeffs, &known, &unknown);
-  for (int i = 0; i < unknown.size(); i++)
-    {
-      cout << i << '\t' << unknown[i] << endl;
-    }
+  // for (int i = 0; i < unknown.size(); i++)
+  //{
+  //  cout << i << '\t' << unknown[i] << endl;
+  //}
 
   //Testing - Test the solution for the sphere velocity ///////////////////////////
   cout << setw(20) << input.viscos_rat << setw(20) << input.init_height << setw(20) << unknown[unknown.size() - 1] << endl;
   ////////////////////////////////////////////////////////////////////////////////
 
   //Perform the 1st time step
+  Iterate(input.n_int, &unknown, &interf.midpoints, &interf.mid_rad, &interf.mid_vert, &sphere.height, input.t_step);
+
+  //Describe the interface using a cubic spline (perform redistribution of points here)
+  Spline_interp rad_spline(interf.midpoints, interf.mid_rad, 1.0, 1.0); //Structures that contain the interpolation routines
+  Spline_interp vert_spline(interf.midpoints, interf.mid_vert, 0.0, 0.0);
+
+
+
+  //Testing - Output the new configuration of the system/////////////////////////////////////
+
+  ///////////////////////////////////////////////////////////////////////////////////////////
+
 
   //Start for loop  
 
-  //Describe the interface using a cubic spline (perform redistribution of points here)
 
   //Build linear system
 
