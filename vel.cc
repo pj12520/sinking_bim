@@ -3,6 +3,8 @@
 #include <vector>
 #include <math.h>
 
+#include "geo.h"
+
 using std::vector;
 
 void Iterate(double n_int, vector<double>* unknown, vector<double>* arc, vector<double>* rad, vector<double>* vert, double *height, double t_step)
@@ -32,7 +34,8 @@ void Iterate(double n_int, vector<double>* unknown, vector<double>* arc, vector<
 	{
 	  (*rad)[i] += rad_vel[i - 1] * t_step;
 
-	  (*arc)[i] = sqrt(((*rad)[i] - (*rad)[i - 1]) * ((*rad)[i] - (*rad)[i - 1]) + ((*vert)[i] - (*vert)[i - 1]) * ((*vert)[i] - (*vert)[i - 1]));
+	  //	  (*arc)[i] = sqrt(((*rad)[i] - (*rad)[i - 1]) * ((*rad)[i] - (*rad)[i - 1]) + ((*vert)[i] - (*vert)[i - 1]) * ((*vert)[i] - (*vert)[i - 1]));
+	  (*arc)[i] = Pythag((*rad)[i] - (*rad)[i - 1],(*vert)[i] - (*vert)[i - 1]); 
 	}
     }
 
