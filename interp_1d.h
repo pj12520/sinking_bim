@@ -39,7 +39,7 @@ struct Base_interp
 	     //Derived classes provide this as the actual interpolation method.
 };
 
-int Base_interp::locate(const double x)
+inline int Base_interp::locate(const double x)
 		//Given a value x, return a value j such that x is (insofar as possible) centered in the subrange xx[i...j+mm-1], where xx is the stored pointer. The values in xx must be monotonic, either increasing or decreasing. The returned value is not less than 0, nor greater than n-1.
 {
   int ju, jm, j1;
@@ -70,7 +70,7 @@ int Base_interp::locate(const double x)
   return max(0, min(n - mm, j1 - ((mm - 2) >> 1)));
 }
 
-int Base_interp::hunt(const double x)
+inline int Base_interp::hunt(const double x)
 		//Given a value x, return a value j such that x is (insofar as possible) centred in the subrange xx[j..j+mm-1], where xx is the stored pointer. The values in xx must be monotonic, either increasing or decreasing. The returned value is not less than 0, nor greater than n - 1.
 {
   int j1 = jsav, jm, ju, inc = 1;
@@ -135,7 +135,7 @@ struct Spline_interp : Base_interp
   double rawinterp(int j1, double xv);
 };
 
-void Spline_interp::sety2(const double *xv, const double *yv, double yp1, double ypn)
+inline void Spline_interp::sety2(const double *xv, const double *yv, double yp1, double ypn)
 
 		   //This routine stores an array y2[0..n-1] with second derivatives of the interpolating function at the tabulated points pointed to by xv, using function values pointed to by yv. If yp1 and/or ypn are equal to1 X 10^99 or larger, the routine is signalled to set the corresponding boundary condition for a natural spline, with zero second derivatives on that boundary; otherwise, they are the values of the first derivatives at the en  dpoints.
 
@@ -182,7 +182,7 @@ void Spline_interp::sety2(const double *xv, const double *yv, double yp1, double
     }
 }
 
-double Spline_interp::rawinterp(int j1, double x) 
+inline double Spline_interp::rawinterp(int j1, double x) 
 //Given a value x, and using pointers to data xx and yy, and the stored vector of second derivatives y2, this routine returns the cubic spline interpolated value y.
 {
   int klo = j1, khi = j1 + 1;

@@ -6,8 +6,8 @@
 #include <iostream>
 
 #include "const.h"
-//#include "interp_1d.h"
-//#include "dfridr.h"
+#include "interp_1d.h"
+#include "dfridr.h"
 
 using std::vector;
 using std::cout;
@@ -22,7 +22,29 @@ double Pythag(double side1, double side2)
 
   return hyp;
 }
-/*
+
+
+//Function to calculate the components of the normal vector and it's divergence at a point along the interface
+void Normal(Spline_interp rad, Spline_interp height, double arc, double init_step, double *norm_rad, double *norm_vert, double *div_norm, double rad_coord)
+{
+  double rad_deriv_error;
+  double height_deriv_error;
+  double rad_deriv2_error;
+  double height_deriv2_error;
+
+  double rad_deriv = dfridr_interp(rad, arc, init_step, rad_deriv_error);
+  double height_deriv = dfridr_interp(height, arc, init_step, height_deriv_error);
+  double rad_deriv2 = sec_dfridr(rad, arc, init_step, rad_deriv2_error);
+  double height_deriv2 = sec_dfridr(height, arc, init_step, height_deriv2_error);
+
+  *norm_rad = - height_deriv / Pythag(rad_deriv, height_deriv);
+
+  *norm_vert =  rad_deriv / Pythag(rad_deriv, height_deriv);
+
+  *div_norm = 1.0 * (rad_deriv2 * height_deriv - rad_deriv * height_deriv2) / pow(rad_deriv * rad_deriv + height_deriv * height_deriv, 1.5) - height_deriv / (rad_coord * pow(rad_deriv * rad_deriv + height_deriv * height_deriv, 0.5));
+}
+
+
 //Function to calculate divergence of the normal of the interface at each point along it
 double Div_norm(Spline_interp rad, Spline_interp height, double arc, double init_step) //When this is called arc must not be within init_step of the boundaries of the interpolation range 
 {
@@ -61,6 +83,7 @@ double Div_norm(Spline_interp rad, Spline_interp height, double arc, double init
   return curve;
 }
 
+/*
 //Function to calculate a tangent vector to a line at each point along it
 void Tangent(vector<double>* rad, vector<double>* height, vector<double>* tangent_rad, vector<double>* tangent_height, int n_eval)
 {
@@ -78,6 +101,7 @@ void Tangent(vector<double>* rad, vector<double>* height, vector<double>* tangen
   (*tangent_rad)[n_eval - 1] = 1;
   (*tangent_height)[n_eval - 1] = 0;
 }
+*/
 
 //Function to calculate the radial component of the normal vector at a point along it
 double Normal_rad(Spline_interp rad, Spline_interp height, double arc, double init_step)
@@ -129,6 +153,7 @@ double Normal_height(Spline_interp rad, Spline_interp height, double arc, double
   return norm_height;
 }
 
+/*
 //Function to rotate a 2D vector in an anticlockwise direction by an angle theta
 void Rotate(vector<double>* init_vector, vector<double>* final_vector, double theta)
 {
