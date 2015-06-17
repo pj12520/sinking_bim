@@ -1,11 +1,12 @@
 1.0
 1.0
 1.0
-100
-100
+5
+5
 15.0
 0.1
 3.0
+2
 
 Viscosity Ratio
 Bond number
@@ -15,3 +16,4 @@ Number of elements on interface
 Truncation length of interface
 Time step
 Initial height of sphere
+Maximum number of iterations

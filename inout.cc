@@ -23,6 +23,7 @@ void Dimless_in(string file, dimless_in *input)
   read >> input->max_arc; //Truncation length of interface
   read >> input->t_step; //Initial time step
   read >> input->init_height; //Initial height of sphere
+  read >> input ->max_it; //Maximum number of iterations
   read.close();
 
 }

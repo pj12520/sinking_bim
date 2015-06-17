@@ -11,10 +11,7 @@
 #include "build.h"
 #include "solve.h"
 #include "vel.h"
-#include "interp_1d.h"
-//#include "interface_interp.h"
-#include "geo.h"
-
+//
 using std::string;
 
 using std::cout; //Currently only used for debugging purposes. Can be removed when program is functional
@@ -53,48 +50,51 @@ int main()
   int order = 2 * (input.n_int + input.n_sphere - 1);
 
   vector<vector<double> > coeffs(order);
-  for (int i = 0; i < order; i++)
-    {
+    for (int i = 0; i < order; i++)
+  {
       coeffs[i].resize(order);
     }
 
   vector<double> known(order);
 
-  //Build the linear system
-  Build(&coeffs, &known, sphere, interf, input.viscos_rat, input.bond, input.mdr);
+  //Start loop over iterations
+  int it = 0;
+  while(it < input.max_it)
+    {
+      //Build the linear system
+      Build(&coeffs, &known, sphere, interf, input.viscos_rat, input.bond, input.mdr);
 
-  //Testing-Test the creation of the linear system/////////////////////////////////
-  Lin_sys_test(&coeffs, &known);
-  //////////////////////////////////////////////////////////////////////////////////
+      //Testing-Test the creation of the linear system/////////////////////////////////
+      Lin_sys_test(&coeffs, &known);
+      //////////////////////////////////////////////////////////////////////////////////
 
-  //Solve the linear system 
-  vector<double> unknown(order);
+      //Solve the linear system 
+      vector<double> unknown(order);
 
-  Solve(order, &coeffs, &known, &unknown);
-  // for (int i = 0; i < unknown.size(); i++)
-  //{
-  //  cout << i << '\t' << unknown[i] << endl;
-  //}
+      Solve(order, &coeffs, &known, &unknown);
+      // for (int i = 0; i < unknown.size(); i++)
+      //{
+      //cout << i << '\t' << unknown[i] << endl;
+      //}
 
-  //Testing - Test the solution for the sphere velocity ///////////////////////////
-  //  cout << setw(20) << input.viscos_rat << setw(20) << input.init_height << setw(20) << unknown[unknown.size() - 1] << endl;
-  ////////////////////////////////////////////////////////////////////////////////
+      //Testing - Test the solution for the sphere velocity ///////////////////////////
+      cout << setw(20) << input.viscos_rat << setw(20) << input.init_height << setw(20) << unknown[unknown.size() - 1] << endl;
+      ////////////////////////////////////////////////////////////////////////////////
 
-  //Perform the 1st time step
-  Iterate(input.n_int, &unknown, &interf.midpoints, &interf.mid_rad, &interf.mid_vert, &sphere.height, input.t_step);
+      //Perform the 1st time step
+      Iterate(input.n_int, &unknown, &interf.midpoints, &interf.mid_rad, &interf.mid_vert, &sphere.height, input.t_step);
 
-  //Update the properties of the interface
-  Up_interf(&interf);
+      //Update the properties of the interface and sphere
+      Up_interf(&interf);
+      Up_sphere(&sphere);
 
-  //Start for loop  
+      //Testing - Check the new configuration of the system/////////////////////////////////////////////////
+      Config(sphere, interf);
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-  //Build linear system
-
-  //Solve linear system
-
-  //Iterate system in time
-
+      //Iterate the system
+      it = it + 1;
+    }
   return 0;
 }
 

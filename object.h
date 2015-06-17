@@ -85,5 +85,9 @@ void Abscissas(double* lower, double* upper, double max, int n_int, vector<doubl
 
 //Function to update the properaties of the interface
 void Up_interf(surf *interf);
+
+//Function to update the properties of the sphere
+void Up_sphere(particle *sphere);
+
 #endif /* OBJECT_H */
 

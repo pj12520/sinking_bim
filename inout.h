@@ -20,6 +20,7 @@ struct dimless_in
   double max_arc; //Truncation distance along interface
   double t_step; //Initial time step
   double init_height; //Initial height of sphere
+  int max_it; //Maximum number of iterations
 };
 
 //Function to read in the input variables for the case that they are the dimensionless parameters

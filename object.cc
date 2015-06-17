@@ -177,7 +177,7 @@ void Up_interf(surf *interf)
 
   for (int i = 0; i < (*interf).n_int; i++)
     {
-      if (i != 0)
+      if (i != 0 && i != (*interf).n_int - 1)
 	{
 	  new_mid_rad[i] = rad_spline.interp(new_midpoints[i]);
 
@@ -193,17 +193,15 @@ void Up_interf(surf *interf)
 	    {
 	      init_step = 0.5;
 	    }
-
 	  Normal(rad_spline, vert_spline, new_midpoints[i], init_step, &(*interf).mid_norm_rad[i], &(*interf).mid_norm_vert[i], &(*interf).mid_div_norm[i], new_mid_rad[i]);
 	}
-      else
+      else if (i == 0)
 	{
 	  new_mid_rad[i] = 0.0;
 	}
 
       new_mid_vert[i] = vert_spline.interp(new_midpoints[i]);
     }
-
   //Find the new intervals
   double half_width = max_arc / (2.0 * ((*interf).n_int - 1)); //This is half the width of the intermediate intervals. 
 
@@ -246,3 +244,16 @@ void Up_interf(surf *interf)
     }
 
 }
+
+//Function to update the properties of the sphere
+void Up_sphere(particle *sphere)
+{
+  for (int i = 0; i < (*sphere).n_int; i++)
+    {
+      for (int j = 0; j < 4; j++)
+	{
+	  (*sphere).intervals[i].vert[j] = (*sphere).height + cos((*sphere).intervals[i].theta[j]);
+	}
+    }
+}
+    

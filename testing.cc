@@ -55,23 +55,24 @@ void Config(particle sphere, surf interf)
   ofstream interf_out;
   interf_out.open("testing/interf_config.dat");
 
-  interf_out << "Arc" << '\t' << "Radial" << '\t' << "Vertical" << endl;
+  interf_out << "Arc" << '\t' << "Radial" << '\t' << "Vertical" << '\t' << "norm_rad" << '\t' << "norm_vert" << '\t' << "div_norm" << endl;
 
   for (int i = 0; i < interf.n_int; i++)
     {
       for (int j = 0; j < 4; j++)
 	{
-	  interf_out << interf.intervals[i].arc[j] << '\t' << interf.intervals[i].rad[j] << '\t' << interf.intervals[i].vert[j] << endl;
+	  interf_out << interf.intervals[i].arc[j] << '\t' << interf.intervals[i].rad[j] << '\t' << interf.intervals[i].vert[j] << '\t' << interf.intervals[i].norm_rad[j] << '\t' << interf.intervals[i].norm_vert[j] << '\t' << interf.intervals[i].div_norm[j] << endl;
 	}
     }
   interf_out.close();
 
   interf_out.open("testing/interf_interv.dat");
 
-  interf_out << "Interval" << '\t' << "Lower Bound" << '\t' << "Midpoint" << '\t' << "Upper Bound" << endl;
+  interf_out << "Interval" << '\t' << "Lower Bound" << '\t' << "Midpoint" << '\t' << "Upper Bound" << '\t' << "Radial" << '\t' << "Vertical" << '\t' << "norm_rad" << '\t' << "norm_vert" << '\t' << "div_norm" << endl;
+
   for (int i = 0; i < interf.n_int; i++)
     {
-      interf_out << i << '\t' << interf.intervals[i].lower << '\t' << interf.midpoints[i] << '\t' << interf.intervals[i].upper << endl;
+      interf_out << i << '\t' << interf.intervals[i].lower << '\t' << interf.midpoints[i] << '\t' << interf.intervals[i].upper << '\t' << interf.mid_rad[i] << '\t' << interf.mid_vert[i] << '\t' << interf.mid_norm_rad[i] << '\t' << interf.mid_norm_vert[i] << '\t' << interf.mid_div_norm[i] << endl;
     }
   interf_out.close();
 }

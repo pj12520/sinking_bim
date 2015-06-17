@@ -110,7 +110,6 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 	  if (i == 0)
 	    {
 	      A_axisource(source_vert, &(interf.intervals[j].vert), &(interf.intervals[j].rad), viscos_rat, &matrix_A21, &matrix_A22);
-
 	      //Perform the Gauss-Legendre integration
 	      for (int k = 0; k < 4; k++)
 		{
@@ -123,8 +122,8 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 
 	      if (j == i)
 		{
-		  coeffs[i][j] += (1.0 + viscos_rat) / 2.0;
-		  coeffs[i + interf.n_int][j + interf.n_int] += (1.0 + viscos_rat) / 2.0;
+		  coeffs[i][j] -= (1.0 + viscos_rat) / 2.0;
+		  coeffs[i + interf.n_int][j + interf.n_int] -= (1.0 + viscos_rat) / 2.0;
 		}
 	    }
 
@@ -160,8 +159,8 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 
 	      if (j == i)
 		{
-		  coeffs[i][j] += (1.0 + viscos_rat) / 2.0;
-		  coeffs[i + interf.n_int][j + interf.n_int] += (1.0 + viscos_rat) / 2.0;
+		  coeffs[i][j] -= (1.0 + viscos_rat) / 2.0;
+		  coeffs[i + interf.n_int][j + interf.n_int] -= (1.0 + viscos_rat) / 2.0;
 		}
 	    }
 	}
@@ -248,8 +247,8 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 	      //Perform the Gauss-Legendre integration (Riley Hobson and Bence 2006 page 1006)
 	      for (int k = 0; k < 4; k++)
 		{
-		  coeffs[i + 2 * interf.n_int + sphere.n_int][j] += matrix_A21[k] * interf.intervals[j].rad[k] * Gauss_int_wts[k];
-		  coeffs[i + 2 * interf.n_int + sphere.n_int][j + interf.n_int] += matrix_A22[k] * interf.intervals[j].rad[k] * Gauss_int_wts[k];
+		  coeffs[i + 2 * interf.n_int + sphere.n_int][j] -= matrix_A21[k] * interf.intervals[j].rad[k] * Gauss_int_wts[k];
+		  coeffs[i + 2 * interf.n_int + sphere.n_int][j + interf.n_int] -= matrix_A22[k] * interf.intervals[j].rad[k] * Gauss_int_wts[k];
 		}
 
 	      coeffs[i + 2 * interf.n_int + sphere.n_int][j] = interf.intervals[j].width * coeffs[i + 2 * interf.n_int + sphere.n_int][j] / 2.0;
@@ -266,11 +265,11 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 	      //Perform the Gauss-Legendre integration
 	      for (int k = 0; k < 4; k++)
 		{
-		  coeffs[i + 2 * interf.n_int][j] += matrix_A11[k] * interf.intervals[j].rad[k] * Gauss_int_wts[k];
-		  coeffs[i + 2 * interf.n_int][j + interf.n_int] += matrix_A12[k] * interf.intervals[j].rad[k] * Gauss_int_wts[k];
+		  coeffs[i + 2 * interf.n_int][j] -= matrix_A11[k] * interf.intervals[j].rad[k] * Gauss_int_wts[k];
+		  coeffs[i + 2 * interf.n_int][j + interf.n_int] -= matrix_A12[k] * interf.intervals[j].rad[k] * Gauss_int_wts[k];
 		  //		  cout << i << '\t' << j << '\t' << k << '\t' << matrix_A11[k] << '\t' << matrix_A12[k] << endl; 
-		  coeffs[i + 2 * interf.n_int + sphere.n_int][j] += matrix_A21[k] * interf.intervals[j].rad[k] * Gauss_int_wts[k];
-		  coeffs[i + 2 * interf.n_int + sphere.n_int][j + interf.n_int] += matrix_A22[k] * interf.intervals[j].rad[k] * Gauss_int_wts[k];
+		  coeffs[i + 2 * interf.n_int + sphere.n_int][j] -= matrix_A21[k] * interf.intervals[j].rad[k] * Gauss_int_wts[k];
+		  coeffs[i + 2 * interf.n_int + sphere.n_int][j + interf.n_int] -= matrix_A22[k] * interf.intervals[j].rad[k] * Gauss_int_wts[k];
 		}
 	      //      cout << i << '\t' << j << '\t' << coeffs[i + 2 * interf.n_int][j] << '\t' << coeffs[i + 2 * interf.n_int][j + interf.n_int] << endl;
 
