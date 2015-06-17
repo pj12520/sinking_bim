@@ -72,13 +72,13 @@ int main()
       vector<double> unknown(order);
 
       Solve(order, &coeffs, &known, &unknown);
-      // for (int i = 0; i < unknown.size(); i++)
-      //{
-      //cout << i << '\t' << unknown[i] << endl;
-      //}
+      for (int i = 0; i < unknown.size(); i++)
+	{
+	   	  cout << i << '\t' << unknown[i] << endl;
+	}
 
       //Testing - Test the solution for the sphere velocity ///////////////////////////
-      cout << setw(20) << input.viscos_rat << setw(20) << input.init_height << setw(20) << unknown[unknown.size() - 1] << endl;
+            cout << setw(20) << sphere.height << setw(20) << unknown[unknown.size() - 1] << endl;
       ////////////////////////////////////////////////////////////////////////////////
 
       //Perform the 1st time step

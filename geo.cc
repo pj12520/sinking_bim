@@ -42,6 +42,8 @@ void Normal(Spline_interp rad, Spline_interp height, double arc, double init_ste
   *norm_vert =  rad_deriv / Pythag(rad_deriv, height_deriv);
 
   *div_norm = 1.0 * (rad_deriv2 * height_deriv - rad_deriv * height_deriv2) / pow(rad_deriv * rad_deriv + height_deriv * height_deriv, 1.5) - height_deriv / (rad_coord * pow(rad_deriv * rad_deriv + height_deriv * height_deriv, 0.5));
+
+  //  cout << arc << " " << rad_coord << " " << *norm_rad << " " << *norm_vert << " " << *div_norm << endl;
 }
 
 

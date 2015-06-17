@@ -10,6 +10,7 @@
 #include "const.h"
 #include "interp_1d.h"
 #include "geo.h"
+#include "interp_curve.h"
 
 using std::vector;
 using math_const::PI;
@@ -141,6 +142,7 @@ void Abscissas(double* lower, double* upper, double max, int n_int, vector<doubl
     {
       *lower = (2.0 * n_int - 3.0) * half_width;
       *upper = max;
+      //*upper = max + half_width;
     }
   else
     {
@@ -156,12 +158,13 @@ void Abscissas(double* lower, double* upper, double max, int n_int, vector<doubl
       (*points)[j] = (*upper + *lower + Gauss_int_pts[j] * (*upper - *lower)) / 2.0;
     }
 }
+
 //Function to update the properaties of the interface
 void Up_interf(surf *interf)
 {
   //Describe the interface using a cubic spline
-  Spline_interp rad_spline((*interf).midpoints, (*interf).mid_rad, 1.0, 1.0); //Structures that contain the interpolation routines
-  Spline_interp vert_spline((*interf).midpoints, (*interf).mid_vert, 0.0, 0.0);
+  Spline_interp rad_spline((*interf).midpoints, (*interf).mid_rad, 1.0, fprime(&(*interf).midpoints[(*interf).n_int - 1], &(*interf).mid_rad[(*interf).n_int - 1], -1)); //Structures that contain the interpolation routines
+  Spline_interp vert_spline((*interf).midpoints, (*interf).mid_vert, 0.0, fprime(&(*interf).midpoints[(*interf).n_int - 1], &(*interf).mid_vert[(*interf).n_int - 1], -1));
 
   //Find the new maximum value of the arc-length
   double max_arc = (*interf).midpoints[(*interf).n_int - 1];
@@ -177,9 +180,10 @@ void Up_interf(surf *interf)
 
   for (int i = 0; i < (*interf).n_int; i++)
     {
-      if (i != 0 && i != (*interf).n_int - 1)
-	{
+      //      if (i != 0 && i != (*interf).n_int - 1)
+      //{
 	  new_mid_rad[i] = rad_spline.interp(new_midpoints[i]);
+	  new_mid_vert[i] = vert_spline.interp(new_midpoints[i]);
 
 	  if (new_midpoints[i] < 0.5)
 	    {
@@ -193,15 +197,16 @@ void Up_interf(surf *interf)
 	    {
 	      init_step = 0.5;
 	    }
-	  Normal(rad_spline, vert_spline, new_midpoints[i], init_step, &(*interf).mid_norm_rad[i], &(*interf).mid_norm_vert[i], &(*interf).mid_div_norm[i], new_mid_rad[i]);
-	}
-      else if (i == 0)
+	  Normal(rad_spline, vert_spline, new_midpoints[i], 0.5, &(*interf).mid_norm_rad[i], &(*interf).mid_norm_vert[i], &(*interf).mid_div_norm[i], new_mid_rad[i]);
+	  /*	}
+        else 
 	{
-	  new_mid_rad[i] = 0.0;
-	}
+	  new_mid_rad[i] = (*interf).mid_rad[i];
+	  new_mid_vert[i] = (*interf).mid_vert[i];
+	  }*/
 
-      new_mid_vert[i] = vert_spline.interp(new_midpoints[i]);
     }
+
   //Find the new intervals
   double half_width = max_arc / (2.0 * ((*interf).n_int - 1)); //This is half the width of the intermediate intervals. 
 
@@ -212,26 +217,59 @@ void Up_interf(surf *interf)
 
 
       //Set radial and vertical components of the integration points in each interval and components and divergence of normal vectors
-      for (int j = 0; j < 4; j++)
+      if (i != (*interf).n_int - 1)
 	{
-	  (*interf).intervals[i].rad[j] = rad_spline.interp((*interf).intervals[i].arc[j]);
-	  (*interf).intervals[i].vert[j] = vert_spline.interp((*interf).intervals[i].arc[j]);
-
-	  if ((*interf).intervals[i].arc[j] < 0.5)
+	  for (int j = 0; j < 4; j++)
 	    {
-	      init_step = (*interf).intervals[i].arc[j] / 2.0;
-	    }
-	  else if (max_arc - (*interf).intervals[i].arc[j] < 0.5)
-	    {
-	      init_step = (max_arc - (*interf).intervals[i].arc[j]) / 2.0;
-	    }
-	  else
-	    {
-	      init_step = 0.5;
-	    }
+	      (*interf).intervals[i].rad[j] = rad_spline.interp((*interf).intervals[i].arc[j]);
+	      (*interf).intervals[i].vert[j] = vert_spline.interp((*interf).intervals[i].arc[j]);
 
-	  Normal(rad_spline, vert_spline, (*interf).intervals[i].arc[j], init_step, &(*interf).intervals[i].norm_rad[j], &(*interf).intervals[i].norm_vert[j], &(*interf).intervals[i].div_norm[j], (*interf).intervals[i].rad[j]);
+	      if ((*interf).intervals[i].arc[j] < 0.5)
+		{
+		  init_step = (*interf).intervals[i].arc[j] / 2.0;
+		}
+	      else if (max_arc - (*interf).intervals[i].arc[j] < 0.5)
+		{
+		  init_step = (max_arc - (*interf).intervals[i].arc[j]) / 2.0;
+		}
+	      else
+		{
+		  init_step = 0.5;
+		}
+	      Normal(rad_spline, vert_spline, (*interf).intervals[i].arc[j], 0.5, &(*interf).intervals[i].norm_rad[j], &(*interf).intervals[i].norm_vert[j], &(*interf).intervals[i].div_norm[j], (*interf).intervals[i].rad[j]);
+	    }
+	}
+      else
+	{
+	  for (int j = 0; j < 2; j++)
+	    {
+	      (*interf).intervals[i].rad[j] = rad_spline.interp((*interf).intervals[i].arc[j]);
+	      (*interf).intervals[i].vert[j] = vert_spline.interp((*interf).intervals[i].arc[j]);
 
+	      if ((*interf).intervals[i].arc[j] < 0.5)
+		{
+		  init_step = (*interf).intervals[i].arc[j] / 2.0;
+		}
+	      else if (max_arc - (*interf).intervals[i].arc[j] < 0.5)
+		{
+		  init_step = (max_arc - (*interf).intervals[i].arc[j]) / 2.0;
+		}
+	      else
+		{
+		  init_step = 0.5;
+		}
+	      Normal(rad_spline, vert_spline, (*interf).intervals[i].arc[j], init_step, &(*interf).intervals[i].norm_rad[j], &(*interf).intervals[i].norm_vert[j], &(*interf).intervals[i].div_norm[j], (*interf).intervals[i].rad[j]);
+	    }
+	  
+	  for (int j = 2; j < 4; j++)
+	    {
+	      (*interf).intervals[i].rad[j] = (*interf).intervals[i].rad[1] + (*interf).intervals[i].arc[j] - (*interf).intervals[i].arc[1];
+	      (*interf).intervals[i].vert[j] = (*interf).intervals[i].vert[1];
+
+	      (*interf).intervals[i].norm_rad[j] = 0.0;
+	      (*interf).intervals[i].norm_vert[j] = 1.0;
+	      (*interf).intervals[i].div_norm[j] = 0.0;
+	    }
 	}
     }
 

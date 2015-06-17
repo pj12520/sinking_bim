@@ -199,19 +199,31 @@ double sec_dfridr(Spline_interp spline, const double x, const double h, double &
       a[k].resize(ntab);
     }
 
-  if (h == 0.0) throw("h must be nonzero in dfridr.");
+  if (h == 0.0) 
+    {
+      cout << "Error in dfridr_interp" << endl;
+      throw("h must be nonzero in dfridr.");
+    }
   hh = h;
-
-  func_plus = spline.interp(x + hh);
 
   //  if (x - hh < 0)
   //{
-  //  func_minus = spline.interp(-(x - hh));
+  //  cout << "Calculate function at radial coordinate less than 0" << endl;
   //}
-  //  else
+  //  else if (x + hh > 5)
   //{
+  //  cout << "Calculate function at radial coordinate greater than 5" << endl;
+  //}
+  func_plus = spline.interp(x + hh);
+
+    if (x - hh < 0)
+  {
+  func_minus = spline.interp(-(x - hh));
+  }
+  else
+  {
   func_minus = spline.interp(x - hh);
-  //  }
+  }
 
   a[0][0] = (func_plus - func_minus) / (2.0 * hh);
   err = big;
@@ -223,14 +235,14 @@ double sec_dfridr(Spline_interp spline, const double x, const double h, double &
 
       func_plus = spline.interp(x + hh);
 
-      //  if (x - hh < 0)
-      //{
-      //  func_minus = spline.interp(-(x - hh));
-      //}
-      //      else
-      //{
+        if (x - hh < 0)
+      {
+        func_minus = spline.interp(-(x - hh));
+      }
+            else
+      {
       func_minus = spline.interp(x - hh);
-      //	}
+      	}
 
       a[0][i] = (func_plus - func_minus) / (2.0 * hh); //Try new, smaller stepsize.
       fac = con2;

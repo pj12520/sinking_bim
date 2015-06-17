@@ -146,7 +146,7 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 		{
 		  coeffs[i][j] += (matrix_A11[k] + h[k]) * interf.intervals[j].rad[k] * Gauss_int_wts[k];
 		  coeffs[i][j + interf.n_int] += matrix_A12[k] * interf.intervals[j].rad[k] * Gauss_int_wts[k];
-
+		  
 		  coeffs[i + interf.n_int][j] += matrix_A21[k] * interf.intervals[j].rad[k] * Gauss_int_wts[k];
 		  coeffs[i + interf.n_int][j + interf.n_int] += matrix_A22[k] * interf.intervals[j].rad[k] * Gauss_int_wts[k];
 		}
@@ -408,13 +408,12 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 		  known[i] -= interf.intervals[j].width * temp1[j] / 2.0 - 9.0 * (interf.mid_div_norm[j] - bond* interf.mid_vert[j]) * ellip1_b0 * interf.mid_norm_rad[j] * interf.midpoints[interf.n_int - 1] / (8.0 * PI * mdr * bond * source_rad * (interf.n_int - 1.0)) * (log(interf.midpoints[interf.n_int - 1] / (4.0 * source_rad * (interf.n_int - 1.0))) - 1.0);
 
 		  known[i + interf.n_int] -= interf.intervals[j].width * temp2[j] / 2.0 - 9.0 * (interf.mid_div_norm[j] - bond* interf.mid_vert[j]) * ellip1_b0 * interf.mid_norm_rad[j] * interf.midpoints[interf.n_int - 1] / (8.0 * PI * mdr * bond * source_rad * (interf.n_int - 1.0)) * (log(interf.midpoints[interf.n_int - 1] / (4.0 * source_rad * (interf.n_int - 1.0))) - 1.0);
-		  //		  cout << i << " " << known[i + interf.n_int] << " " << j << " " << temp2[j] << endl;
 		}	      
 
 	      else
 		{
 		  known[i] -= interf.intervals[j].width * temp1[j] / 2.0; 
-		  known[i + interf.n_int] -= interf.intervals[j].width * temp1[j] / 2.0; 
+		  known[i + interf.n_int] -= interf.intervals[j].width * temp2[j] / 2.0; 
 		}
 	    }
 	}
@@ -470,7 +469,7 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 	      C(source_vert, source_rad_2, source_rad, &(interf.intervals[j].vert), &(interf.intervals[j].rad), (&interf.intervals[j].div_norm), bond, mdr, sing_test, (&interf.intervals[j].norm_rad), (&interf.intervals[j].norm_vert), &(temp1[j]), &(temp2[j]), interf.mid_div_norm[j], interf.mid_vert[j], interf.mid_norm_rad[j], interf.mid_norm_vert[j], &(interf.intervals[j].arc), interf.midpoints[j], &Gauss_int_wts);
 
 	      known[i + 2 * interf.n_int] -= interf.intervals[j].width * temp1[j] / 2.0; 
-	      known[i + 2 * interf.n_int + sphere.n_int] -= interf.intervals[j].width * temp1[j] / 2.0; 
+	      known[i + 2 * interf.n_int + sphere.n_int] -= interf.intervals[j].width * temp2[j] / 2.0; 
 	    }
 	}
 

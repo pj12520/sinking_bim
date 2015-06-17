@@ -138,7 +138,7 @@ void A(vector<double>* pos_rad, double source_vert, vector<double>* pos_vert, do
 
       a14[k] = A14(viscos_rat, vert_diff_3, sum_3_2, diff);
       a16[k] = A16(viscos_rat, alpha_2, sum_3_2, diff_2, vert_diff_3);
-      //            cout << k << '\t' << a4[k] << '\t' << source_rad << '\t' << source_vert << '\t' << (*pos_rad)[k] << '\t' << (*pos_vert)[k] << '\t' << diff << endl;
+      //                  cout << k << '\t' << a4[k] << '\t' << source_rad << '\t' << source_vert << '\t' << (*pos_rad)[k] << '\t' << (*pos_vert)[k] << '\t' << diff << endl;
       double arc_diff;
       if (sing_test == 1) //A11 needs to be handled differently as it is singular in the range of integration
 	{
@@ -246,7 +246,7 @@ void C_axisource(double source_vert, vector<double>* pos_vert, vector<double>* p
 
       vector_C2[k] = Vector_C2_axisource((*pos_div_norm)[k], bond, (*pos_vert)[k], mdr, alpha, vert_diff_2, alpha_2);
 
-      *temp2 += vector_C2[k] * (*Gauss_int_wts)[k];
+      *temp2 += vector_C2[k] * (*pos_rad)[k] * (*Gauss_int_wts)[k];
     }
 }
 
@@ -300,9 +300,9 @@ void C(double source_vert, double source_rad_2, double source_rad, vector<double
 
 	  double arc_diff = (*pos_arc)[k] - midpoint;
 
-	  *temp1 += (vector_C1[k] + j1[k] * log(fabs(arc_diff) * sum / (2.0 * source_rad * diff)) + (9.0 * (mid_div_norm - bond * mid_vert) * ellip1_b0 * mid_norm_rad / (8.0 * PI * mdr * bond * source_rad) - j1[k]) * log(fabs(arc_diff) / 2.0 * source_rad)) * (*Gauss_int_wts)[k];
+	  *temp1 += (vector_C1[k] + j1[k] * log(fabs(arc_diff) * sum / (2.0 * source_rad * diff)) + (9.0 * (mid_div_norm - bond * mid_vert) * ellip1_b0 * mid_norm_rad / (8.0 * PI * mdr * bond * source_rad) - j1[k]) * log(fabs(arc_diff) / 2.0 * source_rad)) * (*pos_rad)[k] * (*Gauss_int_wts)[k];
 
-	  *temp2 += (vector_C2[k] + j2[k] * log(fabs(arc_diff) * sum / (2.0 * source_rad * diff)) + (9.0 * (mid_div_norm - bond * mid_vert) * ellip1_b0 * mid_norm_vert / (8.0 * PI * mdr * bond * source_rad) - j2[k]) * log(fabs(arc_diff) / 2.0 * source_rad)) * (*Gauss_int_wts)[k];
+	  *temp2 += (vector_C2[k] + j2[k] * log(fabs(arc_diff) * sum / (2.0 * source_rad * diff)) + (9.0 * (mid_div_norm - bond * mid_vert) * ellip1_b0 * mid_norm_vert / (8.0 * PI * mdr * bond * source_rad) - j2[k]) * log(fabs(arc_diff) / 2.0 * source_rad)) * (*pos_rad)[k] * (*Gauss_int_wts)[k];
 	}
 
       else

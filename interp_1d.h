@@ -205,4 +205,6 @@ inline double Spline_interp::rawinterp(int j1, double x)
   return y;
 }
 
+
 #endif /* INTERP_1D_H */
+ 
