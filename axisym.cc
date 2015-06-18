@@ -288,7 +288,7 @@ double Vector_C1_reg(double vert_diff, double norm_rad, double pos_rad, double n
 {
   double term1 = vert_diff * (vert_diff * norm_rad + pos_rad * norm_vert);
 
-  double term2 = norm_rad * (2.0 * beta_4 - alpha_2 * (alpha_2 + vert_diff_2));
+  double term2 = norm_rad * (beta_4 - alpha_2 * (alpha_2 + vert_diff_2));
 
   double term3 = norm_vert * vert_diff * (source_rad * beta_2 - pos_rad * alpha_2);
 
