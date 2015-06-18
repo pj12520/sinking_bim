@@ -182,22 +182,29 @@ void Up_interf(surf *interf)
     {
       //      if (i != 0 && i != (*interf).n_int - 1)
       //{
+      if (i == 0)
+	{
+	  new_mid_rad[i] = 0.0;
+	}
+      else
+	{
 	  new_mid_rad[i] = rad_spline.interp(new_midpoints[i]);
-	  new_mid_vert[i] = vert_spline.interp(new_midpoints[i]);
+	}
+      new_mid_vert[i] = vert_spline.interp(new_midpoints[i]);
 
-	  if (new_midpoints[i] < 0.5)
-	    {
-	      init_step = new_midpoints[i] / 2.0;
-	    }
-	  else if (max_arc - new_midpoints[i] < 0.5)
-	    {
-	      init_step = (max_arc - new_midpoints[i]) / 2.0;
-	    }
-	  else
-	    {
-	      init_step = 0.5;
-	    }
-	  Normal(rad_spline, vert_spline, new_midpoints[i], 0.5, &(*interf).mid_norm_rad[i], &(*interf).mid_norm_vert[i], &(*interf).mid_div_norm[i], new_mid_rad[i]);
+      if (new_midpoints[i] < 0.5)
+	{
+	  init_step = new_midpoints[i] / 2.0;
+	}
+      else if (max_arc - new_midpoints[i] < 0.5)
+	{
+	  init_step = (max_arc - new_midpoints[i]) / 2.0;
+	}
+      else
+	{
+	  init_step = 0.5;
+	}
+      Normal(rad_spline, vert_spline, new_midpoints[i], 0.5, &(*interf).mid_norm_rad[i], &(*interf).mid_norm_vert[i], &(*interf).mid_div_norm[i], new_mid_rad[i]);
 	  //	  cout << (*interf).mid_norm_rad[i] << endl;
 	  /*	}
         else 
