@@ -252,7 +252,7 @@ double Vector_C1(double alpha_2, double vert_diff_2, double norm_rad, double pos
 {
   double term1 = (alpha_2 + vert_diff_2) * norm_rad + pos_rad * vert_diff * norm_vert;
 
-  double term2 = norm_rad * (2.0 * beta_4 - alpha_2 * (alpha_2 + vert_diff_2));
+  double term2 = norm_rad * (beta_4 - alpha_2 * (alpha_2 + vert_diff_2));
 
   double term3 = norm_vert * vert_diff * (source_rad * beta_2 - pos_rad * alpha_2);
 
