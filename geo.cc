@@ -36,7 +36,7 @@ void Normal(Spline_interp rad, Spline_interp height, double arc, double init_ste
   double height_deriv = dfridr_interp(height, arc, init_step, height_deriv_error);
   double rad_deriv2 = sec_dfridr(rad, arc, init_step, rad_deriv2_error);
   double height_deriv2 = sec_dfridr(height, arc, init_step, height_deriv2_error);
-
+  //cout << rad_deriv << " " << height_deriv << " " << rad_deriv2 << " " << height_deriv2 << endl;
   *norm_rad = - height_deriv / Pythag(rad_deriv, height_deriv);
 
   *norm_vert =  rad_deriv / Pythag(rad_deriv, height_deriv);
