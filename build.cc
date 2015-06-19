@@ -401,13 +401,13 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 		  sing_test = 0;
 		}
 
-	      C(source_vert, source_rad_2, source_rad, &(interf.intervals[j].vert), &(interf.intervals[j].rad), (&interf.intervals[j].div_norm), bond, mdr, sing_test, (&interf.intervals[j].norm_rad), (&interf.intervals[j].norm_vert), &(temp1[j]), &(temp2[j]), interf.mid_div_norm[j], interf.mid_vert[j], interf.mid_norm_rad[j], interf.mid_norm_vert[j], &(interf.intervals[j].arc), interf.midpoints[j], &Gauss_int_wts);
+	      C(source_vert, source_rad_2, source_rad, &(interf.intervals[j].vert), &(interf.intervals[j].rad), &(interf.intervals[j].div_norm), bond, mdr, sing_test, &(interf.intervals[j].norm_rad), &(interf.intervals[j].norm_vert), &(temp1[j]), &(temp2[j]), interf.mid_div_norm[i], interf.mid_vert[i], interf.mid_norm_rad[i], interf.mid_norm_vert[i], &(interf.intervals[j].arc), interf.midpoints[i], &Gauss_int_wts);
 
 	      if (i == j)
 		{
-		  known[i] -= interf.intervals[j].width * temp1[j] / 2.0 + 9.0 * (interf.mid_div_norm[j] + bond * interf.mid_vert[j]) * ellip1_b0 * interf.mid_norm_rad[j] * interf.midpoints[interf.n_int - 1] / (4.0 * PI * mdr * bond * (interf.n_int - 1.0)) * (log(interf.midpoints[interf.n_int - 1] / (4.0 * source_rad * (interf.n_int - 1.0))) - 1.0);
+		  known[i] -= interf.intervals[j].width * temp1[j] / 2.0 + 9.0 * (interf.mid_div_norm[j] - bond * interf.mid_vert[j]) * ellip1_b0 * interf.mid_norm_rad[j] * interf.midpoints[interf.n_int - 1] / (4.0 * PI * mdr * bond * (interf.n_int - 1.0)) * (log(interf.midpoints[interf.n_int - 1] / (4.0 * source_rad * (interf.n_int - 1.0))) - 1.0);
 
-		  known[i + interf.n_int] -= interf.intervals[j].width * temp2[j] / 2.0 + 9.0 * (interf.mid_div_norm[j] + bond * interf.mid_vert[j]) * ellip1_b0 * interf.mid_norm_vert[j] * interf.midpoints[interf.n_int - 1] / (4.0 * PI * mdr * bond * (interf.n_int - 1.0)) * (log(interf.midpoints[interf.n_int - 1] / (4.0 * source_rad * (interf.n_int - 1.0))) - 1.0);
+		  known[i + interf.n_int] -= interf.intervals[j].width * temp2[j] / 2.0 + 9.0 * (interf.mid_div_norm[j] - bond * interf.mid_vert[j]) * ellip1_b0 * interf.mid_norm_vert[j] * interf.midpoints[interf.n_int - 1] / (4.0 * PI * mdr * bond * (interf.n_int - 1.0)) * (log(interf.midpoints[interf.n_int - 1] / (4.0 * source_rad * (interf.n_int - 1.0))) - 1.0);
 		}	      
 
 	      else
@@ -419,9 +419,6 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 	}
     }
 
-  //Resize the temp vectors
-  temp1.resize(sphere.n_int);
-  temp2.resize(sphere.n_int);
   //Loop over the source points on the sphere
   for (int i = 0; i < sphere.n_int; i++)
     {

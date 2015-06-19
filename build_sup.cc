@@ -296,7 +296,7 @@ void C(double source_vert, double source_rad_2, double source_rad, vector<double
 	  vector_C2[k] = Vector_C2_reg(source_rad, vert_diff, (*pos_norm_rad)[k], ellip1[k], alpha_2, (*pos_rad)[k], beta_2, (*pos_norm_vert)[k], ellip2[k], diff, ellip1_reg[k], prefac[k]);
 
 	  j1[k] = J1(prefac[k], alpha_2, (*pos_norm_rad)[k]);
-	  j2[k] = J2(prefac[k], (*pos_norm_vert)[k]);
+	  j2[k] = J2(prefac[k], (*pos_norm_vert)[k], beta_2);
 
 	  double arc_diff = (*pos_arc)[k] - midpoint;
 

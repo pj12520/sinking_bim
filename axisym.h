@@ -107,6 +107,6 @@ double J1(double prefac, double alpha_2, double norm_rad);
 double Vector_C2_reg(double source_rad, double vert_diff, double norm_rad, double ellip1, double alpha_2, double pos_rad, double beta_2, double norm_vert, double ellip2, double diff, double ellip1_reg, double prefac);
 
 //Function to calculate the function j2 as defined in the notes
-double J2(double prefac, double norm_vert);
+double J2(double prefac, double norm_vert, double beta_2);
 
 #endif /* AXISYM_H */

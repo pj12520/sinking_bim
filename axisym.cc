@@ -320,9 +320,9 @@ double Vector_C2_reg(double source_rad, double vert_diff, double norm_rad, doubl
 }
 
 //Function to calculate the function j2 as defined in the notes
-double J2(double prefac, double norm_vert)
+double J2(double prefac, double norm_vert, double beta_2)
 {
-  double j2 = 2.0 * prefac * norm_vert * ellip1_b0;
+  double j2 = 2.0 * prefac * norm_vert * ellip1_b0 * beta_2;
 
   return j2;
 }
