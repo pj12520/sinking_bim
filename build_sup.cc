@@ -232,7 +232,7 @@ void B(vector<double>* pos_rad, double source_vert, vector<double>* pos_vert, ve
 }
 
 //Function to calculate the components of C when the source point is on axis
-void C_axisource(double source_vert, vector<double>* pos_vert, vector<double>* pos_rad, vector<double>* pos_div_norm, double *temp2, vector<double>* Gauss_int_wts, double bond, double mdr)
+void C_axisource(double source_vert, vector<double>* pos_vert, vector<double>* pos_rad, vector<double>* pos_div_norm, double *temp2, vector<double>* Gauss_int_wts, double bond, double mdr, vector<double>* norm_vert, vector<double>* norm_rad)
 {
   vector<double> vector_C2(4);  
   //Loop over the integration points in the interval and find the values of the integrands
@@ -244,7 +244,7 @@ void C_axisource(double source_vert, vector<double>* pos_vert, vector<double>* p
       double alpha_2 = Alpha_2_axisource((*pos_rad)[k], vert_diff_2);
       double alpha = sqrt(alpha_2);
 
-      vector_C2[k] = Vector_C2_axisource((*pos_div_norm)[k], bond, (*pos_vert)[k], mdr, alpha, vert_diff_2, alpha_2);
+      vector_C2[k] = Vector_C2_axisource((*pos_div_norm)[k], bond, (*pos_vert)[k], mdr, alpha, vert_diff_2, alpha_2, (*norm_vert)[k], (*pos_rad)[k], vert_diff, (*norm_rad)[k]);
 
       *temp2 += vector_C2[k] * (*pos_rad)[k] * (*Gauss_int_wts)[k];
     }

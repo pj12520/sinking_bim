@@ -386,7 +386,7 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 	  //For the case that the source point is on axis
 	  if (i == 0)
 	    {
-	      C_axisource(source_vert, &(interf.intervals[j].vert), &(interf.intervals[j].rad), &(interf.intervals[j].div_norm), &(temp2[j]), &Gauss_int_wts, bond, mdr);
+	      C_axisource(source_vert, &(interf.intervals[j].vert), &(interf.intervals[j].rad), &(interf.intervals[j].div_norm), &(temp2[j]), &Gauss_int_wts, bond, mdr, &(interf.intervals[j].norm_vert), &(interf.intervals[j].norm_rad));
 
 	      known[i + interf.n_int] -= interf.intervals[j].width * temp2[j] / 2.0;
 	    }
@@ -453,7 +453,7 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 	  //For the case that the source point is on axis
 	  if (i == 0 || i == sphere.n_int - 1)
 	    {
-	      C_axisource(source_vert, &(interf.intervals[j].vert), &(interf.intervals[j].rad), &(interf.intervals[j].div_norm), &(temp2[j]), &Gauss_int_wts, bond, mdr);
+	      C_axisource(source_vert, &(interf.intervals[j].vert), &(interf.intervals[j].rad), &(interf.intervals[j].div_norm), &(temp2[j]), &Gauss_int_wts, bond, mdr, &(interf.intervals[j].norm_vert), &(interf.intervals[j].norm_rad));
 
 	      known[i + 2 * interf.n_int + sphere.n_int] -= interf.intervals[j].width * temp2[j] / 2.0;
 	    }

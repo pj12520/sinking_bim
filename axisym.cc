@@ -276,9 +276,9 @@ double Vector_C2(double beta_2, double norm_vert, double pos_rad, double vert_di
 }
 
 //Function to calculate the 2 component of C when the source point is on axis
-double Vector_C2_axisource(double div_norm, double bond, double pos_vert, double mdr, double alpha, double vert_diff_2, double alpha_2)
+double Vector_C2_axisource(double div_norm, double bond, double pos_vert, double mdr, double alpha, double vert_diff_2, double alpha_2, double norm_vert, double pos_rad, double vert_diff, double norm_rad)
 {
-  double vector_C2 = 9.0 * (div_norm - bond * pos_vert) / (8.0 * mdr * bond * alpha) * (1.0 + vert_diff_2 / alpha_2);
+  double vector_C2 = 9.0 * (div_norm - bond * pos_vert) / (8.0 * mdr * bond * alpha) * (norm_vert + (vert_diff_2 * norm_vert - pos_rad * vert_diff * norm_rad) / alpha_2);
 
   return vector_C2;
 }
@@ -300,7 +300,7 @@ double Vector_C1_reg(double vert_diff, double norm_rad, double pos_rad, double n
 //Function to calculate the function j1 as defined in the notes
 double J1(double prefac, double alpha_2, double norm_rad)
 {
-  double j1 = 2.0 * prefac * alpha_2 * ellip1_b0 * norm_rad;
+  double j1 = prefac * alpha_2 * ellip1_b0 * norm_rad;
 
   return j1;
 }
@@ -322,7 +322,7 @@ double Vector_C2_reg(double source_rad, double vert_diff, double norm_rad, doubl
 //Function to calculate the function j2 as defined in the notes
 double J2(double prefac, double norm_vert, double beta_2)
 {
-  double j2 = 2.0 * prefac * norm_vert * ellip1_b0 * beta_2;
+  double j2 = prefac * norm_vert * ellip1_b0 * beta_2;
 
   return j2;
 }
