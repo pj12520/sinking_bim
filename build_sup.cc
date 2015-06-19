@@ -300,9 +300,9 @@ void C(double source_vert, double source_rad_2, double source_rad, vector<double
 
 	  double arc_diff = (*pos_arc)[k] - midpoint;
 
-	  *temp1 += (vector_C1[k] + j1[k] * log(fabs(arc_diff) * sum / (2.0 * source_rad * diff)) + (9.0 * (mid_div_norm - bond * mid_vert) * ellip1_b0 * mid_norm_rad / (4.0 * PI * mdr * bond * source_rad) - j1[k]) * log(fabs(arc_diff) / 2.0 * source_rad)) * (*pos_rad)[k] * (*Gauss_int_wts)[k];
+	  *temp1 += (vector_C1[k] - j1[k] * log(fabs(arc_diff) * sum / (2.0 * source_rad * diff)) + (9.0 * (mid_div_norm - bond * mid_vert) * ellip1_b0 * mid_norm_rad / (4.0 * PI * mdr * bond * source_rad) - j1[k]) * log(fabs(arc_diff) / 2.0 * source_rad)) * (*pos_rad)[k] * (*Gauss_int_wts)[k];
 
-	  *temp2 += (vector_C2[k] + j2[k] * log(fabs(arc_diff) * sum / (2.0 * source_rad * diff)) + (9.0 * (mid_div_norm - bond * mid_vert) * ellip1_b0 * mid_norm_vert / (4.0 * PI * mdr * bond * source_rad) - j2[k]) * log(fabs(arc_diff) / 2.0 * source_rad)) * (*pos_rad)[k] * (*Gauss_int_wts)[k];
+	  *temp2 += (vector_C2[k] - j2[k] * log(fabs(arc_diff) * sum / (2.0 * source_rad * diff)) + (9.0 * (mid_div_norm - bond * mid_vert) * ellip1_b0 * mid_norm_vert / (4.0 * PI * mdr * bond * source_rad) - j2[k]) * log(fabs(arc_diff) / 2.0 * source_rad)) * (*pos_rad)[k] * (*Gauss_int_wts)[k];
 	}
 
       else
@@ -311,9 +311,9 @@ void C(double source_vert, double source_rad_2, double source_rad, vector<double
 
 	  vector_C2[k] = Vector_C2(beta_2, (*pos_norm_vert)[k], (*pos_rad)[k], vert_diff, (*pos_norm_rad)[k], source_rad, alpha_2, prefac[k], ellip1[k], ellip2[k], diff);
 
-	  *temp1 += vector_C1[k] * (*Gauss_int_wts)[k];
+	  *temp1 += vector_C1[k] * (*pos_rad)[k] * (*Gauss_int_wts)[k];
 
-	  *temp2 += vector_C2[k] * (*Gauss_int_wts)[k];
+	  *temp2 += vector_C2[k] * (*pos_rad)[k] * (*Gauss_int_wts)[k];
 	}
     }
 }
