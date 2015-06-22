@@ -12,7 +12,7 @@
 double Pythag(double side1, double side2);
 
 //Function to calculate the components of the normal vector and it's divergence at a point along the interface
-void Normal(Spline_interp rad, Spline_interp height, double arc, double init_step, double *norm_rad, double *norm_vert, double *div_norm, double rad_coord);
+void Normal(Spline_interp rad, Spline_interp height, double arc, double init_step, double *norm_rad, double *norm_vert, double *div_norm, double rad_coord, vector<double>* midpoints, vector<double>* pos_rad, vector<double>* pos_vert);
 
 //Function to calculate divergence of the normal of the interface at given point along it
 double Div_norm(Spline_interp rad, Spline_interp height, double arc, double init_step); 

@@ -192,19 +192,26 @@ void Up_interf(surf *interf)
 	}
       new_mid_vert[i] = vert_spline.interp(new_midpoints[i]);
 
-      if (new_midpoints[i] < 0.5)
+      if (new_midpoints[i] < 0.3)
 	{
 	  init_step = new_midpoints[i] / 2.0;
 	}
-      else if (max_arc - new_midpoints[i] < 0.5)
+      else if (max_arc - new_midpoints[i] < 0.3)
 	{
 	  init_step = (max_arc - new_midpoints[i]) / 2.0;
 	}
       else
 	{
-	  init_step = 0.5;
+	  init_step = 0.3;
 	}
-      Normal(rad_spline, vert_spline, new_midpoints[i], 0.5, &(*interf).mid_norm_rad[i], &(*interf).mid_norm_vert[i], &(*interf).mid_div_norm[i], new_mid_rad[i]);
+      if (i != 0 && i != (*interf).n_int - 1)
+	{
+	  Normal(rad_spline, vert_spline, new_midpoints[i], init_step, &(*interf).mid_norm_rad[i], &(*interf).mid_norm_vert[i], &(*interf).mid_div_norm[i], new_mid_rad[i], &(*interf).midpoints, &(*interf).mid_rad, &(*interf).mid_vert);
+	}
+      else
+	{
+	  Normal(rad_spline, vert_spline, new_midpoints[i], 0.3, &(*interf).mid_norm_rad[i], &(*interf).mid_norm_vert[i], &(*interf).mid_div_norm[i], new_mid_rad[i], &(*interf).midpoints, &(*interf).mid_rad, &(*interf).mid_vert);
+	}
 	  //	  cout << (*interf).mid_norm_rad[i] << endl;
 	  /*	}
         else 
@@ -244,7 +251,7 @@ void Up_interf(surf *interf)
 		{
 		  init_step = 0.5;
 		}
-	      Normal(rad_spline, vert_spline, (*interf).intervals[i].arc[j], init_step, &(*interf).intervals[i].norm_rad[j], &(*interf).intervals[i].norm_vert[j], &(*interf).intervals[i].div_norm[j], (*interf).intervals[i].rad[j]);
+	      Normal(rad_spline, vert_spline, (*interf).intervals[i].arc[j], init_step, &(*interf).intervals[i].norm_rad[j], &(*interf).intervals[i].norm_vert[j], &(*interf).intervals[i].div_norm[j], (*interf).intervals[i].rad[j], &(*interf).midpoints, &(*interf).mid_rad, &(*interf).mid_vert);
 	    }
 	}
       else
@@ -266,7 +273,7 @@ void Up_interf(surf *interf)
 		{
 		  init_step = 0.5;
 		}
-	      Normal(rad_spline, vert_spline, (*interf).intervals[i].arc[j], init_step, &(*interf).intervals[i].norm_rad[j], &(*interf).intervals[i].norm_vert[j], &(*interf).intervals[i].div_norm[j], (*interf).intervals[i].rad[j]);
+	      Normal(rad_spline, vert_spline, (*interf).intervals[i].arc[j], init_step, &(*interf).intervals[i].norm_rad[j], &(*interf).intervals[i].norm_vert[j], &(*interf).intervals[i].div_norm[j], (*interf).intervals[i].rad[j], &(*interf).midpoints, &(*interf).mid_rad, &(*interf).mid_vert);
 	    }
 	  
 	  for (int j = 2; j < 4; j++)

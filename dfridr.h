@@ -216,14 +216,14 @@ double sec_dfridr(Spline_interp spline, const double x, const double h, double &
   //}
   func_plus = spline.interp(x + hh);
 
-  //  if (x - hh < 0)
+  //if (x - hh < 0)
   //{
   //  func_minus = spline.interp(-(x - hh));
   //}
   //  else
   //{
   func_minus = spline.interp(x - hh);
-  //  }
+  //}
 
   a[0][0] = (func_plus - func_minus) / (2.0 * hh);
   err = big;
@@ -242,7 +242,7 @@ double sec_dfridr(Spline_interp spline, const double x, const double h, double &
       //      else
       //{
       func_minus = spline.interp(x - hh);
-      //	}
+      //}
 
       a[0][i] = (func_plus - func_minus) / (2.0 * hh); //Try new, smaller stepsize.
       fac = con2;
