@@ -6,13 +6,17 @@
 
 #include <vector>
 
+#include <fstream> //Included for debugging purposes only. Can be removed when program is functional
+
 #include "interp_1d.h"
+
+using std::ofstream; //Using for debugging purposes only. Can be removed when program is functioanl
 
 //Function to calculate hypotenuse of a right angled triangle given the length of the other sides.
 double Pythag(double side1, double side2);
 
 //Function to calculate the components of the normal vector and it's divergence at a point along the interface
-void Normal(Spline_interp rad, Spline_interp height, double arc, double init_step, double *norm_rad, double *norm_vert, double *div_norm, double rad_coord, vector<double>* midpoints, vector<double>* pos_rad, vector<double>* pos_vert);
+void Normal(Spline_interp rad, Spline_interp height, double arc, double init_step, double *norm_rad, double *norm_vert, double *div_norm, double rad_coord, vector<double>* midpoints, vector<double>* pos_rad, vector<double>* pos_vert, ofstream& out);
 
 //Function to calculate divergence of the normal of the interface at given point along it
 double Div_norm(Spline_interp rad, Spline_interp height, double arc, double init_step); 

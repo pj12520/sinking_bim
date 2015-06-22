@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <iostream>
 #include <iomanip> //Inlcuded for debugging purposes only. Remove when program is functional
+#include <fstream> //Inlcuded for debugging purposes only. Remove when program i functional
 
 #include "const.h"
 #include "interp_1d.h"
@@ -14,6 +15,7 @@ using std::vector;
 using std::cout;
 using std::endl;
 using std::setw; //Using for debugging purposes only. Remove when program is functional
+using std::ofstream;
 
 //Function to calculate hypotenuse of a right angled triangle given the length of the other sides.
 double Pythag(double side1, double side2)
@@ -27,24 +29,25 @@ double Pythag(double side1, double side2)
 
 
 //Function to calculate the components of the normal vector and it's divergence at a point along the interface
-void Normal(Spline_interp rad, Spline_interp height, double arc, double init_step, double *norm_rad, double *norm_vert, double *div_norm, double rad_coord, vector<double>* midpoints, vector<double>* pos_rad, vector<double>* pos_vert)
+void Normal(Spline_interp rad, Spline_interp height, double arc, double init_step, double *norm_rad, double *norm_vert, double *div_norm, double rad_coord, vector<double>* midpoints, vector<double>* pos_rad, vector<double>* pos_vert, ofstream& out)
 {
   double rad_deriv_error;
   double height_deriv_error;
   double rad_deriv2_error;
   double height_deriv2_error;
 
-  //  double rad_deriv = dfridr_interp(rad, arc, init_step, rad_deriv_error);
-  //  double height_deriv = dfridr_interp(height, arc, init_step, height_deriv_error);
-  //  double rad_deriv2 = sec_dfridr(rad, arc, init_step, rad_deriv2_error);
-  //  double height_deriv2 = sec_dfridr(height, arc, init_step, height_deriv2_error);
+  //    double rad_deriv = dfridr_interp(rad, arc, init_step, rad_deriv_error);
+  //    double height_deriv = dfridr_interp(height, arc, init_step, height_deriv_error);
+  //    double rad_deriv2 = sec_dfridr(rad, arc, init_step, rad_deriv2_error);
+  //    double height_deriv2 = sec_dfridr(height, arc, init_step, height_deriv2_error);
   
-  double rad_deriv = deriv(rad, arc, &(*midpoints), &(*pos_rad));
-  double height_deriv = deriv(height, arc, &(*midpoints), &(*pos_vert));
-  double rad_deriv2 = sec_deriv(rad, arc, &(*midpoints)); 
-  double height_deriv2 = sec_deriv(height, arc, &(*midpoints));
+      double rad_deriv = deriv(rad, arc, &(*midpoints), &(*pos_rad));
+        double height_deriv = deriv(height, arc, &(*midpoints), &(*pos_vert));
+        double rad_deriv2 = sec_deriv(rad, arc, &(*midpoints)); 
+        double height_deriv2 = sec_deriv(height, arc, &(*midpoints));
 
-    cout << setw(15) << arc << " " << setw(15) << rad_deriv << " " << setw(15) << height_deriv << " " << setw(15) << rad_deriv2 << " " << setw(15) << height_deriv2 << endl;
+  out << setw(15) << arc << " " << setw(15) << rad_deriv << " " << setw(15) << height_deriv << " " << setw(15) << rad_deriv2 << " " << setw(15) << height_deriv2 << endl;
+
   *norm_rad = - height_deriv / Pythag(rad_deriv, height_deriv);
 
   *norm_vert =  rad_deriv / Pythag(rad_deriv, height_deriv);

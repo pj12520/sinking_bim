@@ -5,6 +5,8 @@
 #include <new>
 
 #include <iostream> //Currently only included for debugging purposes. Can be removed when program is functional
+#include <fstream> //Included for debugging purposes only. Can be removed when program is functional
+#include <iomanip> //Included for debugging purposes onyl. Can be removed when program is functional
 
 #include "object.h"
 #include "const.h"
@@ -17,6 +19,8 @@ using math_const::PI;
 
 using std::cout; //Currently only used for debugging purposes. Can be removed when program is functional
 using std::endl; //Currently only used for debugging purposes. Can be removed when program is functional
+using std::ofstream; //Used for debugging purposes only. Can be removed when program is functional
+using std::setw; //Used for debugging purposes only. Can be removed when program is functional
 
 using namespace Gauss;
 
@@ -164,7 +168,8 @@ void Up_interf(surf *interf)
 {
   //Describe the interface using a cubic spline
   Spline_interp rad_spline((*interf).midpoints, (*interf).mid_rad, 1.0, fprime(&(*interf).midpoints[(*interf).n_int - 1], &(*interf).mid_rad[(*interf).n_int - 1], -1)); //Structures that contain the interpolation routines
-  Spline_interp vert_spline((*interf).midpoints, (*interf).mid_vert, 0.0, fprime(&(*interf).midpoints[(*interf).n_int - 1], &(*interf).mid_vert[(*interf).n_int - 1], -1));
+  //    Spline_interp vert_spline((*interf).midpoints, (*interf).mid_vert, fprime(&(*interf).midpoints[0], &(*interf).mid_vert[0], 1), fprime(&(*interf).midpoints[(*interf).n_int - 1], &(*interf).mid_vert[(*interf).n_int - 1], -1));
+    Spline_interp vert_spline((*interf).midpoints, (*interf).mid_vert, 0.0, fprime(&(*interf).midpoints[(*interf).n_int - 1], &(*interf).mid_vert[(*interf).n_int - 1], -1));
 
   //Find the new maximum value of the arc-length
   double max_arc = (*interf).midpoints[(*interf).n_int - 1];
@@ -178,6 +183,11 @@ void Up_interf(surf *interf)
 
   double init_step; //Initial stepsize used in numerical differentiation of spline
 
+  ofstream out;
+  out.open("testing/dfridr_test.dat");
+
+  out << setw(15) << "arc" << " " << setw(15) << "rad_deriv" << " " << setw(15) << "height_deriv" << " " << setw(15) << "rad_deriv2" << " " << setw(15) << "height_deriv2" << endl;
+
   for (int i = 0; i < (*interf).n_int; i++)
     {
       //      if (i != 0 && i != (*interf).n_int - 1)
@@ -185,33 +195,38 @@ void Up_interf(surf *interf)
       if (i == 0)
 	{
 	  new_mid_rad[i] = 0.0;
+	  new_mid_vert[i] = (*interf).mid_vert[i];
+	}
+      if (i == (*interf).n_int - 1)
+	{
+	  new_mid_rad[i] = (*interf).mid_rad[i];
+	  new_mid_vert[i] = (*interf).mid_vert[i];
 	}
       else
 	{
 	  new_mid_rad[i] = rad_spline.interp(new_midpoints[i]);
+	  new_mid_vert[i] = vert_spline.interp(new_midpoints[i]);
 	}
-      new_mid_vert[i] = vert_spline.interp(new_midpoints[i]);
 
-      if (new_midpoints[i] < 0.3)
+      if (i == 0 || i == (*interf).n_int - 1)
+	{
+	  init_step = 0.3;
+	}
+      else if (new_midpoints[i] < 0.3)
 	{
 	  init_step = new_midpoints[i] / 2.0;
 	}
       else if (max_arc - new_midpoints[i] < 0.3)
 	{
 	  init_step = (max_arc - new_midpoints[i]) / 2.0;
-	}
+	}      
       else
 	{
 	  init_step = 0.3;
 	}
-      if (i != 0 && i != (*interf).n_int - 1)
-	{
-	  Normal(rad_spline, vert_spline, new_midpoints[i], init_step, &(*interf).mid_norm_rad[i], &(*interf).mid_norm_vert[i], &(*interf).mid_div_norm[i], new_mid_rad[i], &(*interf).midpoints, &(*interf).mid_rad, &(*interf).mid_vert);
-	}
-      else
-	{
-	  Normal(rad_spline, vert_spline, new_midpoints[i], 0.3, &(*interf).mid_norm_rad[i], &(*interf).mid_norm_vert[i], &(*interf).mid_div_norm[i], new_mid_rad[i], &(*interf).midpoints, &(*interf).mid_rad, &(*interf).mid_vert);
-	}
+      
+      Normal(rad_spline, vert_spline, new_midpoints[i], init_step, &(*interf).mid_norm_rad[i], &(*interf).mid_norm_vert[i], &(*interf).mid_div_norm[i], new_mid_rad[i], &(*interf).midpoints, &(*interf).mid_rad, &(*interf).mid_vert, out);
+
 	  //	  cout << (*interf).mid_norm_rad[i] << endl;
 	  /*	}
         else 
@@ -239,19 +254,19 @@ void Up_interf(surf *interf)
 	      (*interf).intervals[i].rad[j] = rad_spline.interp((*interf).intervals[i].arc[j]);
 	      (*interf).intervals[i].vert[j] = vert_spline.interp((*interf).intervals[i].arc[j]);
 
-	      if ((*interf).intervals[i].arc[j] < 0.5)
+	      if ((*interf).intervals[i].arc[j] < 0.3)
 		{
 		  init_step = (*interf).intervals[i].arc[j] / 2.0;
 		}
-	      else if (max_arc - (*interf).intervals[i].arc[j] < 0.5)
+	      else if (max_arc - (*interf).intervals[i].arc[j] < 0.3)
 		{
 		  init_step = (max_arc - (*interf).intervals[i].arc[j]) / 2.0;
 		}
 	      else
 		{
-		  init_step = 0.5;
+		  init_step = 0.3;
 		}
-	      Normal(rad_spline, vert_spline, (*interf).intervals[i].arc[j], init_step, &(*interf).intervals[i].norm_rad[j], &(*interf).intervals[i].norm_vert[j], &(*interf).intervals[i].div_norm[j], (*interf).intervals[i].rad[j], &(*interf).midpoints, &(*interf).mid_rad, &(*interf).mid_vert);
+	      Normal(rad_spline, vert_spline, (*interf).intervals[i].arc[j], init_step, &(*interf).intervals[i].norm_rad[j], &(*interf).intervals[i].norm_vert[j], &(*interf).intervals[i].div_norm[j], (*interf).intervals[i].rad[j], &(*interf).midpoints, &(*interf).mid_rad, &(*interf).mid_vert, out);
 	    }
 	}
       else
@@ -261,19 +276,19 @@ void Up_interf(surf *interf)
 	      (*interf).intervals[i].rad[j] = rad_spline.interp((*interf).intervals[i].arc[j]);
 	      (*interf).intervals[i].vert[j] = vert_spline.interp((*interf).intervals[i].arc[j]);
 
-	      if ((*interf).intervals[i].arc[j] < 0.5)
+	      if ((*interf).intervals[i].arc[j] < 0.3)
 		{
 		  init_step = (*interf).intervals[i].arc[j] / 2.0;
 		}
-	      else if (max_arc - (*interf).intervals[i].arc[j] < 0.5)
+	      else if (max_arc - (*interf).intervals[i].arc[j] < 0.3)
 		{
 		  init_step = (max_arc - (*interf).intervals[i].arc[j]) / 2.0;
 		}
 	      else
 		{
-		  init_step = 0.5;
+		  init_step = 0.3;
 		}
-	      Normal(rad_spline, vert_spline, (*interf).intervals[i].arc[j], init_step, &(*interf).intervals[i].norm_rad[j], &(*interf).intervals[i].norm_vert[j], &(*interf).intervals[i].div_norm[j], (*interf).intervals[i].rad[j], &(*interf).midpoints, &(*interf).mid_rad, &(*interf).mid_vert);
+	      Normal(rad_spline, vert_spline, (*interf).intervals[i].arc[j], init_step, &(*interf).intervals[i].norm_rad[j], &(*interf).intervals[i].norm_vert[j], &(*interf).intervals[i].div_norm[j], (*interf).intervals[i].rad[j], &(*interf).midpoints, &(*interf).mid_rad, &(*interf).mid_vert, out);
 	    }
 	  
 	  for (int j = 2; j < 4; j++)
@@ -287,7 +302,7 @@ void Up_interf(surf *interf)
 	    }
 	}
     }
-
+  out.close();
   //Move the new points into the interf object
   for (int i = 0; i < (*interf).n_int; i++)
     {
