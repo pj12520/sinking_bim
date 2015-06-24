@@ -36,17 +36,17 @@ void Normal(Spline_interp rad, Spline_interp height, double arc, double init_ste
   double rad_deriv2_error;
   double height_deriv2_error;
 
-  //    double rad_deriv = dfridr_interp(rad, arc, init_step, rad_deriv_error);
-  //    double height_deriv = dfridr_interp(height, arc, init_step, height_deriv_error);
-  //    double rad_deriv2 = sec_dfridr(rad, arc, init_step, rad_deriv2_error);
-  //    double height_deriv2 = sec_dfridr(height, arc, init_step, height_deriv2_error);
+  double rad_deriv = dfridr_interp(rad, arc, init_step, rad_deriv_error);
+  double height_deriv = dfridr_interp(height, arc, init_step, height_deriv_error);
+  double rad_deriv2 = sec_dfridr(rad, arc, init_step, rad_deriv2_error);
+  double height_deriv2 = sec_dfridr(height, arc, init_step, height_deriv2_error);
   
-      double rad_deriv = deriv(rad, arc, &(*midpoints), &(*pos_rad));
-        double height_deriv = deriv(height, arc, &(*midpoints), &(*pos_vert));
-        double rad_deriv2 = sec_deriv(rad, arc, &(*midpoints)); 
-        double height_deriv2 = sec_deriv(height, arc, &(*midpoints));
+  //    double rad_deriv = deriv(rad, arc, &(*midpoints), &(*pos_rad));
+  //    double height_deriv = deriv(height, arc, &(*midpoints), &(*pos_vert));
+  //    double rad_deriv2 = sec_deriv(rad, arc, &(*midpoints)); 
+  //    double height_deriv2 = sec_deriv(height, arc, &(*midpoints));
 
-  out << setw(15) << arc << " " << setw(15) << rad_deriv << " " << setw(15) << height_deriv << " " << setw(15) << rad_deriv2 << " " << setw(15) << height_deriv2 << endl;
+	out << setw(15) << arc << " " << setw(15) << rad_deriv << " " << setw(15) << height_deriv << " " << setw(15) << rad_deriv2 << " " << setw(15) << height_deriv2 << endl;
 
   *norm_rad = - height_deriv / Pythag(rad_deriv, height_deriv);
 

@@ -11,7 +11,7 @@ using std::vector;
 using std::cout; //Using for the purposes of debugging only
 using std::endl; //Using for the purposes of debugging only
 
-void Iterate(double n_int, vector<double>* unknown, vector<double>* arc, vector<double>* rad, vector<double>* vert, double *height, double t_step)
+void Iterate(double n_int, vector<double>* unknown, vector<double>* arc, vector<double>* rad, vector<double>* vert, double *height, double t_step, double *trunc_arc, double trunc_rad, double trunc_vert)
 {
   //Extract the velocities from unknown vector
 
@@ -46,7 +46,10 @@ void Iterate(double n_int, vector<double>* unknown, vector<double>* arc, vector<
 	{
 	  (*arc)[i] = (*arc)[i - 1] + Pythag((*rad)[i] - (*rad)[i - 1],(*vert)[i] - (*vert)[i - 1]); 
 	}
+      //      cout << i << " " << rad_vel[i] << endl;
     }
+
+  *trunc_arc = (*arc)[n_int - 1] + Pythag(trunc_rad - (*rad)[n_int - 1], trunc_vert - (*vert)[n_int - 1]);
 
   *height += sphere_vel * t_step;
 }
