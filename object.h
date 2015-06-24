@@ -62,11 +62,6 @@ struct surf
   vector<double> mid_div_norm;
 
   vector<interf_int> intervals; //Array of interval structures
-
-  //Coordinates of the interface truncation point
-  double trunc_arc;
-  double trunc_rad;
-  double trunc_vert;
 };
 
 

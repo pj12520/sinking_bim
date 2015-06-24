@@ -9,6 +9,6 @@
 using std::vector;
 
 //Function to iterate the system forward in time
-void Iterate(double n_int, vector<double>* unknown, vector<double>* arc, vector<double>* rad, vector<double>* vert, double *height, double t_step, double *trunc_arc, double trunc_rad, double trunc_vert);
+void Iterate(double n_int, vector<double>* unknown, vector<double>* arc, vector<double>* rad, vector<double>* vert, double *height, double t_step);
 
 #endif /* VELOCITY_H */

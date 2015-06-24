@@ -74,7 +74,7 @@ int main()
       Solve(order, &coeffs, &known, &unknown);
       for (int i = 0; i < unknown.size(); i++)
 	{
-	  cout << i << '\t' << unknown[i] << endl;
+	  	  cout << i << '\t' << unknown[i] << endl;
 	}
 
       //Testing - Test the solution for the sphere velocity ///////////////////////////
@@ -82,7 +82,7 @@ int main()
       ////////////////////////////////////////////////////////////////////////////////
 
       //Perform the 1st time step
-      Iterate(input.n_int, &unknown, &interf.midpoints, &interf.mid_rad, &interf.mid_vert, &sphere.height, input.t_step, &interf.trunc_arc, interf.trunc_rad, interf.trunc_vert);
+      Iterate(input.n_int, &unknown, &interf.midpoints, &interf.mid_rad, &interf.mid_vert, &sphere.height, input.t_step);
 
       //Update the properties of the interface and sphere
       Up_interf(&interf);
