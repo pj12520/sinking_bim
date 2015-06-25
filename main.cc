@@ -50,8 +50,8 @@ int main()
   int order = 2 * (input.n_int + input.n_sphere - 1);
 
   vector<vector<double> > coeffs(order);
-    for (int i = 0; i < order; i++)
-  {
+  for (int i = 0; i < order; i++)
+    {
       coeffs[i].resize(order);
     }
 
@@ -74,11 +74,11 @@ int main()
       Solve(order, &coeffs, &known, &unknown);
       for (int i = 0; i < unknown.size(); i++)
 	{
-	  	  cout << i << '\t' << unknown[i] << endl;
+	  //cout << i << '\t' << unknown[i] << endl;
 	}
 
       //Testing - Test the solution for the sphere velocity ///////////////////////////
-            cout << setw(20) << sphere.height << setw(20) << unknown[unknown.size() - 1] << endl;
+      cout << setw(20) << sphere.height << setw(20) << unknown[unknown.size() - 1] << endl;
       ////////////////////////////////////////////////////////////////////////////////
 
       //Perform the 1st time step

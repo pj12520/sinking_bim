@@ -44,7 +44,7 @@ void Normal(Spline_interp rad, Spline_interp height, double arc, double init_ste
   double rad_deriv2 = sec_deriv(rad, arc, &(*midpoints)); 
   double height_deriv2 = sec_deriv(height, arc, &(*midpoints));
 
-    cout << setw(15) << arc << " " << setw(15) << rad_deriv << " " << setw(15) << height_deriv << " " << setw(15) << rad_deriv2 << " " << setw(15) << height_deriv2 << endl;
+  //    cout << setw(15) << arc << " " << setw(15) << rad_deriv << " " << setw(15) << height_deriv << " " << setw(15) << rad_deriv2 << " " << setw(15) << height_deriv2 << endl;
   *norm_rad = - height_deriv / Pythag(rad_deriv, height_deriv);
 
   *norm_vert =  rad_deriv / Pythag(rad_deriv, height_deriv);

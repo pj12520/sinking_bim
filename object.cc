@@ -3,6 +3,7 @@
 #include <vector>
 #include <math.h>
 #include <new>
+#include <gsl/gsl_fit.h>
 
 #include <iostream> //Currently only included for debugging purposes. Can be removed when program is functional
 
@@ -141,7 +142,7 @@ void Abscissas(double* lower, double* upper, double max, int n_int, vector<doubl
   else if (interval == n_int - 1)
     {
       *lower = (2.0 * n_int - 3.0) * half_width;
-      *upper = max;
+      *upper = max + half_width;
       //*upper = max + half_width;
     }
   else
@@ -165,6 +166,47 @@ void Up_interf(surf *interf)
   //Describe the interface using a cubic spline
   Spline_interp rad_spline((*interf).midpoints, (*interf).mid_rad, 1.0, fprime(&(*interf).midpoints[(*interf).n_int - 1], &(*interf).mid_rad[(*interf).n_int - 1], -1)); //Structures that contain the interpolation routines
   Spline_interp vert_spline((*interf).midpoints, (*interf).mid_vert, 0.0, fprime(&(*interf).midpoints[(*interf).n_int - 1], &(*interf).mid_vert[(*interf).n_int - 1], -1));
+
+  //Spline_interp rad_spline((*interf).midpoints, (*interf).mid_rad, 1.0, 1.0);
+  //Spline_interp vert_spline((*interf).midpoints, (*interf).mid_vert, 0.0, 0.0);
+
+  //The interface beyond the truncation point is described by the function z = a *r^-3 + b* r^-4. Need to find a and b by fitting to the final part of the interface just before the truncation point
+  int n_fit = 10; //Number of points used to fit the extrapolating function
+
+  //Coordinates of fitting points
+  double rad[n_fit];
+  double vert[n_fit];
+
+  for (int i = 0; i < n_fit; i++)
+    {
+      rad[i] = (*interf).mid_rad[(*interf).n_int - 1 - (n_fit - 1 - i)];
+      vert[i] = (*interf).mid_vert[(*interf).n_int - 1 - (n_fit - 1 - i)];
+    }
+
+  //Fit to function r^3 z = a + b / r so
+
+  double prod[n_fit];
+  double rad_recip[n_fit];
+
+  for (int i = 0; i < n_fit; i++)
+    {
+      prod[i] = rad[i] * rad[i] * rad[i] * vert[i];
+      rad_recip[i] = 1.0 / rad[i];
+      //      cout << i << " " << prod[i] << " " << vert_recip[i] << endl;
+    }
+  //Fit these coords to find fitting constants
+  double fit_const1;
+  double fit_const2;
+
+  //Parameters outputted from the fitting routine
+  double cov00;
+  double cov01;
+  double cov11;
+  double chisq;
+
+  gsl_fit_linear(rad_recip, 1, prod, 1, n_fit, &fit_const1, &fit_const2, &cov00, &cov01, &cov11, &chisq);
+  
+  cout << fit_const1 << " " << fit_const2 << endl;
 
   //Find the new maximum value of the arc-length
   double max_arc = (*interf).midpoints[(*interf).n_int - 1];
@@ -208,10 +250,10 @@ void Up_interf(surf *interf)
 	{
 	  Normal(rad_spline, vert_spline, new_midpoints[i], init_step, &(*interf).mid_norm_rad[i], &(*interf).mid_norm_vert[i], &(*interf).mid_div_norm[i], new_mid_rad[i], &(*interf).midpoints, &(*interf).mid_rad, &(*interf).mid_vert);
 	}
-      else
-	{
-	  Normal(rad_spline, vert_spline, new_midpoints[i], 0.3, &(*interf).mid_norm_rad[i], &(*interf).mid_norm_vert[i], &(*interf).mid_div_norm[i], new_mid_rad[i], &(*interf).midpoints, &(*interf).mid_rad, &(*interf).mid_vert);
-	}
+      //      else
+      //{
+      //  Normal(rad_spline, vert_spline, new_midpoints[i], 0.3, &(*interf).mid_norm_rad[i], &(*interf).mid_norm_vert[i], &(*interf).mid_div_norm[i], new_mid_rad[i], &(*interf).midpoints, &(*interf).mid_rad, &(*interf).mid_vert);
+      //}
 	  //	  cout << (*interf).mid_norm_rad[i] << endl;
 	  /*	}
         else 
@@ -239,17 +281,17 @@ void Up_interf(surf *interf)
 	      (*interf).intervals[i].rad[j] = rad_spline.interp((*interf).intervals[i].arc[j]);
 	      (*interf).intervals[i].vert[j] = vert_spline.interp((*interf).intervals[i].arc[j]);
 
-	      if ((*interf).intervals[i].arc[j] < 0.5)
+	      if ((*interf).intervals[i].arc[j] < 0.3)
 		{
 		  init_step = (*interf).intervals[i].arc[j] / 2.0;
 		}
-	      else if (max_arc - (*interf).intervals[i].arc[j] < 0.5)
+	      else if (max_arc - (*interf).intervals[i].arc[j] < 0.3)
 		{
 		  init_step = (max_arc - (*interf).intervals[i].arc[j]) / 2.0;
 		}
 	      else
 		{
-		  init_step = 0.5;
+		  init_step = 0.3;
 		}
 	      Normal(rad_spline, vert_spline, (*interf).intervals[i].arc[j], init_step, &(*interf).intervals[i].norm_rad[j], &(*interf).intervals[i].norm_vert[j], &(*interf).intervals[i].div_norm[j], (*interf).intervals[i].rad[j], &(*interf).midpoints, &(*interf).mid_rad, &(*interf).mid_vert);
 	    }
@@ -261,17 +303,17 @@ void Up_interf(surf *interf)
 	      (*interf).intervals[i].rad[j] = rad_spline.interp((*interf).intervals[i].arc[j]);
 	      (*interf).intervals[i].vert[j] = vert_spline.interp((*interf).intervals[i].arc[j]);
 
-	      if ((*interf).intervals[i].arc[j] < 0.5)
+	      if ((*interf).intervals[i].arc[j] < 0.3)
 		{
 		  init_step = (*interf).intervals[i].arc[j] / 2.0;
 		}
-	      else if (max_arc - (*interf).intervals[i].arc[j] < 0.5)
+	      else if (max_arc - (*interf).intervals[i].arc[j] < 0.3)
 		{
 		  init_step = (max_arc - (*interf).intervals[i].arc[j]) / 2.0;
 		}
 	      else
 		{
-		  init_step = 0.5;
+		  init_step = 0.3;
 		}
 	      Normal(rad_spline, vert_spline, (*interf).intervals[i].arc[j], init_step, &(*interf).intervals[i].norm_rad[j], &(*interf).intervals[i].norm_vert[j], &(*interf).intervals[i].div_norm[j], (*interf).intervals[i].rad[j], &(*interf).midpoints, &(*interf).mid_rad, &(*interf).mid_vert);
 	    }
