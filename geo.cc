@@ -27,18 +27,24 @@ double Pythag(double side1, double side2)
 
 
 //Function to calculate the components of the normal vector and it's divergence at a point along the interface
-void Normal(Spline_interp rad, Spline_interp height, double arc, double init_step, double *norm_rad, double *norm_vert, double *div_norm, double rad_coord, vector<double>* midpoints, vector<double>* pos_rad, vector<double>* pos_vert)
+void Normal(Spline_interp rad, Spline_interp height, double arc, double init_step, double *norm_rad, double *norm_vert, double *div_norm, double rad_coord, vector<double>* midpoints, vector<double>* pos_rad, vector<double>* pos_vert, double fit_const0, double fit_const1, double fit_const2, double fit_const3, double arc_max)
 {
   double rad_deriv_error;
   double height_deriv_error;
   double rad_deriv2_error;
   double height_deriv2_error;
 
-    double rad_deriv = dfridr_interp(rad, arc, init_step, rad_deriv_error);
-    double height_deriv = dfridr_interp(height, arc, init_step, height_deriv_error);
-    double rad_deriv2 = sec_dfridr(rad, arc, init_step, rad_deriv2_error);
-    double height_deriv2 = sec_dfridr(height, arc, init_step, height_deriv2_error);
+  //    double rad_deriv = dfridr_interp(rad, arc, init_step, rad_deriv_error);
+  //    double height_deriv = dfridr_interp(height, arc, init_step, height_deriv_error);
+  //    double rad_deriv2 = sec_dfridr(rad, arc, init_step, rad_deriv2_error);
+  //    double height_deriv2 = sec_dfridr(height, arc, init_step, height_deriv2_error);
   
+  double rad_deriv = My_dfridr(&Rad, arc, init_step, rad_deriv_error, rad, fit_const0, fit_const1, arc_max);
+  double height_deriv = My_dfridr(&Vert, arc, init_step, height_deriv_error, height, fit_const2, fit_const3, arc_max);
+  double rad_deriv2 = My_sec_dfridr(rad, arc, init_step, rad_deriv2_error, fit_const0, fit_const1, arc_max, &Rad);
+  double height_deriv2 = My_sec_dfridr(height, arc, init_step, height_deriv2_error, fit_const2, fit_const3, arc_max, &Vert);
+
+
     //double rad_deriv = deriv(rad, arc, &(*midpoints), &(*pos_rad));
     //  double height_deriv = deriv(height, arc, &(*midpoints), &(*pos_vert));
     //  double rad_deriv2 = sec_deriv(rad, arc, &(*midpoints)); 

@@ -81,7 +81,7 @@ void Create_sphere_int(vector<sphere_int>* intervals, int n_int, double height);
 void Create_interf_int(vector<interf_int>* intervals, int n_int, double max_arc);
 
 //Function to create the abscissas used for Gauss-Legendre integration in an interval
-void Abscissas(double* lower, double* upper, double max, int n_int, vector<double>* points, double* width, double half_width, int interval); 
+void Abscissas(double* lower, double* upper, double max, int n_int, vector<double>* points, double* width, double half_width, int interval, int sphere_test); 
 
 //Function to update the properaties of the interface
 void Up_interf(surf *interf);

@@ -77,7 +77,7 @@ void Create_sphere_int(vector<sphere_int>* intervals, int n_int, double height)
   for (int i = 0; i < n_int; i++)
     {
       //Create the abscissas for the Gauss-Legendre integration in each interval
-      Abscissas(&(*intervals)[i].lower, &(*intervals)[i].upper, PI, n_int, &(*intervals)[i].theta, &(*intervals)[i].width, half_width, i);
+      Abscissas(&(*intervals)[i].lower, &(*intervals)[i].upper, PI, n_int, &(*intervals)[i].theta, &(*intervals)[i].width, half_width, i, 1);
 
       //Set radial and vertical components of the integration points in each interval
       (*intervals)[i].rad.resize(4);
@@ -99,7 +99,7 @@ void Create_interf_int(vector<interf_int>* intervals, int n_int, double max_arc)
   for (int i = 0; i < n_int; i++)
     {
       //Create the abscissas for the Gauss-Legendre integration in each interval
-      Abscissas(&(*intervals)[i].lower, &(*intervals)[i].upper, max_arc, n_int, &(*intervals)[i].arc, &(*intervals)[i].width, half_width, i);
+      Abscissas(&(*intervals)[i].lower, &(*intervals)[i].upper, max_arc, n_int, &(*intervals)[i].arc, &(*intervals)[i].width, half_width, i, 0);
 
       //Set radial and vertical components of the integration points in each interval and components and divergence of normal vectors
       (*intervals)[i].rad.resize(4);
@@ -123,7 +123,7 @@ void Create_interf_int(vector<interf_int>* intervals, int n_int, double max_arc)
 }
 
 //Function to create the abscissas used for Gauss-Legendre integration in an interval
-void Abscissas(double* lower, double* upper, double max, int n_int, vector<double>* points, double* width, double half_width, int interval)
+void Abscissas(double* lower, double* upper, double max, int n_int, vector<double>* points, double* width, double half_width, int interval, int sphere_test)
 {
   vector<double> Gauss_int_pts(4); //Vector to store integration points used for 4-pt Gaussian quadrature
 
@@ -142,7 +142,15 @@ void Abscissas(double* lower, double* upper, double max, int n_int, vector<doubl
   else if (interval == n_int - 1)
     {
       *lower = (2.0 * n_int - 3.0) * half_width;
-      *upper = max + half_width;
+
+      if (sphere_test = 1)
+	{
+	  *upper = max;
+	}
+      else
+	{
+	  *upper = max + half_width;
+	}
       //*upper = max + half_width;
     }
   else
@@ -243,17 +251,13 @@ void Up_interf(surf *interf)
 	{
 	  init_step = new_midpoints[i] / 2.0;
 	}
-      else if (max_arc - new_midpoints[i] < 0.3)
-	{
-	  init_step = (max_arc - new_midpoints[i]) / 2.0;
-	}
       else
 	{
 	  init_step = 0.3;
 	}
-      if (i != 0 && i != (*interf).n_int - 1)
+      if (i != 0)
 	{
-	  Normal(rad_spline, vert_spline, new_midpoints[i], init_step, &(*interf).mid_norm_rad[i], &(*interf).mid_norm_vert[i], &(*interf).mid_div_norm[i], new_mid_rad[i], &(*interf).midpoints, &(*interf).mid_rad, &(*interf).mid_vert);
+	  Normal(rad_spline, vert_spline, new_midpoints[i], init_step, &(*interf).mid_norm_rad[i], &(*interf).mid_norm_vert[i], &(*interf).mid_div_norm[i], new_mid_rad[i], &(*interf).midpoints, &(*interf).mid_rad, &(*interf).mid_vert, fit_const0, fit_const1, fit_const2, fit_const3, max_arc);
 	}
       //      else
       //{
@@ -275,7 +279,7 @@ void Up_interf(surf *interf)
   for (int i = 0; i < (*interf).n_int; i++)
     {
       //Create the abscissas for the Gauss-Legendre integration in each interval 
-      Abscissas(&(*interf).intervals[i].lower, &(*interf).intervals[i].upper, max_arc, (*interf).n_int, &(*interf).intervals[i].arc, &(*interf).intervals[i].width, half_width, i);
+      Abscissas(&(*interf).intervals[i].lower, &(*interf).intervals[i].upper, max_arc, (*interf).n_int, &(*interf).intervals[i].arc, &(*interf).intervals[i].width, half_width, i, 0);
 
 
       //Set radial and vertical components of the integration points in each interval and components and divergence of normal vectors
@@ -298,7 +302,7 @@ void Up_interf(surf *interf)
 		{
 		  init_step = 0.3;
 		}
-	      Normal(rad_spline, vert_spline, (*interf).intervals[i].arc[j], init_step, &(*interf).intervals[i].norm_rad[j], &(*interf).intervals[i].norm_vert[j], &(*interf).intervals[i].div_norm[j], (*interf).intervals[i].rad[j], &(*interf).midpoints, &(*interf).mid_rad, &(*interf).mid_vert);
+	      Normal(rad_spline, vert_spline, (*interf).intervals[i].arc[j], init_step, &(*interf).intervals[i].norm_rad[j], &(*interf).intervals[i].norm_vert[j], &(*interf).intervals[i].div_norm[j], (*interf).intervals[i].rad[j], &(*interf).midpoints, &(*interf).mid_rad, &(*interf).mid_vert, fit_const0, fit_const1, fit_const2, fit_const3, max_arc);
 	    }
 	}
       else
@@ -320,7 +324,7 @@ void Up_interf(surf *interf)
 		{
 		  init_step = 0.3;
 		}
-	      Normal(rad_spline, vert_spline, (*interf).intervals[i].arc[j], init_step, &(*interf).intervals[i].norm_rad[j], &(*interf).intervals[i].norm_vert[j], &(*interf).intervals[i].div_norm[j], (*interf).intervals[i].rad[j], &(*interf).midpoints, &(*interf).mid_rad, &(*interf).mid_vert);
+	      Normal(rad_spline, vert_spline, (*interf).intervals[i].arc[j], init_step, &(*interf).intervals[i].norm_rad[j], &(*interf).intervals[i].norm_vert[j], &(*interf).intervals[i].div_norm[j], (*interf).intervals[i].rad[j], &(*interf).midpoints, &(*interf).mid_rad, &(*interf).mid_vert, fit_const0, fit_const1, fit_const2, fit_const3, max_arc);
 	    }
 	  
 	  for (int j = 2; j < 4; j++)
