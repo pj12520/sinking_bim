@@ -174,29 +174,33 @@ void Up_interf(surf *interf)
   int n_fit = 10; //Number of points used to fit the extrapolating function
 
   //Coordinates of fitting points
+  double arc[n_fit];
   double rad[n_fit];
   double vert[n_fit];
 
   for (int i = 0; i < n_fit; i++)
     {
+      arc[i] = (*interf).midpoints[(*interf).n_int - 1 - (n_fit - 1 - i)];
       rad[i] = (*interf).mid_rad[(*interf).n_int - 1 - (n_fit - 1 - i)];
       vert[i] = (*interf).mid_vert[(*interf).n_int - 1 - (n_fit - 1 - i)];
     }
 
-  //Fit to function r^3 z = a + b / r so
+  //Extrapolate the splines by fitting to functions r = c_0 * s + c_1, z = c_2 / s*3 + c_3 / s*4
 
   double prod[n_fit];
-  double rad_recip[n_fit];
+  double arc_recip[n_fit];
 
   for (int i = 0; i < n_fit; i++)
     {
-      prod[i] = rad[i] * rad[i] * rad[i] * vert[i];
-      rad_recip[i] = 1.0 / rad[i];
+      prod[i] = arc[i] * arc[i] * arc[i] * vert[i];
+      arc_recip[i] = 1.0 / arc[i];
       //      cout << i << " " << prod[i] << " " << vert_recip[i] << endl;
     }
   //Fit these coords to find fitting constants
+  double fit_const0;
   double fit_const1;
   double fit_const2;
+  double fit_const3;
 
   //Parameters outputted from the fitting routine
   double cov00;
@@ -204,9 +208,10 @@ void Up_interf(surf *interf)
   double cov11;
   double chisq;
 
-  gsl_fit_linear(rad_recip, 1, prod, 1, n_fit, &fit_const1, &fit_const2, &cov00, &cov01, &cov11, &chisq);
+  gsl_fit_linear(arc, 1, rad, 1, n_fit, &fit_const0, &fit_const1, &cov00, &cov01, &cov11, &chisq);
+  gsl_fit_linear(arc_recip, 1, prod, 1, n_fit, &fit_const2, &fit_const3, &cov00, &cov01, &cov11, &chisq);
   
-  cout << fit_const1 << " " << fit_const2 << endl;
+  //  cout << fit_const0 << " " << fit_const1 << " " << fit_const2 << " " << fit_const3 << endl;
 
   //Find the new maximum value of the arc-length
   double max_arc = (*interf).midpoints[(*interf).n_int - 1];
@@ -320,12 +325,20 @@ void Up_interf(surf *interf)
 	  
 	  for (int j = 2; j < 4; j++)
 	    {
-	      (*interf).intervals[i].rad[j] = (*interf).intervals[i].rad[1] + (*interf).intervals[i].arc[j] - (*interf).intervals[i].arc[1];
-	      (*interf).intervals[i].vert[j] = (*interf).intervals[i].vert[1];
+	      //	      (*interf).intervals[i].rad[j] = (*interf).intervals[i].rad[1] + (*interf).intervals[i].arc[j] - (*interf).intervals[i].arc[1];
+	      //	      (*interf).intervals[i].vert[j] = (*interf).intervals[i].vert[1];
 
-	      (*interf).intervals[i].norm_rad[j] = 0.0;
-	      (*interf).intervals[i].norm_vert[j] = 1.0;
-	      (*interf).intervals[i].div_norm[j] = 0.0;
+	      double arc3 = (*interf).intervals[i].arc[j] * (*interf).intervals[i].arc[j] * (*interf).intervals[i].arc[j];
+	      double arc4 = arc3 * (*interf).intervals[i].arc[j];
+
+	      (*interf).intervals[i].rad[j] = fit_const0 + fit_const1 * (*interf).intervals[i].arc[j];
+	      (*interf).intervals[i].vert[j] = fit_const2 / arc3 + fit_const3 / arc4;
+
+	      Normal_fit(fit_const1, fit_const2, fit_const3, (*interf).intervals[i].arc[j], arc4, &(*interf).intervals[i].norm_rad[j], &(*interf).intervals[i].norm_vert[j], &(*interf).intervals[i].div_norm[j], (*interf).intervals[i].rad[j]);
+
+	      //	      (*interf).intervals[i].norm_rad[j] = 0.0;
+	      //	      (*interf).intervals[i].norm_vert[j] = 1.0;
+	      //	      (*interf).intervals[i].div_norm[j] = 0.0;
 	    }
 	}
     }

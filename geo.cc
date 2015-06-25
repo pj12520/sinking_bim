@@ -34,15 +34,15 @@ void Normal(Spline_interp rad, Spline_interp height, double arc, double init_ste
   double rad_deriv2_error;
   double height_deriv2_error;
 
-  //  double rad_deriv = dfridr_interp(rad, arc, init_step, rad_deriv_error);
-  //  double height_deriv = dfridr_interp(height, arc, init_step, height_deriv_error);
-  //  double rad_deriv2 = sec_dfridr(rad, arc, init_step, rad_deriv2_error);
-  //  double height_deriv2 = sec_dfridr(height, arc, init_step, height_deriv2_error);
+    double rad_deriv = dfridr_interp(rad, arc, init_step, rad_deriv_error);
+    double height_deriv = dfridr_interp(height, arc, init_step, height_deriv_error);
+    double rad_deriv2 = sec_dfridr(rad, arc, init_step, rad_deriv2_error);
+    double height_deriv2 = sec_dfridr(height, arc, init_step, height_deriv2_error);
   
-  double rad_deriv = deriv(rad, arc, &(*midpoints), &(*pos_rad));
-  double height_deriv = deriv(height, arc, &(*midpoints), &(*pos_vert));
-  double rad_deriv2 = sec_deriv(rad, arc, &(*midpoints)); 
-  double height_deriv2 = sec_deriv(height, arc, &(*midpoints));
+    //double rad_deriv = deriv(rad, arc, &(*midpoints), &(*pos_rad));
+    //  double height_deriv = deriv(height, arc, &(*midpoints), &(*pos_vert));
+    //  double rad_deriv2 = sec_deriv(rad, arc, &(*midpoints)); 
+    //  double height_deriv2 = sec_deriv(height, arc, &(*midpoints));
 
   //    cout << setw(15) << arc << " " << setw(15) << rad_deriv << " " << setw(15) << height_deriv << " " << setw(15) << rad_deriv2 << " " << setw(15) << height_deriv2 << endl;
   *norm_rad = - height_deriv / Pythag(rad_deriv, height_deriv);
@@ -54,6 +54,23 @@ void Normal(Spline_interp rad, Spline_interp height, double arc, double init_ste
   //  cout << arc << " " << rad_coord << " " << *norm_rad << " " << *norm_vert << " " << *div_norm << endl;
 }
 
+//Function to calculate the normal components and the divergence of the normal to the interface when it is described by the extrapolated functions
+void Normal_fit(double fit_const1, double fit_const2, double fit_const3, double arc, double arc4, double *norm_rad, double *norm_vert, double *div_norm, double rad_coord)
+{
+  double arc5 = arc4 * arc;
+  double arc6 = arc5 * arc;
+
+  double rad_deriv = fit_const1;
+
+  double height_deriv = -3.0 * fit_const2 / arc4 - 4.0 * fit_const3 / arc5;
+  double height_deriv2 = 12.0 * fit_const2 / arc5 + 20 * fit_const3 / arc6;
+
+  *norm_rad = - height_deriv / Pythag(rad_deriv, height_deriv);
+
+  *norm_vert =  rad_deriv / Pythag(rad_deriv, height_deriv);
+
+  *div_norm =  -rad_deriv * height_deriv2 / pow(rad_deriv * rad_deriv + height_deriv * height_deriv, 1.5) - height_deriv / (rad_coord * pow(rad_deriv * rad_deriv + height_deriv * height_deriv, 0.5));
+}
 
 //Function to calculate divergence of the normal of the interface at each point along it
 double Div_norm(Spline_interp rad, Spline_interp height, double arc, double init_step) //When this is called arc must not be within init_step of the boundaries of the interpolation range 
