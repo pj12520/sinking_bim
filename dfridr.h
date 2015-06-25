@@ -40,10 +40,10 @@ double Rad(Spline_interp rad_spline, double fit_const0, double fit_const1, doubl
 double Vert(Spline_interp vert_spline, double fit_const2, double fit_const3, double arc_max, double arc);
 
 //Function to calculate the derivative of r(s) or z(s)
-double My_dfridr(double (*func)(Spline_interp, double, double, double, double), const double x, const double h, double &err, Spline_interp spline, double param1, double param2, double arc_max);
+double My_dfridr(double (*func)(Spline_interp, double, double, double, double), const double x, const double h, double &err, Spline_interp spline, double param1, double param2, double arc_max, int vert_test);
 
 //Function to calculate the second derivative of r(s) and z(s)
-double My_sec_dfridr(Spline_interp spline, const double x, const double h, double &err, double param1, double param2, double arc_max, double (*func)(Spline_interp, double, double, double, double));
+double My_sec_dfridr(Spline_interp spline, const double x, const double h, double &err, double param1, double param2, double arc_max, double (*func)(Spline_interp, double, double, double, double), int vert_test);
 
 
 
@@ -408,7 +408,7 @@ double Vert(Spline_interp vert_spline, double fit_const2, double fit_const3, dou
 }
 
 //Function to calculate the derivative of r(s) or z(s)
-double My_dfridr(double (*func)(Spline_interp, double, double, double, double), const double x, const double h, double &err, Spline_interp spline, double param1, double param2, double arc_max)
+double My_dfridr(double (*func)(Spline_interp, double, double, double, double), const double x, const double h, double &err, Spline_interp spline, double param1, double param2, double arc_max, int vert_test)
 //Returns the derivativre of a function func at a point x by Riddlers' method of polynomial extrapolation. The value h is input as an estimated initial stepsize; it need not be small, but rather should be an increment in x over which func changes substantially. An estimate of the error in the derivative is returned as err.
 {
   const int ntab = 10; //Set maximum size of tableau
@@ -418,6 +418,9 @@ double My_dfridr(double (*func)(Spline_interp, double, double, double, double), 
   int i, j;
   double errt, fac, hh, ans;
   vector<vector<double> > a;
+
+  double func_plus;
+  double func_minus;
 
   a.resize(ntab);
   for (int k = 0; k < ntab; k++)
@@ -432,14 +435,48 @@ double My_dfridr(double (*func)(Spline_interp, double, double, double, double), 
     }
 
   hh = h;
-  a[0][0] = (func(spline, param1, param2, arc_max, x + hh) - func(spline, param1, param2, arc_max, x - hh)) / (2.0 * hh);
+
+  func_plus = func(spline, param1, param2, arc_max, x + hh);
+  if (x - hh >= 0)
+    {
+      func_minus = func(spline, param1, param2, arc_max, x - hh);
+    }
+  else
+    {
+      if (vert_test == 0)
+	{
+	  func_minus = -func(spline, param1, param2, arc_max, -(x - hh));
+	}
+      else
+	{
+	  func_minus = func(spline, param1, param2, arc_max, -(x - hh));
+	}
+    }
+  a[0][0] = (func_plus - func_minus) / (2.0 * hh);
   err = big;
 
   for (i = 1; i <ntab; i++)
     {
       //Successive columns in the Neville tableau will go to smaller stepsizes and higher orders of extrapolation.
       hh /= con;
-      a[0][i] = (func(spline, param1, param2, arc_max, x + hh) - func(spline, param1, param2, arc_max, x - hh)) / (2.0 * hh); //Try new, smaller stepsize.
+      func_plus = func(spline, param1, param2, arc_max, x + hh);
+      if (x - hh >= 0)
+	{
+	  func_minus = func(spline, param1, param2, arc_max, x - hh);
+	}
+      else
+	{
+	  if (vert_test == 0)
+	    {
+	      func_minus = -func(spline, param1, param2, arc_max, -(x - hh));
+	    }
+	  else
+	    {
+	      func_minus = func(spline, param1, param2, arc_max, -(x - hh));
+	    }
+	}
+
+      a[0][i] = (func_plus - func_minus) / (2.0 * hh); //Try new, smaller stepsize.
       fac = con2;
 
       for (j = 1; j <= i; j++) //Compute extrapolations of various orders, requiring no new function evaluations.
@@ -469,7 +506,7 @@ double My_dfridr(double (*func)(Spline_interp, double, double, double, double), 
 }
 
 //Function to calculate the second derivative of r(s) and z(s)
-double My_sec_dfridr(Spline_interp spline, const double x, const double h, double &err, double param1, double param2, double arc_max, double (*func)(Spline_interp, double, double, double, double))
+double My_sec_dfridr(Spline_interp spline, const double x, const double h, double &err, double param1, double param2, double arc_max, double (*func)(Spline_interp, double, double, double, double), int vert_test)
 {
   const int ntab = 10; //Set maximum size of tableau
   const double con = 1.4, con2 = con*con; //Stepsize decreased by con at each iteration
@@ -496,16 +533,23 @@ double My_sec_dfridr(Spline_interp spline, const double x, const double h, doubl
     }
   hh = h;
 
-  deriv1_plus = My_dfridr(*func, x + hh, h, error, spline, param1, param2, arc_max);
+  deriv1_plus = My_dfridr(*func, x + hh, h, error, spline, param1, param2, arc_max, vert_test);
 
-  //  if (x - hh < 0.0)
-  //{
-  //  deriv1_minus = dfridr_interp(spline, -(x - hh), h, error);
-  //}
-  //  else
-  //{
-  deriv1_minus = My_dfridr(*func, x - hh, h, error, spline, param1, param2, arc_max);
-  //  }
+  if(x - hh >= 0)
+    {
+      deriv1_minus = My_dfridr(*func, x - hh, h, error, spline, param1, param2, arc_max, vert_test);
+    }
+  else
+    {
+      if (vert_test == 0)
+	{
+	  deriv1_minus = My_dfridr(*func, -(x - hh), h, error, spline, param1, param2, arc_max, vert_test);
+	}
+      else
+	{
+	  deriv1_minus =  My_dfridr(*func, -(x - hh), h, error, spline, param1, param2, arc_max, vert_test);
+	}
+    }
 
   a[0][0] = (deriv1_plus - deriv1_minus) / (2.0 * hh);
   err = big;
@@ -515,16 +559,16 @@ double My_sec_dfridr(Spline_interp spline, const double x, const double h, doubl
       //Successive columns in the Neville tableau will go to smaller stepsizes and higher orders of extrapolation.
       hh /= con;
 
-      deriv1_plus = My_dfridr(*func, x + hh, h, error, spline, param1, param2, arc_max);
+      deriv1_plus = My_dfridr(*func, x + hh, h, error, spline, param1, param2, arc_max, vert_test);
 
-      //  if (x - hh < 0.0)
-      //{
-      //  deriv1_minus = dfridr_interp(spline, -(x - hh), h, error);
-      //}
-      //      else
-      //{
-      deriv1_minus = My_dfridr(*func, x - hh, h, error, spline, param1, param2, arc_max);
-      //	}
+      if(x - hh >= 0)
+	{
+	  deriv1_minus = My_dfridr(*func, x - hh, h, error, spline, param1, param2, arc_max, vert_test);
+	}
+      else
+	{
+	  deriv1_minus = My_dfridr(*func, -(x - hh), h, error, spline, param1, param2, arc_max, vert_test);
+	}
 
       a[0][i] = (deriv1_plus - deriv1_minus) / (2.0 * hh); //Try new, smaller stepsize.
       fac = con2;
