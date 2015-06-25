@@ -32,47 +32,47 @@ void Config(particle sphere, surf interf)
   ofstream sphere_out;
   sphere_out.open("testing/sphere_config.dat");
 
-  sphere_out << "Theta" << '\t' << "Radial" << '\t' << "Vertical" << endl;
+  sphere_out << setw(20) << "Theta" << setw(20) << "Radial" << setw(20) << "Vertical" << endl;
 
   for (int i = 0; i < sphere.n_int; i++)
     {
       for (int j = 0; j < 4; j++)
 	{
-	  sphere_out << sphere.intervals[i].theta[j] << '\t' << sphere.intervals[i].rad[j] << '\t' << sphere.intervals[i].vert[j] << endl;
+	  sphere_out << setw(20) << sphere.intervals[i].theta[j] << setw(20) << sphere.intervals[i].rad[j] << setw(20) << sphere.intervals[i].vert[j] << endl;
 	}
     }
   sphere_out.close();
 
   sphere_out.open("testing/sphere_interv.dat");
 
-  sphere_out << "Interval" << '\t' << "Lower Bound" << '\t' << "Midpoint" << '\t' << "Upper Bound" << endl;
+  sphere_out << setw(20) << "Interval" << setw(20) << "Lower Bound" << setw(20) << "Midpoint" << setw(20) << "Upper Bound" << endl;
   for (int i = 0; i < sphere.n_int; i++)
     {
-      sphere_out << i << '\t' << sphere.intervals[i].lower << '\t' << sphere.midpoints[i] << '\t' << sphere.intervals[i].upper << endl;
+      sphere_out << setw(20) << i << setw(20) << sphere.intervals[i].lower << setw(20) << sphere.midpoints[i] << setw(20) << sphere.intervals[i].upper << endl;
     }
   sphere_out.close();
 
   ofstream interf_out;
   interf_out.open("testing/interf_config.dat");
 
-  interf_out << "Arc" << '\t' << "Radial" << '\t' << "Vertical" << '\t' << "norm_rad" << '\t' << "norm_vert" << '\t' << "div_norm" << endl;
+  interf_out << setw(20) << "Arc" << setw(20) << "Radial" << setw(20) << "Vertical" << setw(20) << "norm_rad" << setw(20) << "norm_vert" << setw(20) << "div_norm" << endl;
 
   for (int i = 0; i < interf.n_int; i++)
     {
       for (int j = 0; j < 4; j++)
 	{
-	  interf_out << interf.intervals[i].arc[j] << '\t' << interf.intervals[i].rad[j] << '\t' << interf.intervals[i].vert[j] << '\t' << interf.intervals[i].norm_rad[j] << '\t' << interf.intervals[i].norm_vert[j] << '\t' << interf.intervals[i].div_norm[j] << endl;
+	  interf_out << setw(20) << interf.intervals[i].arc[j] << setw(20) << interf.intervals[i].rad[j] << setw(20) << interf.intervals[i].vert[j] << setw(20) << interf.intervals[i].norm_rad[j] << setw(20) << interf.intervals[i].norm_vert[j] << setw(20) << interf.intervals[i].div_norm[j] << endl;
 	}
     }
   interf_out.close();
 
   interf_out.open("testing/interf_interv.dat");
 
-  interf_out << "Interval" << '\t' << "Lower Bound" << '\t' << "Midpoint" << '\t' << "Upper Bound" << '\t' << "Radial" << '\t' << "Vertical" << '\t' << "norm_rad" << '\t' << "norm_vert" << '\t' << "div_norm" << endl;
+  interf_out << setw(20) << "Interval" << setw(20) << "Lower Bound" << setw(20) << "Midpoint" << setw(20) << "Upper Bound" << setw(20) << "Radial" << setw(20) << "Vertical" << setw(20) << "norm_rad" << setw(20) << "norm_vert" << setw(20) << "div_norm" << endl;
 
   for (int i = 0; i < interf.n_int; i++)
     {
-      interf_out << i << '\t' << interf.intervals[i].lower << '\t' << interf.midpoints[i] << '\t' << interf.intervals[i].upper << '\t' << interf.mid_rad[i] << '\t' << interf.mid_vert[i] << '\t' << interf.mid_norm_rad[i] << '\t' << interf.mid_norm_vert[i] << '\t' << interf.mid_div_norm[i] << endl;
+      interf_out << setw(20) << i << setw(20) << interf.intervals[i].lower << setw(20) << interf.midpoints[i] << setw(20) << interf.intervals[i].upper << setw(20) << interf.mid_rad[i] << setw(20) << interf.mid_vert[i] << setw(20) << interf.mid_norm_rad[i] << setw(20) << interf.mid_norm_vert[i] << setw(20) << interf.mid_div_norm[i] << endl;
     }
   interf_out.close();
 }

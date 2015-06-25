@@ -74,7 +74,7 @@ int main()
       Solve(order, &coeffs, &known, &unknown);
       for (int i = 0; i < unknown.size(); i++)
 	{
-	  //cout << i << '\t' << unknown[i] << endl;
+	  cout << i << '\t' << unknown[i] << endl;
 	}
 
       //Testing - Test the solution for the sphere velocity ///////////////////////////

@@ -547,7 +547,7 @@ double My_sec_dfridr(Spline_interp spline, const double x, const double h, doubl
 	}
       else
 	{
-	  deriv1_minus =  My_dfridr(*func, -(x - hh), h, error, spline, param1, param2, arc_max, vert_test);
+	  deriv1_minus =  -My_dfridr(*func, -(x - hh), h, error, spline, param1, param2, arc_max, vert_test);
 	}
     }
 
@@ -567,7 +567,14 @@ double My_sec_dfridr(Spline_interp spline, const double x, const double h, doubl
 	}
       else
 	{
-	  deriv1_minus = My_dfridr(*func, -(x - hh), h, error, spline, param1, param2, arc_max, vert_test);
+	  if (vert_test == 0)
+	    {
+	      deriv1_minus = My_dfridr(*func, -(x - hh), h, error, spline, param1, param2, arc_max, vert_test);
+	    }
+	  else
+	    {
+	      deriv1_minus = -My_dfridr(*func, -(x - hh), h, error, spline, param1, param2, arc_max, vert_test);
+	    }
 	}
 
       a[0][i] = (deriv1_plus - deriv1_minus) / (2.0 * hh); //Try new, smaller stepsize.

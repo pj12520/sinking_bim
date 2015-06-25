@@ -177,14 +177,14 @@ void Up_interf(surf *interf)
 {
   //Describe the interface using a cubic spline
   Spline_interp rad_spline((*interf).midpoints, (*interf).mid_rad, 1.0, fprime(&(*interf).midpoints[(*interf).n_int - 1], &(*interf).mid_rad[(*interf).n_int - 1], -1)); //Structures that contain the interpolation routines
-    Spline_interp vert_spline((*interf).midpoints, (*interf).mid_vert, 0.0, fprime(&(*interf).midpoints[(*interf).n_int - 1], &(*interf).mid_vert[(*interf).n_int - 1], -1));
+  Spline_interp vert_spline((*interf).midpoints, (*interf).mid_vert, 0.0, fprime(&(*interf).midpoints[(*interf).n_int - 1], &(*interf).mid_vert[(*interf).n_int - 1], -1));
 
   //  Spline_interp vert_spline((*interf).midpoints, (*interf).mid_vert, fprime(&(*interf).midpoints[0], &(*interf).mid_vert[0], 1), fprime(&(*interf).midpoints[(*interf).n_int - 1], &(*interf).mid_vert[(*interf).n_int - 1], -1));
   //Spline_interp rad_spline((*interf).midpoints, (*interf).mid_rad, 1.0, 1.0);
   //Spline_interp vert_spline((*interf).midpoints, (*interf).mid_vert, 0.0, 0.0);
 
   //The interface beyond the truncation point is described by the function z = a *r^-3 + b* r^-4. Need to find a and b by fitting to the final part of the interface just before the truncation point
-  int n_fit = 10; //Number of points used to fit the extrapolating function
+  int n_fit = 3; //Number of points used to fit the extrapolating function
 
   //Coordinates of fitting points
   double arc[n_fit];
@@ -266,7 +266,7 @@ void Up_interf(surf *interf)
 	}
       if (i != 0)
 	{
-	  Normal(rad_spline, vert_spline, new_midpoints[i], 0.3, &(*interf).mid_norm_rad[i], &(*interf).mid_norm_vert[i], &(*interf).mid_div_norm[i], new_mid_rad[i], &(*interf).midpoints, &(*interf).mid_rad, &(*interf).mid_vert, fit_const0, fit_const1, fit_const2, fit_const3, max_arc, out);
+	  Normal(rad_spline, vert_spline, new_midpoints[i], 1.5, &(*interf).mid_norm_rad[i], &(*interf).mid_norm_vert[i], &(*interf).mid_div_norm[i], new_mid_rad[i], &(*interf).midpoints, &(*interf).mid_rad, &(*interf).mid_vert, fit_const0, fit_const1, fit_const2, fit_const3, max_arc, out);
 	}
       //      else
       //{
@@ -301,15 +301,11 @@ void Up_interf(surf *interf)
 	    {
 	      init_step = (*interf).intervals[i].arc[j] / 2.0;
 	    }
-	  else if (max_arc - (*interf).intervals[i].arc[j] < 0.3)
-	    {
-	      init_step = (max_arc - (*interf).intervals[i].arc[j]) / 2.0;
-	    }
 	  else
 	    {
 	      init_step = 0.3;
 	    }
-	  Normal(rad_spline, vert_spline, (*interf).intervals[i].arc[j], 0.3, &(*interf).intervals[i].norm_rad[j], &(*interf).intervals[i].norm_vert[j], &(*interf).intervals[i].div_norm[j], (*interf).intervals[i].rad[j], &(*interf).midpoints, &(*interf).mid_rad, &(*interf).mid_vert, fit_const0, fit_const1, fit_const2, fit_const3, max_arc, out);
+	  Normal(rad_spline, vert_spline, (*interf).intervals[i].arc[j], 1.5, &(*interf).intervals[i].norm_rad[j], &(*interf).intervals[i].norm_vert[j], &(*interf).intervals[i].div_norm[j], (*interf).intervals[i].rad[j], &(*interf).midpoints, &(*interf).mid_rad, &(*interf).mid_vert, fit_const0, fit_const1, fit_const2, fit_const3, max_arc, out);
 	}
     }
 
