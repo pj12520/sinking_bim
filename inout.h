@@ -7,6 +7,8 @@
 #include <string>
 #include <fstream>
 
+#include "object.h"
+
 using std::string;
 
 //Structure to contain input parameters in case where they are dimensionless parameters
@@ -25,5 +27,8 @@ struct dimless_in
 
 //Function to read in the input variables for the case that they are the dimensionless parameters
 void Dimless_in(string file, dimless_in *input); 
+
+//Function to output the state of the system
+void Out_sys(int it, surf interf);
 
 #endif /* INOUT_H */

@@ -1,6 +1,7 @@
 //Program to model the impact of a sphere onto a fluid fluid interface 
 
 #include <string>
+#include <fstream>
 
 #include <iostream> //Currently only included for debugging purposes. Can be removed when program is functional
 #include <iomanip> //Currently only included for debugging purposes. Can be removed when program is functional
@@ -11,8 +12,10 @@
 #include "build.h"
 #include "solve.h"
 #include "vel.h"
-//
+#include "geo.h"
+
 using std::string;
+using std::ofstream;
 
 using std::cout; //Currently only used for debugging purposes. Can be removed when program is functional
 using std::endl; //Currently only used for debugging purposes. Can be removed when program is functional
@@ -59,6 +62,16 @@ int main()
 
   //Start loop over iterations
   int it = 0;
+  double time = 0.0;
+
+  //Output the initial configuration
+  Out_sys(it, interf);
+
+  //Object to output the position and velocity of the sphere
+  ofstream sphere_out;
+  sphere_out.open("results/sphere.dat");
+  sphere_out << setw(20) << "iteration" << setw(20) << "time" << setw(20) << "height" << setw(20) << "velocity" << endl;
+
   while(it < input.max_it)
     {
       //Build the linear system
@@ -81,8 +94,14 @@ int main()
       cout << setw(20) << it << setw(20) << sphere.height << setw(20) << unknown[unknown.size() - 1] << endl;
       ////////////////////////////////////////////////////////////////////////////////
 
+      //Outout the sphere position and velocity
+      sphere_out << setw(20) << it << setw(20) << time << setw(20) << sphere.height << setw(20) << unknown[unknown.size() - 1] << endl;
       //Perform the 1st time step
       Iterate(input.n_int, &unknown, &interf.midpoints, &interf.mid_rad, &interf.mid_vert, &sphere.height, input.t_step);
+
+      //Iterate the system
+      it = it + 1;
+      time = time + input.t_step;
 
       //Update the properties of the interface and sphere
       Up_interf(&interf);
@@ -92,9 +111,21 @@ int main()
       Config(sphere, interf);
       ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-      //Iterate the system
-      it = it + 1;
+      //Check the separation between the sphere and the interface isn't smaller than the distance between collocation points
+      int break_criteria = Break_Crit(&interf.midpoints, &interf.mid_rad, &interf.mid_vert, sphere.height);
+
+      if (break_criteria == 1)
+	{
+	  cout << "Sphere and interface collide" << endl;
+	  break;
+	}
+
+      //Output the system
+      Out_sys(it, interf);
     }
+
+  sphere_out.close();
+
   return 0;
 }
 

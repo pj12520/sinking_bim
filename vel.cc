@@ -50,3 +50,24 @@ void Iterate(double n_int, vector<double>* unknown, vector<double>* arc, vector<
 
   *height += sphere_vel * t_step;
 }
+
+//Function to evaluate whether or not the sphere and interface have collided yet
+int Break_Crit(vector<double>* arc, vector<double>* rad, vector<double>* vert, double sphere_pos)
+{
+  double separation;
+  int break_criteria = 0;
+
+  double min_step = (*arc)[1] - (*arc)[0];
+
+  for (int i = 0; i < (*arc).size(); i++)
+    {
+      separation = Pythag((*rad)[i], (*vert)[i] - sphere_pos);
+      if (separation - 1.0 < min_step)
+	{
+	  break_criteria = break_criteria + 1;
+	  break;
+	}
+    }
+
+  return break_criteria;
+}
