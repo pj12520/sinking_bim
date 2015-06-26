@@ -21,11 +21,11 @@ using std::cout; //Currently only used for debugging purposes. Can be removed wh
 using std::endl; //Currently only used for debugging purposes. Can be removed when program is functional
 using std::setw; //Currently only used for debugging purposes. Can be removed when program is functional
 
-int main()
+int main(int argc, char *argv[])
 {
   //Read in input data from input file
   dimless_in input;
-  string infile = "input.dat";
+  string infile(argv[1]);
   Dimless_in(infile, &input);
 
   //TESTING - Test that input data is read correctly//////////////////////
@@ -65,7 +65,7 @@ int main()
   double time = 0.0;
 
   //Output the initial configuration
-  Out_sys(it, interf);
+  Out_sys(it, sphere, interf, input.mdr, input.bond, input.viscos_rat);
 
   //Object to output the position and velocity of the sphere
   ofstream sphere_out;
@@ -121,7 +121,7 @@ int main()
 	}
 
       //Output the system
-      Out_sys(it, interf);
+      Out_sys(it, sphere, interf, input.mdr, input.bond, input.viscos_rat);
     }
 
   sphere_out.close();

@@ -19,7 +19,8 @@ int main()
 
   vector<double> mod_dens_rat_data(4);
   vector<double> bond_data(7);
-  vector<double> viscos_rat_data(7);
+  //  vector<double> viscos_rat_data(7);
+  vector<double> viscos_rat_data(1);
 
   mod_dens_rat_data[0] = 1.0;
   mod_dens_rat_data[1] = 10.0;
@@ -29,26 +30,28 @@ int main()
   bond_data[0] = 0.001;
   bond_data[1] = 0.01;
   bond_data[2] = 0.1;
-  bond_data[3] = 1;
-  bond_data[4] = 10;
-  bond_data[5] = 100;
-  bond_data[6] = 1000;
+  bond_data[3] = 1.0;
+  bond_data[4] = 10.0;
+  bond_data[5] = 100.0;
+  bond_data[6] = 1000.0;
 
-  viscos_rat_data[0] = 0.001;
-  viscos_rat_data[1] = 0.01;
-  viscos_rat_data[2] = 0.1;
-  viscos_rat_data[3] = 1;
-  viscos_rat_data[4] = 10;
-  viscos_rat_data[5] = 100;
-  viscos_rat_data[6] = 1000;
+  /*  
+      viscos_rat_data[0] = 0.001;
+      viscos_rat_data[1] = 0.01;
+      viscos_rat_data[2] = 0.1;
+      viscos_rat_data[3] = 1;
+      viscos_rat_data[4] = 10;
+      viscos_rat_data[5] = 100;
+      viscos_rat_data[6] = 1000;
+  */
+  viscos_rat_data[0] = 1.0;
 
-  double init_pos = 3.0;
-  int n_eval = 100;
-  double pos_max = 15.0;
-  int n_int = 250;
-  int n_it = 1000;
-  double t_step = 0.1;
-  double contact_angle = 1.57;
+  int n_sphere = 100;
+  int n_interf = 100;
+  double trunc = 15.0;
+  double t_step = 0.01;
+  double height = 3.0;
+  int max_it = 1000;
 
   //Create output directories 
 
@@ -99,28 +102,26 @@ int main()
 	      fout << bond_data[j] << endl;
 	      fout << mod_dens_rat_data[i] << endl;
 	      fout << viscos_rat_data[k] << endl;
-	      fout << contact_angle << endl;
 
-	      fout << init_pos << endl;
-	      fout << n_eval << endl;
-	      fout << pos_max << endl;
-	      fout << n_int << endl;
-	      fout << n_it << endl;
+	      fout << n_sphere << endl;
+	      fout << n_interf << endl;
+	      fout << trunc << endl;
 	      fout << t_step << endl;
+	      fout << height << endl;
+	      fout <<max_it << endl;
 
 	      fout << "Input file containing the dimensionless numbers that characterise the system" << endl;
 
 	      fout << "Bond Number" << endl;
 	      fout << "Modified Density Ratio" << endl;
 	      fout << "Viscosity Ratio" << endl;
-	      fout << "Contact Angle" << endl;
 
-	      fout << "Initial position of sphere (in radii above interface)" << endl;
-	      fout << "Number of points on surface at which integral equations are solved" << endl;
-	      fout << "Distance from symmetry axis at which computation is terminated (in radii)" << endl;
-	      fout << "Number of interpolation points on interface" << endl;
-	      fout << "Number of iterations" << endl;
-	      fout << "Time Step" << endl;
+	      fout << "Number of elements on sphere" << endl;
+	      fout << "Number of elements on interface" << endl;
+	      fout << "Truncation length of interface" << endl;
+	      fout << "Time step" << endl;
+	      fout << "Initial height of sphere" << endl;
+	      fout << "Maximum number of iterations" << endl;
 
 	      fout.close();
 
