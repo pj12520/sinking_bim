@@ -4,7 +4,8 @@
 
 # Add module--------------------------------------
 
-module add gcc/4.4.6
+module add languages/gcc-4.7
+module add gnu_builds/gsl-1.16
 
 # Set the working directory for this job----------
 
@@ -13,7 +14,7 @@ cd $RUNDIR
 # echo $RUNDIR
 # Name of application----------------------------
 
-export APPLICATION="${HOME}/sweep1/impact"
+export APPLICATION="${HOME}/sinking_bim/trunk/impact"
 
 # Execute the code
 # echo $INPUT
