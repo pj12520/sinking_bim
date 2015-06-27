@@ -41,8 +41,8 @@ void Out_sys(int it, particle sphere, surf interf, double mdr, double bond, doub
 {
   ofstream write;
 
-  string file = "D=" + static_cast<ostringstream*>( &(ostringstream() << mdr) )->str() + "/Bo=" + static_cast<ostringstream*>( &(ostringstream() << bond) )->str() + "/viscos_rat=" + static_cast<ostringstream*>( &(ostringstream() << viscos_rat) )->str() + "/interf_config" + static_cast<ostringstream*>( &(ostringstream() << it) )->str() + ".dat";
-
+  //  string file = "D=" + static_cast<ostringstream*>( &(ostringstream() << mdr) )->str() + "/Bo=" + static_cast<ostringstream*>( &(ostringstream() << bond) )->str() + "/viscos_rat=" + static_cast<ostringstream*>( &(ostringstream() << viscos_rat) )->str() + "/interf_config" + static_cast<ostringstream*>( &(ostringstream() << it) )->str() + ".dat";
+  string file = "interf_config.dat" + static_cast<ostringstream*>( &(ostringstream() << it) )->str() + ".dat";
   write.open(file.c_str());
 
   write << setw(20) << "Interval" << setw(20) << "Arc" << setw(20) << "Radial" << setw(20) << "Vertical" << endl;
@@ -54,8 +54,8 @@ void Out_sys(int it, particle sphere, surf interf, double mdr, double bond, doub
 
   write.close();
 
-  file = "D=" + static_cast<ostringstream*>( &(ostringstream() << mdr) )->str() + "/Bo=" + static_cast<ostringstream*>( &(ostringstream() << bond) )->str() + "/viscos_rat=" + static_cast<ostringstream*>( &(ostringstream() << viscos_rat) )->str() + "/sphere_config" + static_cast<ostringstream*>( &(ostringstream() << it) )->str() + ".dat";
-
+  //  file = "D=" + static_cast<ostringstream*>( &(ostringstream() << mdr) )->str() + "/Bo=" + static_cast<ostringstream*>( &(ostringstream() << bond) )->str() + "/viscos_rat=" + static_cast<ostringstream*>( &(ostringstream() << viscos_rat) )->str() + "/sphere_config" + static_cast<ostringstream*>( &(ostringstream() << it) )->str() + ".dat";
+  file = "sphere_config" + static_cast<ostringstream*>( &(ostringstream() << it) )->str() + ".dat";
   write.open(file.c_str());
 
   write << setw(20) << "Interval" << setw(20) << "Theta" << setw(20) << "Radial" << setw(20) << "Vertical" << endl;

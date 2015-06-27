@@ -71,8 +71,8 @@ int main(int argc, char *argv[])
 
   //Object to output the position and velocity of the sphere
   ofstream sphere_out;
-  string out_file = "D=" + static_cast<ostringstream*>( &(ostringstream() << input.mdr) )->str() + "/Bo=" + static_cast<ostringstream*>( &(ostringstream() << input.bond) )->str() + "/viscos_rat=" + static_cast<ostringstream*>( &(ostringstream() << input.viscos_rat) )->str() + "/sphere.dat";
-
+  //  string out_file = "D=" + static_cast<ostringstream*>( &(ostringstream() << input.mdr) )->str() + "/Bo=" + static_cast<ostringstream*>( &(ostringstream() << input.bond) )->str() + "/viscos_rat=" + static_cast<ostringstream*>( &(ostringstream() << input.viscos_rat) )->str() + "/sphere.dat";
+  string out_file = "sphere.dat";
   sphere_out.open(out_file.c_str());
   sphere_out << setw(20) << "iteration" << setw(20) << "time" << setw(20) << "height" << setw(20) << "velocity" << endl;
 
