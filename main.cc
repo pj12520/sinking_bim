@@ -2,6 +2,7 @@
 
 #include <string>
 #include <fstream>
+#include <sstream>
 
 #include <iostream> //Currently only included for debugging purposes. Can be removed when program is functional
 #include <iomanip> //Currently only included for debugging purposes. Can be removed when program is functional
@@ -16,6 +17,7 @@
 
 using std::string;
 using std::ofstream;
+using std::ostringstream;
 
 using std::cout; //Currently only used for debugging purposes. Can be removed when program is functional
 using std::endl; //Currently only used for debugging purposes. Can be removed when program is functional
@@ -69,7 +71,9 @@ int main(int argc, char *argv[])
 
   //Object to output the position and velocity of the sphere
   ofstream sphere_out;
-  sphere_out.open("results/sphere.dat");
+  string out_file = "D=" + static_cast<ostringstream*>( &(ostringstream() << input.mdr) )->str() + "/Bo=" + static_cast<ostringstream*>( &(ostringstream() << input.bond) )->str() + "/viscos_rat=" + static_cast<ostringstream*>( &(ostringstream() << input.viscos_rat) )->str() + "/sphere.dat";
+
+  sphere_out.open(out_file.c_str());
   sphere_out << setw(20) << "iteration" << setw(20) << "time" << setw(20) << "height" << setw(20) << "velocity" << endl;
 
   while(it < input.max_it)
@@ -91,7 +95,7 @@ int main(int argc, char *argv[])
 	}
 
       //Testing - Test the solution for the sphere velocity ///////////////////////////
-      cout << setw(20) << it << setw(20) << sphere.height << setw(20) << unknown[unknown.size() - 1] << endl;
+            cout << setw(20) << it << setw(20) << sphere.height << setw(20) << unknown[unknown.size() - 1] << endl;
       ////////////////////////////////////////////////////////////////////////////////
 
       //Outout the sphere position and velocity
@@ -116,7 +120,7 @@ int main(int argc, char *argv[])
 
       if (break_criteria == 1)
 	{
-	  cout << "Sphere and interface collide" << endl;
+	  sphere_out << "# Sphere and interface collide" << endl;
 	  break;
 	}
 
