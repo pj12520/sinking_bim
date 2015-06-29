@@ -119,7 +119,7 @@ int main()
 	      fout << "Number of elements on sphere" << endl;
 	      fout << "Number of elements on interface" << endl;
 	      fout << "Truncation length of interface" << endl;
-	      fout << "Time step" << endl;
+	      //	      fout << "Time step" << endl;
 	      fout << "Initial height of sphere" << endl;
 	      fout << "Maximum number of iterations" << endl;
 
