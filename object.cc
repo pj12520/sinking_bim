@@ -239,8 +239,8 @@ void Up_interf(surf *interf)
   double init_step; //Initial stepsize used in numerical differentiation of spline
 
   ofstream out;
-  //  out.open("testing/dfridr_test.dat");
-  //  out << setw(20) << "arc" << setw << "rad_deriv" << setw(20) << "vert_deriv" << setw(20) << "rad_deriv2" << setw(20) << "vert_deriv2" << endl;
+  out.open("testing/dfridr_test.dat");
+  out << setw(20) << "arc" << setw << "rad_deriv" << setw(20) << "vert_deriv" << setw(20) << "rad_deriv2" << setw(20) << "vert_deriv2" << endl;
 
   for (int i = 0; i < (*interf).n_int; i++)
     {
@@ -309,7 +309,7 @@ void Up_interf(surf *interf)
 	}
     }
 
-  //  out.close();
+  out.close();
   //Move the new points into the interf object
   for (int i = 0; i < (*interf).n_int; i++)
     {

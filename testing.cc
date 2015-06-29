@@ -21,7 +21,6 @@ void In_test(dimless_in input)
   cout << "Number of intervals on sphere's surface = " << input.n_sphere << endl;
   cout << "Number of intervals on interface = " << input.n_int << endl;
   cout << "Truncation distance from axis = " << input.max_arc << endl;
-  cout << "Initial time step = " << input.t_step << endl;
   cout << "Initial height of sphere = " << input.init_height << endl;
 }
 
