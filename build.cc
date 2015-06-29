@@ -405,7 +405,7 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 
 	      if (i == j)
 		{
-		  known[i] -= interf.intervals[j].width * temp1[j] / 2.0 - 9.0 * (interf.mid_div_norm[j] - bond * interf.mid_vert[j]) * ellip1_b0 * interf.mid_norm_rad[j] * interf.midpoints[interf.n_int - 1] / (4.0 * PI * mdr * bond * (interf.n_int - 1.0)) * (log(interf.midpoints[interf.n_int - 1] / (4.0 * source_rad * (interf.n_int - 1.0))) - 1.0);
+		  known[i] -= interf.intervals[j].width * temp1[j] / 2.0 - 9.0 * (interf.mid_div_norm[j] - bond * interf.mid_vert[j]) * ellip1_b0 * interf.mid_norm_rad[j] * interf.midpoints[interf.n_int - 1] / (8.0 * PI * mdr * bond * (interf.n_int - 1.0)) * (log(interf.midpoints[interf.n_int - 1] / (4.0 * source_rad * (interf.n_int - 1.0))) - 1.0);
 
 		  known[i + interf.n_int] -= interf.intervals[j].width * temp2[j] / 2.0 - 9.0 * (interf.mid_div_norm[j] - bond * interf.mid_vert[j]) * ellip1_b0 * interf.mid_norm_vert[j] * interf.midpoints[interf.n_int - 1] / (4.0 * PI * mdr * bond * (interf.n_int - 1.0)) * (log(interf.midpoints[interf.n_int - 1] / (4.0 * source_rad * (interf.n_int - 1.0))) - 1.0);
 		}	      

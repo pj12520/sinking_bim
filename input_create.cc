@@ -49,8 +49,9 @@ int main()
   int n_sphere = 100;
   int n_interf = 100;
   double trunc = 15.0;
+  double t_step = 0.01;
   double height = 3.0;
-  int max_it = 2000;
+  int max_it = 1000;
 
   //Create output directories 
 
@@ -105,6 +106,7 @@ int main()
 	      fout << n_sphere << endl;
 	      fout << n_interf << endl;
 	      fout << trunc << endl;
+	      fout << t_step << endl;
 	      fout << height << endl;
 	      fout <<max_it << endl;
 
@@ -117,6 +119,7 @@ int main()
 	      fout << "Number of elements on sphere" << endl;
 	      fout << "Number of elements on interface" << endl;
 	      fout << "Truncation length of interface" << endl;
+	      fout << "Time step" << endl;
 	      fout << "Initial height of sphere" << endl;
 	      fout << "Maximum number of iterations" << endl;
 

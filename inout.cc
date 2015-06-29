@@ -29,6 +29,7 @@ void Dimless_in(string file, dimless_in *input)
   read >> input->n_sphere; //Number of elements on sphere's surface
   read >> input->n_int; //Number of elements on interface
   read >> input->max_arc; //Truncation length of interface
+  read >> input->t_step; //Initial time step
   read >> input->init_height; //Initial height of sphere
   read >> input ->max_it; //Maximum number of iterations
   read.close();
@@ -41,7 +42,7 @@ void Out_sys(int it, particle sphere, surf interf, double mdr, double bond, doub
   ofstream write;
 
   //  string file = "D=" + static_cast<ostringstream*>( &(ostringstream() << mdr) )->str() + "/Bo=" + static_cast<ostringstream*>( &(ostringstream() << bond) )->str() + "/viscos_rat=" + static_cast<ostringstream*>( &(ostringstream() << viscos_rat) )->str() + "/interf_config" + static_cast<ostringstream*>( &(ostringstream() << it) )->str() + ".dat";
-  string file = "interf_config" + static_cast<ostringstream*>( &(ostringstream() << it) )->str() + ".dat";
+  string file = "interf_config.dat" + static_cast<ostringstream*>( &(ostringstream() << it) )->str() + ".dat";
   write.open(file.c_str());
 
   write << setw(20) << "Interval" << setw(20) << "Arc" << setw(20) << "Radial" << setw(20) << "Vertical" << endl;

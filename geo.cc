@@ -47,6 +47,7 @@ void Normal(Spline_interp rad, Spline_interp height, double arc, double init_ste
   double rad_deriv2 = My_sec_dfridr(rad, arc, init_step, rad_deriv2_error, fit_const0, fit_const1, arc_max, &Rad, 0);
   double height_deriv2 = My_sec_dfridr(height, arc, init_step, height_deriv2_error, fit_const2, fit_const3, arc_max, &Vert, 1);
 
+  //  out << setw(20) << arc << setw(20) << rad_deriv << setw(20) << height_deriv << setw(20) << rad_deriv2 << setw(20) << height_deriv2 << endl;
 
 
     //double rad_deriv = deriv(rad, arc, &(*midpoints), &(*pos_rad));
@@ -59,12 +60,9 @@ void Normal(Spline_interp rad, Spline_interp height, double arc, double init_ste
 
   *norm_vert =  rad_deriv / Pythag(rad_deriv, height_deriv);
 
-  *div_norm =  1.0 * (rad_deriv2 * height_deriv - rad_deriv * height_deriv2) / pow(rad_deriv * rad_deriv + height_deriv * height_deriv, 1.5) - height_deriv / (rad_coord * pow(rad_deriv * rad_deriv + height_deriv * height_deriv, 0.5));
+  *div_norm = 1.0 * (rad_deriv2 * height_deriv - rad_deriv * height_deriv2) / pow(rad_deriv * rad_deriv + height_deriv * height_deriv, 1.5) - height_deriv / (rad_coord * pow(rad_deriv * rad_deriv + height_deriv * height_deriv, 0.5));
 
   *div_norm = -*div_norm;
-
-  //out << setw(20) << arc << setw(20) << *norm_rad << setw(20) << *norm_vert << setw(20) << *div_norm << endl;
-
   //  cout << arc << " " << rad_coord << " " << *norm_rad << " " << *norm_vert << " " << *div_norm << endl;
 }
 
