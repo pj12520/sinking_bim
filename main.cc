@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
 
   //Determine timestep
   double t_step = min(0.1, 0.1 * input.mdr * input.bond);
-
+  cout << t_step << endl;
   //Output the initial configuration
   Out_sys(it, sphere, interf, input.mdr, input.bond, input.viscos_rat);
 
@@ -94,7 +94,7 @@ int main(int argc, char *argv[])
       Solve(order, &coeffs, &known, &unknown);
       for (int i = 0; i < unknown.size(); i++)
 	{
-	  cout << i << '\t' << unknown[i] << endl;
+	  //	  cout << i << '\t' << unknown[i] << endl;
 	}
 
       //Testing - Test the solution for the sphere velocity ///////////////////////////
@@ -123,8 +123,8 @@ int main(int argc, char *argv[])
 
       if (break_criteria == 1)
 	{
-	  //  sphere_out << "# Sphere and interface collide" << endl;
-	  //	  break;
+	  sphere_out << "# Sphere and interface collide" << endl;
+	  break;
 	}
 
       //Output the system
