@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
 
   //Determine timestep
   double t_step = min(0.1, 0.1 * input.mdr * input.bond);
-  cout << t_step << endl;
+
   //Output the initial configuration
   Out_sys(it, sphere, interf, input.mdr, input.bond, input.viscos_rat);
 
