@@ -20,7 +20,7 @@ struct dimless_in
   int n_sphere; //Number of elements on sphere surface
   int n_int; //Number of elements on interface
   double max_arc; //Truncation distance along interface
-  double t_step; //Initial time step
+  //  double t_step; //Initial time step
   double init_height; //Initial height of sphere
   int max_it; //Maximum number of iterations
 };

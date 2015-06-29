@@ -66,6 +66,8 @@ int main(int argc, char *argv[])
   int it = 0;
   double time = 0.0;
 
+  double t_step = min(0.01, 0.1 * input.mdr * input.bond);
+
   //Output the initial configuration
   Out_sys(it, sphere, interf, input.mdr, input.bond, input.viscos_rat);
 
@@ -101,11 +103,11 @@ int main(int argc, char *argv[])
       //Outout the sphere position and velocity
       sphere_out << setw(20) << it << setw(20) << time << setw(20) << sphere.height << setw(20) << unknown[unknown.size() - 1] << endl;
       //Perform the 1st time step
-      Iterate(input.n_int, &unknown, &interf.midpoints, &interf.mid_rad, &interf.mid_vert, &sphere.height, input.t_step);
+      Iterate(input.n_int, &unknown, &interf.midpoints, &interf.mid_rad, &interf.mid_vert, &sphere.height, t_step);
 
       //Iterate the system
       it = it + 1;
-      time = time + input.t_step;
+      time = time + t_step;
 
       //Update the properties of the interface and sphere
       Up_interf(&interf);
