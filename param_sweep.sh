@@ -14,7 +14,7 @@ cd $RUNDIR
 # echo $RUNDIR
 # Name of application----------------------------
 
-export APPLICATION="${HOME}/sinking_bim/impact"
+export APPLICATION="${HOME}/sinking_bim/trunk/impact"
 
 # Execute the code
 # echo $INPUT
