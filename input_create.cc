@@ -49,7 +49,7 @@ int main()
   int n_sphere = 100;
   int n_interf = 100;
   double trunc = 15.0;
-  double t_step = 0.01;
+  //  double t_step = 0.01;
   double height = 3.0;
   int max_it = 1000;
 
@@ -106,7 +106,7 @@ int main()
 	      fout << n_sphere << endl;
 	      fout << n_interf << endl;
 	      fout << trunc << endl;
-	      fout << t_step << endl;
+	      //	      fout << t_step << endl;
 	      fout << height << endl;
 	      fout <<max_it << endl;
 
