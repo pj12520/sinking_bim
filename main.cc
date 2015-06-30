@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
   int it = 0;
   double time = 0.0;
 
-  double t_step = min(0.01, 0.1 * input.mdr * input.bond);
+  double t_step = min(0.01, 0.01 * input.mdr * input.bond);
 
   //Output the initial configuration
   Out_sys(it, sphere, interf, input.mdr, input.bond, input.viscos_rat);
