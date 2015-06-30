@@ -51,7 +51,7 @@ int main()
   double trunc = 15.0;
   //  double t_step = 0.01;
   double height = 3.0;
-  int max_it = 10000;
+  int max_it = 3000000;
 
   //Create output directories 
 
