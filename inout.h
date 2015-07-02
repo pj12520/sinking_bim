@@ -29,6 +29,6 @@ struct dimless_in
 void Dimless_in(string file, dimless_in *input); 
 
 //Function to output the state of the system
-void Out_sys(int it, particle sphere, surf interf, double mdr, double bond, double viscos_rat);
+void Out_sys(int it, particle sphere, surf interf, double mdr, double bond, double viscos_rat, vector<double>* rad_vel, vector<double>* vert_vel);
 
 #endif /* INOUT_H */

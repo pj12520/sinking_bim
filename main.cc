@@ -68,8 +68,10 @@ int main(int argc, char *argv[])
 
   double t_step = min(0.01, 0.01 * input.mdr * input.bond);
 
-  //Output the initial configuration
-  Out_sys(it, sphere, interf, input.mdr, input.bond, input.viscos_rat);
+  //Vectors to store the interfacial velocity
+  vector<double> rad_vel(input.n_int);
+  vector<double> vert_vel(input.n_int);
+
 
   //Object to output the position and velocity of the sphere
   ofstream sphere_out;
@@ -91,6 +93,25 @@ int main(int argc, char *argv[])
       vector<double> unknown(order);
 
       Solve(order, &coeffs, &known, &unknown);
+
+      //Update the vectors storing the interfacial velocities
+      for (int i = 0; i < input.n_int; i++)
+	{
+	  if (i == 0)
+	    {
+	      rad_vel[i] = 0.0;
+	      vert_vel[i] = unknown[i + input.n_int - 1];
+	    }
+	  else
+	    {
+	      rad_vel[i] = unknown[i - 1];
+	      vert_vel[i] = unknown[i + input.n_int - 1];
+	    }
+	}
+
+      //Output the configuration
+      Out_sys(it, sphere, interf, input.mdr, input.bond, input.viscos_rat, &rad_vel, &vert_vel);
+
       for (int i = 0; i < unknown.size(); i++)
 	{
 	  //	  cout << i << '\t' << unknown[i] << endl;
@@ -127,7 +148,7 @@ int main(int argc, char *argv[])
 	}
 
       //Output the system
-      Out_sys(it, sphere, interf, input.mdr, input.bond, input.viscos_rat);
+      //    Out_sys(it, sphere, interf, input.mdr, input.bond, input.viscos_rat);
     }
 
   sphere_out.close();

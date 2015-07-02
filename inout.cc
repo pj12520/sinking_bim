@@ -37,7 +37,7 @@ void Dimless_in(string file, dimless_in *input)
 }
 
 //Function to output the state of the system
-void Out_sys(int it, particle sphere, surf interf, double mdr, double bond, double viscos_rat)
+void Out_sys(int it, particle sphere, surf interf, double mdr, double bond, double viscos_rat, vector<double>* rad_vel, vector<double>* vert_vel)
 {
   ofstream write;
 
@@ -45,11 +45,11 @@ void Out_sys(int it, particle sphere, surf interf, double mdr, double bond, doub
   string file = "interf_config.dat" + static_cast<ostringstream*>( &(ostringstream() << it) )->str() + ".dat";
   write.open(file.c_str());
 
-  write << setw(20) << "Interval" << setw(20) << "Arc" << setw(20) << "Radial" << setw(20) << "Vertical" << endl;
+  write << setw(20) << "Interval" << setw(20) << "Arc" << setw(20) << "Radial" << setw(20) << "Vertical" << setw(20) << "Radial_vel" << setw(20) << "Vertical_vel" << endl;
 
   for (int i = 0; i < interf.n_int; i++)
     {
-      write << setw(20) << i << setw(20) << interf.midpoints[i] << setw(20) << interf.mid_rad[i] << setw(20) << interf.mid_vert[i] << endl;
+      write << setw(20) << i << setw(20) << interf.midpoints[i] << setw(20) << interf.mid_rad[i] << setw(20) << interf.mid_vert[i] << setw(20) << (*rad_vel)[i] << setw(20) << (*vert_vel)[i] << endl;
     }
 
   write.close();
