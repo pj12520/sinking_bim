@@ -80,6 +80,9 @@ int main(int argc, char *argv[])
   sphere_out.open(out_file.c_str());
   sphere_out << setw(20) << "iteration" << setw(20) << "time" << setw(20) << "height" << setw(20) << "velocity" << endl;
 
+  //Vectors of output data structures
+  vector<out_data> output;
+
   while(it < input.max_it)
     {
       //Build the linear system
@@ -110,7 +113,19 @@ int main(int argc, char *argv[])
 	}
 
       //Output the configuration
-      Out_sys(it, sphere, interf, input.mdr, input.bond, input.viscos_rat, &rad_vel, &vert_vel);
+      //      Out_sys(it, sphere, interf, input.mdr, input.bond, input.viscos_rat, &rad_vel, &vert_vel);
+
+      //Store the configuration
+      output.resize(output.size() + 1);
+
+      output[output.size() - 1].it = it;
+      output[output.size() - 1].sphere_pos = sphere.height;
+
+      for (int i = 0; i < interf.n_int; i++)
+	{
+	  output[output.size() - 1].interf_rad[i] = interf.mid_rad[i];
+	  output[output.size() - 1].interf_vert[i] = interf.mid_vert[i];
+	}
 
       for (int i = 0; i < unknown.size(); i++)
 	{
@@ -152,6 +167,45 @@ int main(int argc, char *argv[])
     }
 
   sphere_out.close();
+
+  //Need to output the configuration at 20 iterations plus the initial and final ones
+  int n_it = it - 1; //Number of iterations that occured
+
+  if (n_it % 20 == 0)
+    {
+      vector<int> out_it(21);
+
+      out_it[0] = 0;
+
+      for (int i = 1; i < out_it.size(); i++)
+	{
+	  out_it[i] = n_it * i / 20;
+	}
+
+      for (int i = 0; i < out_it.size(); i++)
+	{
+	  Out_sys(output[i], input.mdr, input.bond, input.viscos_rat);
+	}
+    }
+  else
+    {
+      vector<int> out_it(22);
+
+      out_it[0] = 0;
+      out_it[21] = n_it;
+
+      int rem = n_it % 20;
+
+      for (int i = 1; i < out_it.size() - 1; i++)
+	{
+	  out_it[i] = (n_it - rem) * i / 20;
+	}
+
+      for (int i = 0; i < out_it.size(); i++)
+	{
+	  Out_sys(output[i], input.mdr, input.bond, input.viscos_rat);
+	}
+    }
 
   return 0;
 }
