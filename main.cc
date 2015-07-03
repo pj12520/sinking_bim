@@ -123,8 +123,8 @@ int main(int argc, char *argv[])
 
       for (int i = 0; i < interf.n_int; i++)
 	{
-	  output[output.size() - 1].interf_rad[i] = interf.mid_rad[i];
-	  output[output.size() - 1].interf_vert[i] = interf.mid_vert[i];
+	  output[output.size() - 1].interf_rad.push_back(interf.mid_rad[i]);
+	  output[output.size() - 1].interf_vert.push_back(interf.mid_vert[i]);
 	}
 
       for (int i = 0; i < unknown.size(); i++)
@@ -184,7 +184,7 @@ int main(int argc, char *argv[])
 
       for (int i = 0; i < out_it.size(); i++)
 	{
-	  Out_sys(output[i], input.mdr, input.bond, input.viscos_rat);
+	  Out_sys(output[out_it[i]], input.mdr, input.bond, input.viscos_rat);
 	}
     }
   else
@@ -203,7 +203,7 @@ int main(int argc, char *argv[])
 
       for (int i = 0; i < out_it.size(); i++)
 	{
-	  Out_sys(output[i], input.mdr, input.bond, input.viscos_rat);
+	  Out_sys(output[out_it[i]], input.mdr, input.bond, input.viscos_rat);
 	}
     }
 
