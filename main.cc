@@ -129,7 +129,7 @@ int main(int argc, char *argv[])
 
       for (int i = 0; i < unknown.size(); i++)
 	{
-	  //	  cout << i << '\t' << unknown[i] << endl;
+	  	  cout << i << '\t' << unknown[i] << endl;
 	}
 
       //Testing - Test the solution for the sphere velocity ///////////////////////////
@@ -171,7 +171,19 @@ int main(int argc, char *argv[])
   //Need to output the configuration at 20 iterations plus the initial and final ones
   int n_it = it - 1; //Number of iterations that occured
 
-  if (n_it % 20 == 0)
+  if (n_it < 20)
+    {
+      vector<int> out_it(n_it + 1);
+
+      for (int i = 0; i < out_it.size(); i++)
+	{
+	  out_it[i] = i;
+
+	  Out_sys(output[out_it[i]], input.mdr, input.bond, input.viscos_rat);
+	}
+
+    }
+  else if (n_it % 20 == 0)
     {
       vector<int> out_it(21);
 

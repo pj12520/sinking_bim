@@ -109,7 +109,7 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 	  //For the case that the source point is on axis
 	  if (i == 0)
 	    {
-	      A_axisource(source_vert, &(interf.intervals[j].vert), &(interf.intervals[j].rad), viscos_rat, &matrix_A21, &matrix_A22);
+	      A_axisource(source_vert, &(interf.intervals[j].vert), &(interf.intervals[j].rad), viscos_rat, &matrix_A21, &matrix_A22, &interf.intervals[j].norm_rad, &interf.intervals[j].norm_vert);
 	      //Perform the Gauss-Legendre integration
 	      for (int k = 0; k < 4; k++)
 		{
@@ -242,7 +242,7 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 	  //For the case that the source point is on axis
 	  if (i == 0 || i == sphere.n_int - 1)
 	    {
-	      A_axisource(source_vert, &(interf.intervals[j].vert), &(interf.intervals[j].rad), viscos_rat, &matrix_A21, &matrix_A22);
+	      A_axisource(source_vert, &(interf.intervals[j].vert), &(interf.intervals[j].rad), viscos_rat, &matrix_A21, &matrix_A22, &(interf.intervals[j].norm_rad), &(interf.intervals[j].norm_vert));
 
 	      //Perform the Gauss-Legendre integration (Riley Hobson and Bence 2006 page 1006)
 	      for (int k = 0; k < 4; k++)

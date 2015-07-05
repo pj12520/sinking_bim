@@ -44,10 +44,10 @@ double A16(double viscos_rat, double alpha_2, double sum_3_2, double diff_2, dou
 double Matrix_A(double a1, double a2, double a3, double a4, double norm_rad, double norm_vert, double ellip1, double ellip2);
 
 //Function to calculate the 21 component of A when the source point is on axis
-double Matrix_A21_axisource(double viscos_rat, double vert_diff_2, double pos_rad, double alpha_5);
+double Matrix_A21_axisource(double viscos_rat, double vert_diff, double pos_rad, double alpha_5, double norm_vert, double norm_rad);
 
 //Function to calculate the 22 component of A when the source point is on axis
-double Matrix_A22_axisource(double viscos_rat, double vert_diff_3, double alpha_5);
+double Matrix_A22_axisource(double viscos_rat, double vert_diff_2, double alpha_5, double pos_rad, double norm_rad, double vert_diff, double norm_vert);
 
 //Function to calculate the regular part of the A11 function
 double Matrix_A11_reg(double a1, double a2, double a3, double a4, double norm_rad, double norm_vert, double ellip1, double ellip2, double ellip2_var);

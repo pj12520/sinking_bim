@@ -116,17 +116,17 @@ double Matrix_A(double a1, double a2, double a3, double a4, double norm_rad, dou
 }
 
 //Function to calculate the 21 component of A when the source point is on axis
-double Matrix_A21_axisource(double viscos_rat, double vert_diff_2, double pos_rad, double alpha_5)
+double Matrix_A21_axisource(double viscos_rat, double vert_diff, double pos_rad, double alpha_5, double norm_vert, double norm_rad)
 {
-  double matrix_A21 = 3.0 * (1.0 - viscos_rat) * vert_diff_2 * pos_rad / (2.0 * alpha_5);
+  double matrix_A21 = 3.0 * (1.0 - viscos_rat) * vert_diff * pos_rad * (vert_diff * norm_vert - pos_rad * norm_rad) / (2.0 * alpha_5);
 
   return matrix_A21;
 }
 
 //Function to calculate the 22 component of A when the source point is on axis
-double Matrix_A22_axisource(double viscos_rat, double vert_diff_3, double alpha_5)
+double Matrix_A22_axisource(double viscos_rat, double vert_diff_2, double alpha_5, double pos_rad, double norm_rad, double vert_diff, double norm_vert)
 {
-  double matrix_A22 = -3.0 * (1.0 - viscos_rat) * vert_diff_3 / (2.0 * alpha_5);
+  double matrix_A22 = 3.0 * (1.0 - viscos_rat) * vert_diff_2 * (pos_rad * norm_rad - vert_diff * norm_vert) / (2.0 * alpha_5);
 
   return matrix_A22;
 }
@@ -152,7 +152,7 @@ double H(double viscos_rat, double sum_3_2, double vert_diff_2, double beta_4, d
 
   double term4 = -3.0 * source_rad * pos_rad_2 * alpha_2 * beta_4;
 
-  double term5 = source_norm_vert_3 * source_norm_rad * sum_3_2 * diff_2 * beta_4;
+  double term5 = - source_norm_vert_3 * source_norm_rad * sum_3_2 * diff_2 * beta_4;
 
   double h = prefac * (norm_rad * source_rad * eps * (term1 + term2 + term3 + term4) + term5);
 

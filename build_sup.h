@@ -23,7 +23,7 @@ double Beta_2(double source_rad, double pos_rad);
 void Stand_ellip(double beta_2, double sum, double *comp_param, double *ellip1, double *ellip2);
 
 //Function to calculate the component of A when the source point is on axis
-void A_axisource(double source_vert, vector<double>* pos_vert, vector<double>* pos_rad, double viscos_rat, vector<double>* matrix_A21, vector<double>* matrix_A22);
+void A_axisource(double source_vert, vector<double>* pos_vert, vector<double>* pos_rad, double viscos_rat, vector<double>* matrix_A21, vector<double>* matrix_A22, vector<double>* norm_rad, vector<double>* norm_vert);
 
 //Function to calculate the components of A when the source point is off axis
 void A(vector<double>* pos_rad, double source_vert, vector<double>* pos_vert, double source_rad_2, double viscos_rat, double midpoint, vector<double>* arc, vector<double>* h, vector<double>* matrix_A11, vector<double>* matrix_A12, vector<double>* matrix_A21, vector<double>* matrix_A22, double source_rad, int sing_test, vector<double>* pos_norm_rad, vector<double>* pos_norm_vert, double source_norm_vert_3, double source_norm_rad);

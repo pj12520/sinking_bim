@@ -66,7 +66,7 @@ void Stand_ellip(double beta_2, double sum, double *comp_param, double *ellip1, 
 }
 
 //Function to calculate the components of A when the source point is on axis
-void A_axisource(double source_vert, vector<double>* pos_vert, vector<double>* pos_rad, double viscos_rat, vector<double>* matrix_A21, vector<double>* matrix_A22)
+void A_axisource(double source_vert, vector<double>* pos_vert, vector<double>* pos_rad, double viscos_rat, vector<double>* matrix_A21, vector<double>* matrix_A22, vector<double>* norm_rad, vector<double>* norm_vert)
 {
   //Loop over the integration points in the interval and find the values of the integrands
   for (int k = 0; k < 4; k++)
@@ -79,8 +79,8 @@ void A_axisource(double source_vert, vector<double>* pos_vert, vector<double>* p
       double alpha_2 = Alpha_2_axisource((*pos_rad)[k], vert_diff_2);
       double alpha_5 = pow(alpha_2, 2.5);
 
-      (*matrix_A21)[k] = Matrix_A21_axisource(viscos_rat, vert_diff_2, (*pos_rad)[k], alpha_5);
-      (*matrix_A22)[k] = Matrix_A22_axisource(viscos_rat, vert_diff_3, alpha_5);
+      (*matrix_A21)[k] = Matrix_A21_axisource(viscos_rat, vert_diff, (*pos_rad)[k], alpha_5, (*norm_vert)[k], (*norm_rad)[k]);
+      (*matrix_A22)[k] = Matrix_A22_axisource(viscos_rat, vert_diff_2, alpha_5, (*pos_rad)[k], (*norm_rad)[k], vert_diff, (*norm_vert)[k]);
     }
 }
 
@@ -152,6 +152,8 @@ void A(vector<double>* pos_rad, double source_vert, vector<double>* pos_vert, do
       else
 	{
 	  (*matrix_A11)[k] = Matrix_A(a1[k], a2[k], a3[k], a4[k], (*pos_norm_rad)[k], (*pos_norm_vert)[k], ellip1[k], ellip2[k]);
+
+	  (*h)[k] = 0.0;
 	}
 
       (*matrix_A12)[k] = Matrix_A(a2[k], a6[k], a4[k], a8[k], (*pos_norm_rad)[k], (*pos_norm_vert)[k], ellip1[k], ellip2[k]);
