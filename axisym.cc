@@ -150,7 +150,7 @@ double H(double viscos_rat, double sum_3_2, double vert_diff_2, double beta_4, d
 
   double term3 = pos_rad * beta_2 * (pos_rad_2 + 2.0 * source_rad_2) * (alpha_4 + 3.0 * beta_4);
 
-  double term4 = -3.0 * source_rad * pos_rad_2 * alpha_2 * beta_4;
+  double term4 = -4.0 * source_rad * pos_rad_2 * alpha_2 * beta_4;
 
   double term5 = - source_norm_vert_3 * source_norm_rad * sum_3_2 * diff_2 * beta_4;
 
