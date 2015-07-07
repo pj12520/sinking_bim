@@ -1,0 +1,13 @@
+#Gnuplot script to plot system configurations and sphere trajectory
+
+set terminal postscript
+
+set output outfile
+
+set xrange[0:15]
+set yrange[-10:5]
+set size square
+
+set title time
+
+plot infile1 u 2:3 w lines, infile2 u 2:3 w lines

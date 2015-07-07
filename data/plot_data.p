@@ -6,14 +6,8 @@ set output traj_plot
 
 unset key
 
-plot traj_data u 2:4 w lines
+set xlabel "Dimensionless Time"
+set ylabel "Dimensionless Position"
 
-set output config_plot
+plot traj_data u 2:3 w lines
 
-set xrange[0:15]
-set yrange[-10:5]
-set size square
-
-set title time
-
-plot interf_dat  u 2:3 w lines, sphere_dat u 2:3 w lines
