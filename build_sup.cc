@@ -74,7 +74,6 @@ void A_axisource(double source_vert, vector<double>* pos_vert, vector<double>* p
       double vert_diff, vert_diff_2;
 
       Vert_diff(&vert_diff, source_vert, (*pos_vert)[k], &vert_diff_2);
-      double vert_diff_3 = vert_diff_2 * vert_diff;
       
       double alpha_2 = Alpha_2_axisource((*pos_rad)[k], vert_diff_2);
       double alpha_5 = pow(alpha_2, 2.5);
@@ -87,6 +86,12 @@ void A_axisource(double source_vert, vector<double>* pos_vert, vector<double>* p
 //Function to calculate the components of A when the source point is off axis
 void A(vector<double>* pos_rad, double source_vert, vector<double>* pos_vert, double source_rad_2, double viscos_rat, double midpoint, vector<double>* arc, vector<double>* h, vector<double>* matrix_A11, vector<double>* matrix_A12, vector<double>* matrix_A21, vector<double>* matrix_A22, double source_rad, int sing_test, vector<double>* pos_norm_rad, vector<double>* pos_norm_vert, double source_norm_vert_3, double source_norm_rad)
 {
+  vector<double> ellip1(4);
+  vector<double> ellip2(4);
+  vector<double> ellip2_var(4);
+
+  vector<double> a1(4), a2(4), a3(4), a4(4), a6(4), a8(4), a9(4), a10(4), a11(4), a12(4), a14(4), a16(4);
+
   //Loop over the integration points in the interval and find the values of the integrands
   for (int k = 0; k < 4; k++)
     {
@@ -115,13 +120,8 @@ void A(vector<double>* pos_rad, double source_vert, vector<double>* pos_vert, do
       double diff_2 = diff * diff;
 
       double comp_param;
-      vector<double> ellip1(4);
-      vector<double> ellip2(4);
-      vector<double> ellip2_var(4);
       Stand_ellip(beta_2, sum, &comp_param, &ellip1[k], &ellip2[k]);
       ellip2_var[k] = Ellip2_var(comp_param);
-
-      vector<double> a1(4), a2(4), a3(4), a4(4), a6(4), a8(4), a9(4), a10(4), a11(4), a12(4), a14(4), a16(4);
 
       a1[k] = A1(viscos_rat, sum_3_2, diff, beta_4, source_rad, alpha_2, alpha_4, source_rad_2, pos_rad_2, (*pos_rad)[k], beta_2);
       a2[k] = A2(viscos_rat, vert_diff, alpha_4, beta_4, alpha_2, vert_diff_2, sum_3_2, diff, beta_2);
@@ -144,7 +144,7 @@ void A(vector<double>* pos_rad, double source_vert, vector<double>* pos_vert, do
 	{
 	  (*matrix_A11)[k] = Matrix_A11_reg(a1[k], a2[k], a3[k], a4[k], (*pos_norm_rad)[k], (*pos_norm_vert)[k], ellip1[k], ellip2[k], ellip2_var[k]);
 
-	  arc_diff = midpoint - (*arc)[k];
+	  arc_diff = -(midpoint - (*arc)[k]);
 
 	  (*h)[k] = H(viscos_rat, sum_3_2, vert_diff_2, beta_4, source_rad, arc_diff, alpha_8, alpha_4, beta_8, alpha_2, pos_rad_2, source_rad_2, (*pos_rad)[k], (*pos_norm_rad)[k], diff_2, beta_2, source_norm_vert_3, source_norm_rad);
 

@@ -64,8 +64,19 @@ int Break_Crit(vector<double>* arc, vector<double>* rad, vector<double>* vert, d
       separation = Pythag((*rad)[i], (*vert)[i] - sphere_pos);
       if (separation - 1.0 < min_step)
 	{
-	  break_criteria = break_criteria + 1;
+	  break_criteria = 1;
+	  cout << "Sphere and interface collide" << endl;
 	  break;
+	}
+
+      if (i != 0)
+	{
+	  if ((*rad)[i] < (*rad)[i - 1] && (*rad)[i] < min_step)
+	    {
+	      break_criteria = 2;
+	      cout << "Tail snaps" << endl;
+	      break;
+	    }
 	}
     }
 

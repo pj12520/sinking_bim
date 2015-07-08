@@ -129,7 +129,7 @@ int main(int argc, char *argv[])
 
       for (int i = 0; i < unknown.size(); i++)
 	{
-	  	  cout << i << '\t' << unknown[i] << endl;
+	  //	  	  cout << i << '\t' << unknown[i] << endl;
 	}
 
       //Testing - Test the solution for the sphere velocity ///////////////////////////
@@ -159,6 +159,11 @@ int main(int argc, char *argv[])
       if (break_criteria == 1)
 	{
 	  sphere_out << "# Sphere and interface collide" << endl;
+	  break;
+	}
+      else if (break_criteria == 2)
+	{
+	  sphere_out << "# Tail snaps" << endl;
 	  break;
 	}
 

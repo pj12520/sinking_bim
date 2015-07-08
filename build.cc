@@ -113,8 +113,8 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 	      //Perform the Gauss-Legendre integration
 	      for (int k = 0; k < 4; k++)
 		{
-		  coeffs[i + interf.n_int][j] += matrix_A21[k] * interf.intervals[j].rad[k] * Gauss_int_wts[k];
-		  coeffs[i + interf.n_int][j + interf.n_int] += matrix_A22[k] * interf.intervals[j].rad[k] * Gauss_int_wts[k];
+		  coeffs[i + interf.n_int][j] -= matrix_A21[k] * interf.intervals[j].rad[k] * Gauss_int_wts[k];
+		  coeffs[i + interf.n_int][j + interf.n_int] -= matrix_A22[k] * interf.intervals[j].rad[k] * Gauss_int_wts[k];
 		}
 
 	      coeffs[i + interf.n_int][j] = interf.intervals[j].width * coeffs[i + interf.n_int][j] / 2.0;
@@ -144,18 +144,18 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 	      //Perform the Gauss-Legendre integration
 	      for (int k = 0; k < 4; k++)
 		{
-		  coeffs[i][j] += (matrix_A11[k] + h[k]) * interf.intervals[j].rad[k] * Gauss_int_wts[k];
-		  coeffs[i][j + interf.n_int] += matrix_A12[k] * interf.intervals[j].rad[k] * Gauss_int_wts[k];
+		  coeffs[i][j] -= (matrix_A11[k] + h[k]) * interf.intervals[j].rad[k] * Gauss_int_wts[k];
+		  coeffs[i][j + interf.n_int] -= matrix_A12[k] * interf.intervals[j].rad[k] * Gauss_int_wts[k];
 		  
-		  coeffs[i + interf.n_int][j] += matrix_A21[k] * interf.intervals[j].rad[k] * Gauss_int_wts[k];
-		  coeffs[i + interf.n_int][j + interf.n_int] += matrix_A22[k] * interf.intervals[j].rad[k] * Gauss_int_wts[k];
+		  coeffs[i + interf.n_int][j] -= matrix_A21[k] * interf.intervals[j].rad[k] * Gauss_int_wts[k];
+		  coeffs[i + interf.n_int][j + interf.n_int] -= matrix_A22[k] * interf.intervals[j].rad[k] * Gauss_int_wts[k];
 		}
 
 	      coeffs[i][j] = interf.intervals[j].width * coeffs[i][j] / 2.0;
 	      coeffs[i][j + interf.n_int] = interf.intervals[j].width * coeffs[i][j + interf.n_int] / 2.0;
 
 	      coeffs[i + interf.n_int][j] = interf.intervals[j].width * coeffs[i + interf.n_int][j] / 2.0;
-	      coeffs[i + interf.n_int][j + interf.n_int] = interf.intervals[j].width * coeffs[i + interf.n_int][j] / 2.0;
+	      coeffs[i + interf.n_int][j + interf.n_int] = interf.intervals[j].width * coeffs[i + interf.n_int][j + interf.n_int] / 2.0;
 
 	      if (j == i)
 		{
@@ -252,7 +252,7 @@ void Build(vector<vector<double> >* matrix, vector<double>* vec, particle sphere
 		}
 
 	      coeffs[i + 2 * interf.n_int + sphere.n_int][j] = interf.intervals[j].width * coeffs[i + 2 * interf.n_int + sphere.n_int][j] / 2.0;
-	      coeffs[i + 2 * interf.n_int + sphere.n_int][j + interf.n_int] = interf.intervals[j].width * coeffs[i + 2* interf.n_int + sphere.n_int][j + interf.n_int] / 2.0;
+	      coeffs[i + 2 * interf.n_int + sphere.n_int][j + interf.n_int] = interf.intervals[j].width * coeffs[i + 2 * interf.n_int + sphere.n_int][j + interf.n_int] / 2.0;
 	    }
 
 	  //For the case that the source point is not on axis

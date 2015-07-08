@@ -154,7 +154,7 @@ double H(double viscos_rat, double sum_3_2, double vert_diff_2, double beta_4, d
 
   double term5 = - source_norm_vert_3 * source_norm_rad * sum_3_2 * diff_2 * beta_4;
 
-  double h = prefac * (norm_rad * source_rad * eps * (term1 + term2 + term3 + term4) + term5);
+  double h = prefac * (source_rad * eps * (term1 + term2 + term3 + term4) + term5);
 
   return h;
 }
