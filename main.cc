@@ -133,7 +133,7 @@ int main(int argc, char *argv[])
 	}
 
       //Testing - Test the solution for the sphere velocity ///////////////////////////
-            cout << setw(20) << it << setw(20) << sphere.height << setw(20) << unknown[unknown.size() - 1] << endl;
+      cout << setw(20) << it << setw(20) << time << setw(20) << sphere.height << setw(20) << unknown[unknown.size() - 1] << endl;
       ////////////////////////////////////////////////////////////////////////////////
 
       //Outout the sphere position and velocity

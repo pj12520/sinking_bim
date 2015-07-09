@@ -1,6 +1,6 @@
-10.0
-10.0
-0.1
+1000.0
+1000.0
+0.001
 100
 100
 15.0
@@ -13,6 +13,5 @@ Viscosity Ratio
 Number of elements on sphere
 Number of elements on interface
 Truncation length of interface
-Time step
 Initial height of sphere
 Maximum number of iterations
