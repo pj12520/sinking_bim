@@ -19,8 +19,7 @@ int main()
 
   vector<double> mod_dens_rat_data(4);
   vector<double> bond_data(7);
-  //  vector<double> viscos_rat_data(7);
-  vector<double> viscos_rat_data(1);
+  vector<double> viscos_rat_data(6);
 
   mod_dens_rat_data[0] = 1.0;
   mod_dens_rat_data[1] = 10.0;
@@ -35,16 +34,12 @@ int main()
   bond_data[5] = 100.0;
   bond_data[6] = 1000.0;
 
-  /*  
-      viscos_rat_data[0] = 0.001;
-      viscos_rat_data[1] = 0.01;
-      viscos_rat_data[2] = 0.1;
-      viscos_rat_data[3] = 1;
-      viscos_rat_data[4] = 10;
-      viscos_rat_data[5] = 100;
-      viscos_rat_data[6] = 1000;
-  */
-  viscos_rat_data[0] = 1.0;
+  viscos_rat_data[0] = 0.001;
+  viscos_rat_data[1] = 0.01;
+  viscos_rat_data[2] = 0.1;
+  viscos_rat_data[3] = 10;
+  viscos_rat_data[4] = 100;
+  viscos_rat_data[5] = 1000;
 
   int n_sphere = 100;
   int n_interf = 100;
@@ -64,6 +59,10 @@ int main()
   ostringstream viscos_convert;
 
   const char* up = "../";
+
+  const char* data = "new_data/";
+
+  chdir(data);
 
   for (int i = 0; i < mod_dens_rat_data.size(); i++)
     {
