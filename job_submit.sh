@@ -1,5 +1,7 @@
 #!/bin/bash
 
+cd new_data
+
 for i in $(ls -d */); do
 
     cd ${i}
@@ -16,7 +18,7 @@ for i in $(ls -d */); do
 
 	    export RUNDIR=${HOME}/sinking_bim/trunk/new_data/${i}/${j}/${k}
 
-	    qsub -V ../../../param_sweep.sh
+	    qsub -V ../../../../param_sweep.sh
 # echo $INPUT
 # echo $RUNDIR
 	    sleep 10
