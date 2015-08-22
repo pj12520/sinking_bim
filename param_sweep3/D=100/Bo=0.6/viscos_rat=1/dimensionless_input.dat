@@ -1,0 +1,17 @@
+0.6
+100
+1
+100
+100
+15
+3
+60000
+Input file containing the dimensionless numbers that characterise the system
+Bond Number
+Modified Density Ratio
+Viscosity Ratio
+Number of elements on sphere
+Number of elements on interface
+Truncation length of interface
+Initial height of sphere
+Maximum number of iterations
