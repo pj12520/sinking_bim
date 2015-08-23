@@ -92,11 +92,52 @@
 
 \section{Theoretical Development}
 
+The problem being modelled is the low Reynolds number gravitational settling of a sphere towards an initialy horizontal interface separating two density stratified, immiscible, semi-infinte fluids (figure~\ref{fig:params}). The fluids are characterised by the velocity $\mathbf{u}_{l}(\mathbf{x})$ and pressure $p_{l}(\mathbf{x})$ fields where $l = 1,2$ denotes the fluid and $\mathbf{x}$ is a position vector. The dynamic pressure is defined as
+
+\begin{equation}
+\label{equ:dyn_p}
+p_{\text{d},l}(\mathbf{x}) = p_{l}(\mathbf{x}) - \rho_{l} \mathbf{g} \cdot \mathbf{x} ,
+\end{equation}
+
+where $\mathbf{g}$ is acceleration due to gravity. This allows the stress tensor to be defined as
+
+\begin{equation}
+\label{equ:stress}
+
+\end{equation}
+
   \begin{figure}
-    $$\includegraphics[width=\textwidth]{formulation.eps}$$
-    \caption{Diagrammatic representation of the system. See table (NEED TO MAKE SYMBOL TABLE) for definition of symbols. \label{fig:params}}
+    $$\includegraphics[width=0.8\textwidth]{formulation.eps}$$
+    \caption{Diagrammatic representation of the system. A sphere falls under gravity, at low Reynolds number, towards an initially horizontal interface between two density stratified, immiscible semi-infinite fluids. See table~\ref{tab:symbols} for definition of symbols. \label{fig:params}}
   \end{figure}
 
+    \begin{longtable}{|c|c|}
+    \caption{Definition of symbols. \label{tab:symbols}} \\ % title name of the table
+    \hline
+    Symbol & Definition \\  
+    \hline % inserts single-line
+    $a$                                                    & Sphere radius           \\
+    $\mathbf{g} = (-9.81 \text{m s}^{-2}) \mathbf{\hat{z}}$ & Acceleration due to gravity \\      
+    $\mathcal{I}$                                          & Surface of interface \\
+    $l = 1,2$                                              & Fluid label \\
+    $m$                                                    & Outward normal to sphere surface \\
+    $n$                                                    & Normal to interface (points into fluid 1) \\
+    $p_{l}(\mathbf{x})$                                     & Pressure field of fluid $l$ \\
+    $p_{\text{d},l}(\mathbf{x}) $                             & Dynamic pressure of fluid $l$ \\
+    $s$                                                    & Arc length along interface measured from axis \\
+    $\mathcal{S}$                                          & Surface of sphere \\
+    $\mathbf{u}_{l}(\mathbf{x})$                            & Velocity field of fluid $l$ \\
+    $\mathcal{V}_{l}$                                       & Volume of fluid $l$ \\
+    $\mathbf{x}$                                           & Position vector \\
+    $\mathbf{\hat{z}}$                                     & Unit vector in the upward vertical direction \\
+    $\eta_{l}$                                              & Viscosity of fluid $l$ \\ 
+    $\theta$                                               & Polar angle with respect to sphere centre \\
+    $\rho_{l}$                                              & Density of fluid $l$   \\
+    $\rho_{\text{s}}$                                         & Sphere density          \\
+    $\sigma$                                               & Interfacial Tension     \\
+    $\phi$                                                 & Azimuhtal angle with respect to axis of motion \\
+    \hline % inserts single-line
+  \end{longtable}
 
 
 %\bibliographystyle{plainnat}

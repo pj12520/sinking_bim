@@ -1,5 +1,6 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2012.12.18)  21 AUG 2015 10:41
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2012.12.18)  21 AUG 2015 14:43
 entering extended mode
+ \write18 enabled.
  %&-line parsing enabled.
 **bim.tex
 (./bim.tex
@@ -380,13 +381,11 @@ Package: epstopdf-base 2009/10/17 v2.4 Base part for package epstopdf
 (/usr/share/texmf-texlive/tex/latex/oberdiek/grfext.sty
 Package: grfext 2007/09/30 v1.0 Managing graphics extensions (HO)
 )
-
-Package epstopdf Warning: Shell escape feature is not enabled.
-
 Package grfext Info: Graphics extension search list:
 (grfext)             [.png,.pdf,.jpg,.mps,.jpeg,.jbig2,.jb2,.PNG,.PDF,.JPG,.JPE
 G,.JBIG2,.JB2,.eps]
 (grfext)             \AppendGraphicsExtensions on input line 433.
+
 (/usr/share/texmf-texlive/tex/latex/latexconfig/epstopdf-sys.cfg
 File: epstopdf-sys.cfg 2009/10/26 v1.1 Configuration of epstopdf for TeX Live
 )))
@@ -490,26 +489,51 @@ LaTeX Font Info:    Try loading font information for U+msb on input line 82.
 File: umsb.fd 2009/06/22 v3.00 AMS symbols B
 ) [1
 
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] (./bim.aux) ) 
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
+Package epstopdf Info: Source file: <formulation.eps>
+(epstopdf)                    date: 2015-08-21 10:57:37
+(epstopdf)                    size: 28450 bytes
+(epstopdf)             Output file: <formulation-eps-converted-to.pdf>
+(epstopdf)                    date: 2015-08-21 12:33:05
+(epstopdf)                    size: 13643 bytes
+(epstopdf)             Command: <epstopdf --outfile=formulation-eps-converted-t
+o.pdf formulation.eps>
+(epstopdf)             \includegraphics on input line 105.
+Package epstopdf Info: Output file is already uptodate.
+
+<formulation-eps-converted-to.pdf, id=27, 301.125pt x 259.97125pt>
+File: formulation-eps-converted-to.pdf Graphic file (type pdf)
+
+<use formulation-eps-converted-to.pdf>
+
+Package Fancyhdr Warning: \headheight is too small (12.0pt): 
+ Make it at least 14.49998pt.
+ We now make it that large for the rest of the document.
+ This may cause the page layout to be inconsistent, however.
+
+[2 <./formulation-eps-converted-to.pdf>] [3] (./bim.aux) ) 
 Here is how much of TeX's memory you used:
- 7953 strings out of 495061
- 116383 string characters out of 1182620
- 223424 words of memory out of 3000000
- 10973 multiletter control sequences out of 15000+50000
- 14980 words of font info for 58 fonts, out of 3000000 for 9000
+ 7986 strings out of 495061
+ 116867 string characters out of 1182620
+ 229424 words of memory out of 3000000
+ 10996 multiletter control sequences out of 15000+50000
+ 16260 words of font info for 62 fonts, out of 3000000 for 9000
  28 hyphenation exceptions out of 8191
- 38i,8n,58p,266b,301s stack positions out of 5000i,500n,10000p,200000b,50000s
-</usr/share/t
-exmf-texlive/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texmf-texliv
-e/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texmf-texlive/fonts/typ
-e1/public/amsfonts/cm/cmr10.pfb></usr/share/texmf-texlive/fonts/type1/public/am
-sfonts/cm/cmr12.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cm
-r17.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr
-/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texm
-f-texlive/fonts/type1/public/amsfonts/cm/cmsy7.pfb>
-Output written on bim.pdf (1 page, 92480 bytes).
+ 38i,11n,58p,474b,424s stack positions out of 5000i,500n,10000p,200000b,50000s
+</usr/share/texmf-tex
+live/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texmf-texlive/fonts/
+type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texmf-texlive/fonts/type1/publi
+c/amsfonts/cm/cmmi12.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/
+cm/cmmi8.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr10.pfb
+></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share
+/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/texmf-texli
+ve/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texmf-texlive/fonts/type
+1/public/amsfonts/cm/cmsl12.pfb></usr/share/texmf-texlive/fonts/type1/public/am
+sfonts/cm/cmsy10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/c
+msy7.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmsy8.pfb>
+Output written on bim.pdf (3 pages, 155446 bytes).
 PDF statistics:
- 45 PDF objects out of 1000 (max. 8388607)
- 4 named destinations out of 1000 (max. 500000)
- 1 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 103 PDF objects out of 1000 (max. 8388607)
+ 9 named destinations out of 1000 (max. 500000)
+ 22 words of extra memory for PDF output out of 10000 (max. 10000000)
 
